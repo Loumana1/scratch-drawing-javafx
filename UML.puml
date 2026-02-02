@@ -1,0 +1,113 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+' ================= ENUMS =================
+enum ActionType {
+  PEN_UP
+  PEN_DOWN
+  MOVE_FORWARD
+  TURN_LEFT
+  TURN_RIGHT
+}
+
+enum ProgramState {
+  READY
+  RUNNING
+  FINISHED
+}
+
+' ================= ACTION =================
+abstract class Action {
+  - type : ActionType
+  + execute(context : ExecutionContext)
+  + validate() : boolean
+}
+
+abstract class ParameterizedAction {
+  - value : int
+  + setValue(value : int)
+  + getValue() : int
+}
+
+Action <|-- ParameterizedAction
+
+class MoveForwardAction
+class TurnLeftAction
+class TurnRightAction
+class PenUpAction
+class PenDownAction
+
+ParameterizedAction <|-- MoveForwardAction
+ParameterizedAction <|-- TurnLeftAction
+ParameterizedAction <|-- TurnRightAction
+Action <|-- PenUpAction
+Action <|-- PenDownAction
+
+' ================= PROGRAM =================
+class Program {
+  - actions : List<Action>
+  - currentIndex : int
+  - state : ProgramState
+
+  + addAction(action : Action)
+  + removeAction(index : int)
+  + duplicateAction(index : int)
+  + moveUp(index : int)
+  + moveDown(index : int)
+  + clear()
+  + resetExecution()
+  + executeNext(context : ExecutionContext)
+  + hasNext() : boolean
+}
+
+Program "1" o-- "*" Action
+
+' ================= PALETTE =================
+class ActionPalette {
+  - availableActions : List<ActionType>
+  + createAction(type : ActionType) : Action
+}
+
+ActionPalette --> Program
+
+' ================= EXECUTION =================
+class ExecutionContext {
+  - x : int
+  - y : int
+  - direction : int
+  - penDown : boolean
+  - canvas : Canvas
+
+  + move(distance : int)
+  + turnLeft(angle : int)
+  + turnRight(angle : int)
+  + penUp()
+  + penDown()
+  + reset()
+}
+
+class Canvas {
+  + drawLine(x1:int, y1:int, x2:int, y2:int)
+  + clear()
+}
+
+ExecutionContext --> Canvas
+
+' ================= DETAILS =================
+class ActionDetailsPanel {
+  + show(action : Action)
+  + updateValue(value : int)
+  + showError(message : String)
+}
+
+ActionDetailsPanel --> Action
+
+' ================= FILE =================
+class ProgramFileService {
+  + save(program : Program)
+  + load() : Program
+}
+
+ProgramFileService --> Program
+
+@enduml
