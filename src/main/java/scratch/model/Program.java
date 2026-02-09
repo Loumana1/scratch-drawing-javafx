@@ -1,21 +1,30 @@
 package scratch.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Program {
-    private List<Action> actions;
+    private final List<Action> actions;
     private int currenIndex;
+
+    public Program(List<Action> actions, int currenIndex) {
+        this.actions = new ArrayList<>();
+        this.currenIndex = currenIndex;
+    }
 
 
     //Gestion du programme
     public void addAction(Action action){
+        if (action == null)
+            return;
+        actions.add(action);
 
     }
     public void removeAction(int index){
 
     }
     public Action getAction(int index){
-        return ;
+        return actions.get(index);
     }
     public  List<Action> getActions(){
         return ;
@@ -31,6 +40,7 @@ public class Program {
 
     }
     public void clear(){
+        actions.clear();
 
     }
 
