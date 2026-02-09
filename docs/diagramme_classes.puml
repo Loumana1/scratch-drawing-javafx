@@ -1,0 +1,199 @@
+@startuml Domain Class Diagram - Scratch-like (iteration 1)
+
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam classAttributeIconSize 0
+
+' === Colors: classes, abstract, enum ===
+skinparam class {
+  BackgroundColor #E8F5E9
+  BorderColor #2E7D32
+  FontColor #1B5E20
+  ArrowColor #37474F
+}
+skinparam abstractClass {
+  BackgroundColor #E3F2FD
+  BorderColor #1565C0
+  FontColor #0D47A1
+}
+skinparam enum {
+  BackgroundColor #F3E5F5
+  BorderColor #7B1FA2
+  FontColor #4A148C
+}
+skinparam note {
+  BackgroundColor #FFFDE7
+  BorderColor #F9A825
+  FontColor #333333
+}
+skinparam arrow {
+  Color #37474F
+}
+
+title Domain class diagram\n(actions + execution model)\nCommand pattern
+
+' ================= ACTION TYPES (file format) =================
+rectangle "**Action types**" as pkg_types #F3E5F5 {
+  enum ActionType {
+    MOVE_FORWARD
+    TURN_LEFT
+    TURN_RIGHT
+    PEN_UP
+    PEN_DOWN
+  }
+}
+
+' ================= ACTION (Command pattern) =================
+rectangle "**Actions (Command pattern)**" as pkg_actions #E8F5E9 {
+  abstract class Action {
+    + execute(context : ExecutionContext) : void
+    + isValid(context : ExecutionContext) : boolean
+    + getType() : ActionType
+  }
+
+  abstract class ParameterizedAction {
+    - value : int
+    + getValue() : int
+    + setValue(value : int) : void
+  }
+
+  Action <|-- ParameterizedAction
+
+  class MoveForwardAction {
+    - value : int {1..100, default 30}
+    + execute(context : ExecutionContext) : void
+    + isValid(context : ExecutionContext) : boolean
+    + getValue() : int
+    + setValue(value : int) : void
+  }
+
+  class TurnLeftAction {
+    - value : int {1..180, default 90}
+    + execute(context : ExecutionContext) : void
+    + isValid(context : ExecutionContext) : boolean
+    + getValue() : int
+    + setValue(value : int) : void
+  }
+
+  class TurnRightAction {
+    - value : int {1..180, default 90}
+    + execute(context : ExecutionContext) : void
+    + isValid(context : ExecutionContext) : boolean
+    + getValue() : int
+    + setValue(value : int) : void
+  }
+
+  class PenUpAction {
+    + execute(context : ExecutionContext) : void
+    + isValid(context : ExecutionContext) : boolean
+  }
+
+  class PenDownAction {
+    + execute(context : ExecutionContext) : void
+    + isValid(context : ExecutionContext) : boolean
+  }
+
+  ParameterizedAction <|-- MoveForwardAction
+  ParameterizedAction <|-- TurnLeftAction
+  ParameterizedAction <|-- TurnRightAction
+  Action <|-- PenUpAction
+  Action <|-- PenDownAction
+}
+
+' ================= PROGRAM =================
+rectangle "**Program**" as pkg_program #FFF3E0 {
+  class Program {
+    - actions : List<Action>
+    - currentIndex : int
+    --
+    + addAction(action : Action) : void
+    + removeAction(index : int) : void
+    + getAction(index : int) : Action
+    + getActions() : List<Action>
+    + moveUp(index : int) : void
+    + moveDown(index : int) : void
+    + duplicateAt(index : int) : void
+    + clear() : void
+    --
+    + isValid(context : ExecutionContext) : boolean
+    + executeNext(context : ExecutionContext) : void
+    + hasNext() : boolean
+    + resetExecution() : void
+  }
+}
+
+Program "1" o-- "*" Action : contains
+
+' ================= EXECUTION (context + drawing support) =================
+rectangle "**Execution**" as pkg_exec #E1F5FE {
+  class Segment {
+    - x1 : int
+    - y1 : int
+    - x2 : int
+    - y2 : int
+    --
+    + getX1() : int
+    + getY1() : int
+    + getX2() : int
+    + getY2() : int
+  }
+
+  class ExecutionContext {
+    - x : int
+    - y : int
+    - direction : int {degrees, 0 = up}
+    - penDown : boolean
+    - segments : List<Segment>
+    --
+    + move(distance : int) : void
+    + turnLeft(angle : int) : void
+    + turnRight(angle : int) : void
+    + penUp() : void
+    + penDown() : void
+    + reset() : void
+    + getX() : int
+    + getY() : int
+    + getDirection() : int
+    + isPenDown() : boolean
+    + getSegments() : List<Segment>
+    + getSegmentsCount() : int
+  }
+
+  ExecutionContext "1" o-- "*" Segment : contains
+}
+
+' Action uses context at execution time
+Action ..> ExecutionContext : used in execute()
+Program ..> ExecutionContext : uses in isValid()
+
+note right of Action
+  **Command pattern**
+  Each action encapsulates an operation
+  and its parameters. 
+  isValid(ctx) checks if the action can
+  be executed (e.g., penDown when pen
+  is already down is invalid).
+  execute(ctx) delegates to the context
+  (move, turnLeft, etc.).
+end note
+
+note bottom of Program
+  Ordered list of actions.
+  isValid(ctx) checks if the next action
+  can be executed before executing it.
+  executeNext(ctx) runs the action
+  at currentIndex then increments.
+end note
+
+note bottom of ExecutionContext
+  **Drawing context**
+  Tracks position, direction, pen state.
+  move(distance) creates a Segment when
+  penDown is true and adds it to segments.
+  getSegments() returns the list of segments.
+  getSegmentsCount() returns the number
+  of line segments drawn.
+  Canvas/drawing is handled by the View.
+end note
+
+@enduml
