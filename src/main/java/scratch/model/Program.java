@@ -1,6 +1,7 @@
 package scratch.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Program {
@@ -24,10 +25,12 @@ public class Program {
 
     }
     public Action getAction(int index){
+
         return actions.get(index);
     }
     public  List<Action> getActions(){
-        return ;
+
+        return Collections.unmodifiableList(actions);
     }
     public void moveUp(int index){
 

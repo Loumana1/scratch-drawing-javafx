@@ -4,12 +4,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExecutionContext {
-    private int x ;
-    private int y ;
-    private int direction ;
-    private boolean penDown ;
-    private List<Segment> segmentList = new ArrayList<>();
+    private static final int DEFAULT_X = 200;
+    private static final int DEFAULT_Y = 200 ;
+    private static final int DEFAULT_DIRECTION = 0 ;
+    private static final boolean DEFAULT_PEN_DOWN = false ;
 
+    private int x , y , direction ;
+    private boolean penDown ;
+    private List<Segment> segments ;
+
+    public ExecutionContext(){
+        this.segments = new ArrayList<>();
+        reset();
+    }
+    // FONCTION
+
+    public void move(int distance){
+        
+    }
+    public void turnLeft(int angle){
+        direction = (direction - angle + 360) % 360 ;
+    }
+    public void turnRight(int angle){
+        direction = (direction - angle) % 360 ;
+    }
+    public void penUp(){
+        this.penDown = false ;
+    }
+    public void penDown(){
+        this.penDown = true ;
+    }
+    public void reset(){
+        x = DEFAULT_X ;
+        y = DEFAULT_Y ;
+        direction = DEFAULT_DIRECTION ;
+        penDown = DEFAULT_PEN_DOWN ;
+        segments.clear();
+    }
+    // GETTERS
     public int getX() {
         return x;
     }
@@ -22,32 +54,10 @@ public class ExecutionContext {
         return direction;
     }
 
-    public boolean isPenDown() {
-        return penDown;
-    }
-
-    public List<Segment> getSegmentList() {
-        return segmentList;
+    public List<Segment> getSegments() {
+        return segments;
     }
     public int getSegmentsCount(List<Segment> segments){
         return segments.size();
-    }
-    public void move(int indx){
-
-    }
-    public void turnLeft(int indx){
-
-    }
-    public void turnRight(int indx){
-
-    }
-    public void penUp(int indx){
-
-    }
-    public void penDown(int indx){
-
-    }
-    public void reset(){
-        
     }
 }
