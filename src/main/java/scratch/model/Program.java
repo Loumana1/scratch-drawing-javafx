@@ -21,9 +21,14 @@ public class Program {
         actions.add(action);
 
     }
-    public void removeAction(int index){
+    public void removeAction(int index) {
+       //index valide ?
+        if (index >= 0 && index < actions.size()) {
 
+            actions.remove(index);
+        }
     }
+
     public Action getAction(int index){
 
         return actions.get(index);
