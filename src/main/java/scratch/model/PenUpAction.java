@@ -10,7 +10,6 @@ public class PenUpAction extends Action {
     @Override
     public boolean isValid(ExecutionContext context){
         return context.isPenDown() ;
-
     }
 
     @Override

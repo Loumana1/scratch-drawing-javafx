@@ -63,6 +63,6 @@ public class ExecutionContext {
         return segments.size();
     }
     public boolean isPenDown(){
-        return ;
+        return penDown;
     }
 }
