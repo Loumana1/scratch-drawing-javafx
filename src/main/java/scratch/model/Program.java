@@ -67,9 +67,8 @@ public class Program {
     public void executeNext(ExecutionContext context){
 
     }
-    public boolean hasNext(){
+   // public boolean hasNext(){}
 
-    }
     public void  resetExecution(){
 
     }
