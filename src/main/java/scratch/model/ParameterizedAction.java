@@ -1,6 +1,6 @@
 package scratch.model;
 
-public abstract class  ParameterizedAction {
+public abstract class  ParameterizedAction extends Action {
 
     private int value ;
 
@@ -15,4 +15,9 @@ public abstract class  ParameterizedAction {
     public void setValue(int value) {
         this.value = value;
     }
+
+    protected abstract boolean isValueValid(int value);
+
+    public abstract int getDefaultValue();
+
 }

@@ -29,7 +29,6 @@ public class Program {
         return actions.get(index);
     }
     public  List<Action> getActions(){
-
         return Collections.unmodifiableList(actions);
     }
     public void moveUp(int index){

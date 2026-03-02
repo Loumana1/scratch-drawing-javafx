@@ -20,7 +20,7 @@ public class ExecutionContext {
     // FONCTION
 
     public void move(int distance){
-        
+
     }
     public void turnLeft(int angle){
         direction = (direction - angle + 360) % 360 ;
@@ -41,7 +41,9 @@ public class ExecutionContext {
         penDown = DEFAULT_PEN_DOWN ;
         segments.clear();
     }
+
     // GETTERS
+
     public int getX() {
         return x;
     }
