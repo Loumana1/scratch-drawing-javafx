@@ -14,7 +14,7 @@ public class MoveForwardAction extends ParameterizedAction{
 
     @Override
     public boolean isValid(ExecutionContext e) {
-        return super.isValid(e);
+        return isValueValid(getValue());
     }
 
     @Override
@@ -31,6 +31,9 @@ public class MoveForwardAction extends ParameterizedAction{
     public int getDefaultValue() {
         return DEFAULT_VALUE ;
     }
-    
 
+    @Override
+    public ActionType getType() {
+        return ActionType.MOVE_FORWARD;
+    }
 }

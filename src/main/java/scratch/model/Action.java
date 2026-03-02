@@ -1,12 +1,10 @@
 package scratch.model;
 
 public abstract class  Action {
-  public void execute(ExecutionContext e ){
 
-  }
+    abstract void execute(ExecutionContext e );
 
-   public boolean isValid(ExecutionContext e ){
-      return false;
-   }
-   abstract ActionType getType();
+  abstract boolean isValid(ExecutionContext e ) ;
+
+  abstract ActionType getType();
 }
