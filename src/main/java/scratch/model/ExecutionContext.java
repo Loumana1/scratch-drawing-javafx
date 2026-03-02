@@ -20,7 +20,15 @@ public class ExecutionContext {
     // FONCTION
 
     public void move(int distance){
+        double radians =  Math.toRadians(direction -90);
+        int oldX = x , oldY = y ;
 
+        x += (int) Math.round(distance * Math.cos(radians));
+        y += (int) Math.round(distance * Math.sin(radians));
+
+        if (penDown) {
+            segments.add(new Segment(oldX , oldY , x , y));
+        }
     }
     public void turnLeft(int angle){
         direction = (direction - angle + 360) % 360 ;
