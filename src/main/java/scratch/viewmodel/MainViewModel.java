@@ -1,5 +1,7 @@
 package scratch.viewmodel;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -35,6 +37,15 @@ public class MainViewModel {
         this.selectedIndex.set(this.observableActions.size() - 1);
     }
 
+
+    //
+    public void clear(){
+        program.clear();
+        observableActions.clear();
+        selectedIndex.set(-1);
+    }
+
+
     //Button pen down
     public void addPenDown() {
         PenDownAction action = new PenDownAction();
@@ -67,6 +78,13 @@ public class MainViewModel {
             }
             // Sinon on a supprimé un élément au milieu, l'index pointe maintenant sur l'élément suivant
         }
+    }
+
+//Button supprimer dessactivé
+    public BooleanBinding canRemove() {
+        // On peut supprimer si la liste n'est pas vide ET qu'un élément est sélectionné
+        return Bindings.isEmpty(observableActions).not()
+                .and(selectedIndex.greaterThanOrEqualTo(0));
     }
 
 

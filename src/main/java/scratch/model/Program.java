@@ -8,9 +8,9 @@ public class Program {
     private final List<Action> actions;
     private int currenIndex;
 
-    public Program(List<Action> actions, int currenIndex) {
+    public Program() {
         this.actions = new ArrayList<>();
-        this.currenIndex = currenIndex;
+        this.currenIndex = 0;
     }
 
 
