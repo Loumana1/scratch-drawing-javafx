@@ -8,4 +8,5 @@ public abstract class  Action {
    public boolean isValid(ExecutionContext e ){
       return false;
    }
+   abstract ActionType getType();
 }

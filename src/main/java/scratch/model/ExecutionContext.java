@@ -62,4 +62,7 @@ public class ExecutionContext {
     public int getSegmentsCount(List<Segment> segments){
         return segments.size();
     }
+    public boolean isPenDown(){
+        return ;
+    }
 }
