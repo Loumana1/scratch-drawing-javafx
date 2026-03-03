@@ -25,17 +25,17 @@ public class TurnRightAction  extends ParameterizedAction{
     }
 
     @Override
-    void execute(ExecutionContext e) {
+    public void execute(ExecutionContext e) {
         e.turnLeft(getValue());
     }
 
     @Override
-    boolean isValid(ExecutionContext e) {
+    public boolean isValid(ExecutionContext e) {
         return isValueValid(getValue());
     }
 
     @Override
-    ActionType getType() {
+    public ActionType getType() {
         return ActionType.TURN_RIGHT;
     }
 }
