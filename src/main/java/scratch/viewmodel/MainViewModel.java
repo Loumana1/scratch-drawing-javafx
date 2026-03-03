@@ -149,7 +149,7 @@ public class MainViewModel {
     }
 
 
-//----------------------- GETTERS POUR VUE---------------
+//----------------------- GETTERS POUR VUE ------------------------
 
 //Vue récupére  liste et s'y abonner
     public ObservableList<Action> getObservableActions() {
