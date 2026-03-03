@@ -13,12 +13,16 @@ import scratch.model.*;
 public class MainViewModel {
 
     private final Program program;
-
-
     private final ObservableList<Action> observableActions;
-
     // -1 = aucune sélection
     private final IntegerProperty selectedIndex = new SimpleIntegerProperty(-1);
+
+    private final ExecutionContext executionContext = new ExecutionContext();
+
+    // Compteur d'exécution : la Vue l'observe et redessine le Canvas à chaque changement
+    private final IntegerProperty executionStep = new SimpleIntegerProperty(0);
+
+
 
     public MainViewModel(Program program) {
         this.program = program;
@@ -26,6 +30,31 @@ public class MainViewModel {
         this.observableActions = FXCollections.observableArrayList(program.getActions());
     }
 
+
+
+    //--------------------------ACTIONS---------------------------
+
+    // Methode générique---> la Palette passe le type,  ViewModel crée l'action
+    public void addAction(ActionType type) {
+        Action action = createAction(type);
+        program.addAction(action);
+        observableActions.add(action);
+        selectedIndex.set(observableActions.size() - 1);
+    }
+
+    // Zone de detail: choisir quel template d'info aficher
+    public Action getSelectedAction() {
+        int idx = selectedIndex.get();
+        // quel index est sélectionné ?
+        if (idx >= 0 && idx < observableActions.size()) {
+            //index valide ?
+            return observableActions.get(idx);
+            //si oui retourne l'action
+        }
+        //si non
+        return null;
+
+    }
     //Button pen up
     public void addPenUp() {
         PenUpAction action = new PenUpAction();
@@ -37,14 +66,12 @@ public class MainViewModel {
         this.selectedIndex.set(this.observableActions.size() - 1);
     }
 
-
-    //
-    public void clear(){
+    // Boutton vider
+    public void clearProgram(){
         program.clear();
         observableActions.clear();
         selectedIndex.set(-1);
     }
-
 
     //Button pen down
     public void addPenDown() {
@@ -54,25 +81,22 @@ public class MainViewModel {
         this.selectedIndex.set(this.observableActions.size() - 1);
     }
 
-    //Boutton Suprrimer
+    //Boutton Suprrimer une action
     public void removeSelectedAction() {
         int index = selectedIndex.get();
 
         // Validate
         if (index >= 0 && index < observableActions.size()) {
-
             //  supp Modèle
             this.program.removeAction(index);
-
-            //supp de la liste Observable (ce qui mettra à jour la Vue graphic)
+            //supp de la liste Observable m-a-j la Vue graphic)
             this.observableActions.remove(index);
-
 
             // Si la liste est maintenant vide, on désélectionne (-1)
             if (this.observableActions.isEmpty()) {
                 this.selectedIndex.set(-1);
             }
-            // Sinon, si on a supprimé le tout dernier élément, on sélectionne le "nouveau" dernier
+            // Sinon, si on a supprimé le tout dernier élément, on sélectionne le nv dernier
             else if (index >= this.observableActions.size()) {
                 this.selectedIndex.set(this.observableActions.size() - 1);
             }
@@ -80,24 +104,42 @@ public class MainViewModel {
         }
     }
 
+
+
+    //--------------------------BINDINGS----------------------
 //Button supprimer dessactivé
     public BooleanBinding canRemove() {
         // On peut supprimer si la liste n'est pas vide ET qu'un élément est sélectionné
         return Bindings.isEmpty(observableActions).not()
                 .and(selectedIndex.greaterThanOrEqualTo(0));
     }
+    public BooleanBinding canExecuteNext() {
+        return Bindings.createBooleanBinding(
+                () -> program.hasNext(),
+                executionStep
+        );
+    }
 
 
+    private Action createAction(ActionType type) {
+        return switch (type) {
+            case PEN_UP -> new PenUpAction();
+            case PEN_DOWN -> new PenDownAction();
+        };
+    }
 
 
+//----------------------- GETTERS POUR VUE---------------
 
-//Vue récupére cette liste et s'y abonner
+//Vue récupére  liste et s'y abonner
     public ObservableList<Action> getObservableActions() {
         return observableActions;
     }
-    //La Vue récupère la propriété d'index pour s'y lier (
+
     public IntegerProperty selectedIndexProperty() {
         return selectedIndex;
     }
+
+
 
 }
