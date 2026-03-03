@@ -80,6 +80,26 @@ public class MainViewModel {
         this.observableActions.add(action);
         this.selectedIndex.set(this.observableActions.size() - 1);
     }
+    //Turn Right
+    public void addTurnRight() {
+        TurnRightAction action = new TurnRightAction(90);
+        this.program.addAction(action);
+        this.observableActions.add(action);
+        this.selectedIndex.set(this.observableActions.size() - 1);
+    }
+
+    //Move Up
+    public void moveUp() {
+        program.moveUp(selectedIndex.get());
+        this.selectedIndex.set(selectedIndex.get() - 1);
+    }
+
+    //Move Down
+    public void moveDown() {
+        program.moveDown(selectedIndex.get());
+        this.selectedIndex.set(selectedIndex.get() + 1);
+    }
+
 
     //Boutton Suprrimer une action
     public void removeSelectedAction() {
