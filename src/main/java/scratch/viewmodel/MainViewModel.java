@@ -90,14 +90,36 @@ public class MainViewModel {
 
     //Move Up
     public void moveUp() {
-        program.moveUp(selectedIndex.get());
-        this.selectedIndex.set(selectedIndex.get() - 1);
+        int index = selectedIndex.get();
+        if (index > 0 && index < observableActions.size()){
+            program.moveUp(selectedIndex.get());
+            Action action = observableActions.remove(index);
+            observableActions.add(index - 1 ,  action);
+            this.selectedIndex.set(selectedIndex.get() - 1);
+        }
     }
 
     //Move Down
     public void moveDown() {
-        program.moveDown(selectedIndex.get());
-        this.selectedIndex.set(selectedIndex.get() + 1);
+        int index = selectedIndex.get();
+        if (index >= 0 && index < observableActions.size()){
+            program.moveDown(index);
+            Action action = observableActions.remove(index);
+            observableActions.add(index + 1 , action);
+            this.selectedIndex.set(selectedIndex.get() + 1);
+        }
+
+    }
+
+    //Duplicate
+    public void duplicateSelected(){
+        int index = selectedIndex.get();
+        if (index >= 0 && index < observableActions.size() - 1 ){
+            program.duplicateAt(index);
+            Action duplicate = program.getAction(index + 1);
+            observableActions.add(index + 1 , duplicate);
+            selectedIndex.set(index + 1);
+        }
     }
 
 
