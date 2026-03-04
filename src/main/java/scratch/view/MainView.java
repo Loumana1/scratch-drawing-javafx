@@ -1,8 +1,7 @@
 package scratch.view;
 
-import javafx.geometry.Insets;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import scratch.viewmodel.MainViewModel;
 
 public class MainView extends BorderPane {
@@ -11,13 +10,12 @@ public class MainView extends BorderPane {
 
         PaletteView palette = new PaletteView(viewModel);
         ProgramView program = new ProgramView(viewModel);
+        SceneView scene = new SceneView(viewModel);
 
-        VBox programWrapper = new VBox(program);
-        programWrapper.setPadding(new Insets(0,20,0,0));
+        HBox center = new HBox(20);
+        center.getChildren().addAll(program, scene);
 
         setLeft(palette);
-        setCenter(programWrapper);
-
-
+        setCenter(center);
     }
 }
