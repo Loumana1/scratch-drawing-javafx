@@ -143,6 +143,9 @@ public class MainViewModel {
 
     private Action createAction(ActionType type) {
         return switch (type) {
+            case MOVE_FORWARD -> new MoveForwardAction();
+            case TURN_LEFT -> new TurnLeftAction();
+            case TURN_RIGHT -> new TurnRightAction();
             case PEN_UP -> new PenUpAction();
             case PEN_DOWN -> new PenDownAction();
         };

@@ -2,89 +2,42 @@ package scratch.view;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
+import javafx.scene.layout.VBox;
+import scratch.model.ActionType;
+import scratch.viewmodel.MainViewModel;
 
 public class PaletteView extends VBox {
 
-    public PaletteView() {
+    public PaletteView(MainViewModel viewModel) {
 
-        setSpacing(8);
+        setSpacing(10);
         setPadding(new Insets(10));
-        setPrefWidth(260);
 
         Label title = new Label("Palette d'actions");
 
         ListView<String> listView = new ListView<>();
+
         listView.getItems().addAll(
-                "Avancer de",
-                "Tourner à gauche de",
-                "Tourner à droite de",
+                "Avancer",
+                "Tourner gauche",
+                "Tourner droite",
                 "Lever stylo",
                 "Abaisser stylo"
         );
 
-
-        listView.setFixedCellSize(28);
-        double maxHeight = 28 * 15;
-        listView.setPrefHeight(maxHeight);
-        listView.setMaxHeight(maxHeight);
-
-        listView.setStyle(
-                "-fx-border-color: #3FA9F5;" +
-                        "-fx-border-width: 2;" +
-                        "-fx-background-color: white;"
-        );
-
-        // Cellule personnalisée
-        listView.setCellFactory(lv -> new ListCell<>() {
-
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-
-                if (empty || item == null) {
-                    setGraphic(null);
-                } else {
-
-                    Circle circle = new Circle(5);
-
-                    Label label = new Label(item);
-
-                    if (item.startsWith("Avancer")) {
-                        circle.setFill(Color.BLUE);
-                        label.setTextFill(Color.BLUE);
-                    }
-                    else if (item.contains("gauche")) {
-                        circle.setFill(Color.RED);
-                        label.setTextFill(Color.RED);
-                    }
-                    else if (item.contains("droite")) {
-                        circle.setFill(Color.RED);
-                        label.setTextFill(Color.RED);
-                    }
-                    else if (item.startsWith("Lever")) {
-                        circle.setFill(Color.GREEN);
-                        label.setTextFill(Color.GREEN);
-                    }
-                    else {
-                        circle.setFill(Color.GREEN);
-                        label.setTextFill(Color.GREEN);
-                    }
-
-                    HBox box = new HBox(10, circle, label);
-                    box.setPadding(new Insets(5, 0, 5, 5));
-
-                    setGraphic(box);
-                }
-            }
-        });
-
         Button addButton = new Button("Ajouter au programme");
-        addButton.setDisable(true);
 
+        addButton.setOnAction(e -> {
 
+            int index = listView.getSelectionModel().getSelectedIndex();
+
+            if (index == 0) viewModel.addAction(ActionType.MOVE_FORWARD);
+            if (index == 1) viewModel.addAction(ActionType.TURN_LEFT);
+            if (index == 2) viewModel.addAction(ActionType.TURN_RIGHT);
+            if (index == 3) viewModel.addAction(ActionType.PEN_UP);
+            if (index == 4) viewModel.addAction(ActionType.PEN_DOWN);
+
+        });
 
         getChildren().addAll(title, listView, addButton);
     }
