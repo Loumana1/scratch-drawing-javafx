@@ -211,9 +211,6 @@ public class MainViewModel {
             case TURN_RIGHT -> new TurnRightAction();
             case PEN_UP -> new PenUpAction();
             case PEN_DOWN -> new PenDownAction();
-            case TURN_LEFT -> new TurnRightAction();
-            case TURN_RIGHT -> new TurnRightAction();
-            case MOVE_FORWARD -> new MoveForwardAction();
         };
     }
 
