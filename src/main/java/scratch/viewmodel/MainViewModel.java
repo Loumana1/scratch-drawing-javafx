@@ -2,8 +2,7 @@ package scratch.viewmodel;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import scratch.model.*;
@@ -21,8 +20,11 @@ public class MainViewModel {
 
     private final ExecutionContext executionContext = new ExecutionContext();
 
-    // Compteur d'exécution : la Vue l'observe et redessine le Canvas à chaque changement
+    // Compteur d'exécution
     private final IntegerProperty executionStep = new SimpleIntegerProperty(0);
+
+    private final StringProperty errorMessage = new SimpleStringProperty("");
+    private final BooleanProperty programLoaded = new SimpleBooleanProperty(false);
 
 
 
@@ -72,12 +74,7 @@ public class MainViewModel {
         this.selectedIndex.set(this.observableActions.size() - 1);
     }
 
-    // Boutton vider
-    public void clearProgram(){
-        program.clear();
-        observableActions.clear();
-        selectedIndex.set(-1);
-    }
+
 
     //Button pen down
     public void addPenDown() {
@@ -130,6 +127,12 @@ public class MainViewModel {
         }
     }
 
+    // Boutton vider
+    public void clearProgram(){
+        program.clear();
+        observableActions.clear();
+        selectedIndex.set(-1);
+    }
 
     //Boutton Suprrimer une action
     public void removeSelectedAction() {
@@ -167,6 +170,7 @@ public class MainViewModel {
         }
     }
 
+
     //Sauvegarde des Actions
     public  void loadFromFile(File file){
         try {
@@ -202,7 +206,18 @@ public class MainViewModel {
                 executionStep
         );
     }
-
+    public BooleanBinding canMoveUp() {
+        return selectedIndex.greaterThan(0);
+    }
+    public BooleanBinding canMoveDown() {
+        return Bindings.createBooleanBinding(() -> {
+            int idx = selectedIndex.get();
+            return idx >= 0 && idx < observableActions.size() - 1;
+        }, observableActions, selectedIndex);
+    }
+    public BooleanBinding canDuplicate() {
+        return canRemove();
+    }
 
     private Action createAction(ActionType type) {
         return switch (type) {
@@ -229,5 +244,8 @@ public class MainViewModel {
     }
 
 
-
+    public IntegerProperty executionStepProperty() { return executionStep; }
+    public ExecutionContext getExecutionContext()   { return executionContext; }
+    public StringProperty errorMessageProperty()   { return errorMessage; }
+    public BooleanProperty programLoadedProperty() { return programLoaded; }
 }
