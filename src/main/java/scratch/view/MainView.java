@@ -21,16 +21,19 @@ public class MainView extends BorderPane {
         this.viewModel = viewModel;
     //Gauche
         PaletteView palette = new PaletteView(viewModel);
+        ProgramView program = new ProgramView(viewModel);
+        SceneView scene = new SceneView(viewModel);
 
-        //Centre
+        //
+
+
+        //
+        HBox center = new HBox(20);
+        center.getChildren().addAll(program, scene);
+
+        //detailview
         DetailPanelView detailPanelView = new DetailPanelView(viewModel, programListView);
         programListView.setItems(viewModel.getObservableActions());
-
-
-        //droite
-        VBox centerBox = new VBox(10, programListView, detailPanelView);
-        centerBox.setPadding(new Insets(10));
-        setCenter(centerBox);
 
 
         // Synchro sélection ListView -ViewModel
@@ -43,7 +46,8 @@ public class MainView extends BorderPane {
 
 
 
+
         setLeft(palette);
-        setCenter(centerBox);
+        setCenter(center);
     }
 }

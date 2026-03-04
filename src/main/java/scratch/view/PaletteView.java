@@ -5,6 +5,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import scratch.model.ActionType;
 import scratch.viewmodel.MainViewModel;
 
@@ -16,12 +18,14 @@ public class PaletteView extends VBox {
     private final MainViewModel viewModel;
 
     public PaletteView(MainViewModel viewModel) {
+
         this.viewModel = viewModel;
-        setSpacing(10);
+        setSpacing(8);
         setPadding(new Insets(10));
         setPrefWidth(260);
 
         Label title = new Label("Palette d'actions");
+
 
 
 
@@ -80,7 +84,6 @@ public class PaletteView extends VBox {
             if (index == 2) viewModel.addAction(ActionType.TURN_RIGHT);
             if (index == 3) viewModel.addAction(ActionType.PEN_UP);
             if (index == 4) viewModel.addAction(ActionType.PEN_DOWN);
-
         });
 
         getChildren().addAll(title, listView, addButton);
