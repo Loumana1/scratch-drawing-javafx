@@ -57,6 +57,10 @@ public class MainViewModel {
         return null;
 
     }
+    //actions peuvent être supprimées une fois que createAction() gère tous les types
+    // et que la PaletteView appelle addAction(type)
+
+    /*
     //Button pen up
     public void addPenUp() {
         PenUpAction action = new PenUpAction();
@@ -89,6 +93,8 @@ public class MainViewModel {
         this.observableActions.add(action);
         this.selectedIndex.set(this.observableActions.size() - 1);
     }
+
+     */
 
     //Move Up
     public void moveUp() {
@@ -200,18 +206,18 @@ public class MainViewModel {
 
     private Action createAction(ActionType type) {
         return switch (type) {
+            case MOVE_FORWARD -> new MoveForwardAction();
+            case TURN_LEFT -> new TurnLeftAction();
+            case TURN_RIGHT -> new TurnRightAction();
             case PEN_UP -> new PenUpAction();
             case PEN_DOWN -> new PenDownAction();
-            case TURN_LEFT -> new TurnRightAction();
-            case TURN_RIGHT -> new TurnRightAction();
-            case MOVE_FORWARD -> new MoveForwardAction();
         };
     }
 
 
 
 
-//----------------------- GETTERS POUR VUE---------------
+//----------------------- GETTERS POUR VUE ------------------------
 
 //Vue récupére  liste et s'y abonner
     public ObservableList<Action> getObservableActions() {
