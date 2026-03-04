@@ -20,7 +20,15 @@ public class ExecutionContext {
     // FONCTION
 
     public void move(int distance){
-        
+        double radians =  Math.toRadians(direction -90);
+        int oldX = x , oldY = y ;
+
+        x += (int) Math.round(distance * Math.cos(radians));
+        y += (int) Math.round(distance * Math.sin(radians));
+
+        if (penDown) {
+            segments.add(new Segment(oldX , oldY , x , y));
+        }
     }
     public void turnLeft(int angle){
         direction = (direction - angle + 360) % 360 ;
@@ -41,7 +49,9 @@ public class ExecutionContext {
         penDown = DEFAULT_PEN_DOWN ;
         segments.clear();
     }
+
     // GETTERS
+
     public int getX() {
         return x;
     }
@@ -59,5 +69,8 @@ public class ExecutionContext {
     }
     public int getSegmentsCount(List<Segment> segments){
         return segments.size();
+    }
+    public boolean isPenDown(){
+        return penDown;
     }
 }
