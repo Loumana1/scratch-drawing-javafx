@@ -8,6 +8,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import scratch.model.*;
 
+import java.io.File;
+import java.util.List;
 
 
 public class MainViewModel {
@@ -90,14 +92,36 @@ public class MainViewModel {
 
     //Move Up
     public void moveUp() {
-        program.moveUp(selectedIndex.get());
-        this.selectedIndex.set(selectedIndex.get() - 1);
+        int index = selectedIndex.get();
+        if (index > 0 && index < observableActions.size()){
+            program.moveUp(selectedIndex.get());
+            Action action = observableActions.remove(index);
+            observableActions.add(index - 1 ,  action);
+            this.selectedIndex.set(selectedIndex.get() - 1);
+        }
     }
 
     //Move Down
     public void moveDown() {
-        program.moveDown(selectedIndex.get());
-        this.selectedIndex.set(selectedIndex.get() + 1);
+        int index = selectedIndex.get();
+        if (index >= 0 && index < observableActions.size()){
+            program.moveDown(index);
+            Action action = observableActions.remove(index);
+            observableActions.add(index + 1 , action);
+            this.selectedIndex.set(selectedIndex.get() + 1);
+        }
+
+    }
+
+    //Duplicate
+    public void duplicateSelected(){
+        int index = selectedIndex.get();
+        if (index >= 0 && index < observableActions.size() - 1 ){
+            program.duplicateAt(index);
+            Action duplicate = program.getAction(index + 1);
+            observableActions.add(index + 1 , duplicate);
+            selectedIndex.set(index + 1);
+        }
     }
 
 
@@ -124,6 +148,39 @@ public class MainViewModel {
         }
     }
 
+    //Execution du prochain instruction
+    public void executeNext(){
+        if (program.hasNext()){
+            program.executeNext(executionContext);
+            //Declenche le redessin du Canvas
+            executionStep.set(executionStep.get() + 1);
+            if (program.hasNext()){
+                //Next Action
+                selectedIndex.set(program.getCurrenIndex());
+            }
+        }
+    }
+
+    //Sauvegarde des Actions
+    public  void loadFromFile(File file){
+        try {
+            List<Action> loaded = ProgramFileService.load(file);
+            program.clear();
+            observableActions.clear();
+            for (Action a : loaded){
+                program.addAction(a);
+                observableActions.add(a);
+            }
+            selectedIndex.set(observableActions.isEmpty() ? -1 : 0);
+            // Si la gestion d'erreur est ajoutée (errorMessageProperty)
+            // errorMessage.set("");
+        }catch (Exception e){
+            // errorMessage.set("Erreur chargement : " + e.getMessage());
+            System.err.println("Erreur chargement : " + e.getMessage());
+        }
+    }
+
+
 
 
     //--------------------------BINDINGS----------------------
@@ -145,8 +202,13 @@ public class MainViewModel {
         return switch (type) {
             case PEN_UP -> new PenUpAction();
             case PEN_DOWN -> new PenDownAction();
+            case TURN_LEFT -> new TurnRightAction();
+            case TURN_RIGHT -> new TurnRightAction();
+            case MOVE_FORWARD -> new MoveForwardAction();
         };
     }
+
+
 
 
 //----------------------- GETTERS POUR VUE---------------

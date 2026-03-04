@@ -97,6 +97,9 @@ public class Program {
         return actions.isEmpty();
     }
 
+    public int getCurrenIndex() {
+        return currenIndex;
+    }
 
     // Private Fonctions
 
