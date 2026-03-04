@@ -8,6 +8,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import scratch.model.*;
 
+import java.io.File;
+import java.util.List;
 
 
 public class MainViewModel {
@@ -156,6 +158,25 @@ public class MainViewModel {
                 //Next Action
                 selectedIndex.set(program.getCurrenIndex());
             }
+        }
+    }
+
+    //Sauvegarde des Actions
+    public  void loadFromFile(File file){
+        try {
+            List<Action> loaded = ProgramFileService.load(file);
+            program.clear();
+            observableActions.clear();
+            for (Action a : loaded){
+                program.addAction(a);
+                observableActions.add(a);
+            }
+            selectedIndex.set(observableActions.isEmpty() ? -1 : 0);
+            // Si la gestion d'erreur est ajoutée (errorMessageProperty)
+            // errorMessage.set("");
+        }catch (Exception e){
+            // errorMessage.set("Erreur chargement : " + e.getMessage());
+            System.err.println("Erreur chargement : " + e.getMessage());
         }
     }
 
