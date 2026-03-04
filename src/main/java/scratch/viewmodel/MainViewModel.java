@@ -146,6 +146,20 @@ public class MainViewModel {
         }
     }
 
+    //Execution du prochain instruction
+    public void executeNext(){
+        if (program.hasNext()){
+            program.executeNext(executionContext);
+            //Declenche le redessin du Canvas
+            executionStep.set(executionStep.get() + 1);
+            if (program.hasNext()){
+                //Next Action
+                selectedIndex.set(program.getCurrenIndex());
+            }
+        }
+    }
+
+
 
 
     //--------------------------BINDINGS----------------------
@@ -167,8 +181,13 @@ public class MainViewModel {
         return switch (type) {
             case PEN_UP -> new PenUpAction();
             case PEN_DOWN -> new PenDownAction();
+            case TURN_LEFT -> new TurnRightAction();
+            case TURN_RIGHT -> new TurnRightAction();
+            case MOVE_FORWARD -> new MoveForwardAction();
         };
     }
+
+
 
 
 //----------------------- GETTERS POUR VUE---------------
