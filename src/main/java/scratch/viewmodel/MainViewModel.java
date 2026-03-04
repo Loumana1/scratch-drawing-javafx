@@ -55,6 +55,10 @@ public class MainViewModel {
         return null;
 
     }
+    //actions peuvent être supprimées une fois que createAction() gère tous les types
+    // et que la PaletteView appelle addAction(type)
+
+    /*
     //Button pen up
     public void addPenUp() {
         PenUpAction action = new PenUpAction();
@@ -87,6 +91,7 @@ public class MainViewModel {
         this.observableActions.add(action);
         this.selectedIndex.set(this.observableActions.size() - 1);
     }
+     */
 
     //Move Up
     public void moveUp() {
