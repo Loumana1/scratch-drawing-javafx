@@ -16,18 +16,17 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-
         Program program = new Program();
-
         MainViewModel viewModel = new MainViewModel(program);
-
         MainView mainView = new MainView(viewModel);
-
         Scene scene = new Scene(mainView, 1000, 600);
+
 
         primaryStage.setTitle("Scratch");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+
     }
 
     public static void main(String[] args) {
