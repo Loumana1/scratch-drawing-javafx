@@ -11,7 +11,17 @@ import scratch.viewmodel.MainViewModel;
 
 public class ProgramView extends VBox {
 
+
+    private final Button btnUp = new Button("Monter");
+    private final Button btnDown = new Button("Descendre");
+    private final Button btnDuplicate = new Button("Dupliquer");
+    private final Button btnRemove = new Button("Supprimer");
+    private final Button btnClear = new Button("Vider tout");
+    private MainViewModel viewModel ;
+
     public ProgramView(MainViewModel viewModel) {
+
+        this.viewModel = viewModel;
 
         setSpacing(10);
         setPadding(new Insets(10));
@@ -22,6 +32,8 @@ public class ProgramView extends VBox {
 
         ListView<Action> programList = new ListView<>();
         programList.setItems(viewModel.getObservableActions());
+        addListeners();
+        configurationBindings();
 
         programList.setCellFactory(lv -> new ListCell<>() {
 
@@ -84,11 +96,6 @@ public class ProgramView extends VBox {
 
         HBox buttons = new HBox(10);
 
-        Button btnUp = new Button("Monter");
-        Button btnDown = new Button("Descendre");
-        Button btnDuplicate = new Button("Dupliquer");
-        Button btnRemove = new Button("Supprimer");
-        Button btnClear = new Button("Vider tout");
 
         buttons.getChildren().addAll(
                 btnUp,
@@ -108,9 +115,22 @@ public class ProgramView extends VBox {
                 detailPanel
         );
 
+    }
+    // Listiners
+    private void addListeners(){
         btnRemove.setOnAction(e -> viewModel.removeSelectedAction());
-        btnRemove.disableProperty().bind(viewModel.canRemove().not());
         btnClear.setOnAction(e -> viewModel.clearProgram());
+        btnDown.setOnAction(e -> viewModel.moveDown());
+        btnUp.setOnAction(e -> viewModel.moveUp());
+        btnDuplicate.setOnAction(e -> viewModel.duplicateSelected());
+    }
+
+    // Bindins Button
+    private void configurationBindings(){
+        btnRemove.disableProperty().bind(viewModel.canRemove().not());
         btnClear.disableProperty().bind(Bindings.isEmpty(viewModel.getObservableActions()));
+        btnUp.disableProperty().bind(viewModel.canMoveUp().not());
+        btnDown.disableProperty().bind(viewModel.canMoveDown().not());
+        btnDuplicate.disableProperty().bind(viewModel.canDuplicate());
     }
 }

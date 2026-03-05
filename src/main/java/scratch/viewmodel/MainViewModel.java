@@ -43,7 +43,7 @@ public class MainViewModel {
         Action action = createAction(type);
         program.addAction(action);
         observableActions.add(action);
-        selectedIndex.set(observableActions.size() - 1);
+        selectedIndex.set(-1);
     }
 
     // Zone de detail: choisir quel template d'info aficher
@@ -107,7 +107,7 @@ public class MainViewModel {
     //Move Down
     public void moveDown() {
         int index = selectedIndex.get();
-        if (index >= 0 && index < observableActions.size()){
+        if (index >= 0 && index < observableActions.size() - 1){
             program.moveDown(index);
             Action action = observableActions.remove(index);
             observableActions.add(index + 1 , action);
@@ -119,7 +119,7 @@ public class MainViewModel {
     //Duplicate
     public void duplicateSelected(){
         int index = selectedIndex.get();
-        if (index >= 0 && index < observableActions.size() - 1 ){
+        if (index >= 0 && index < observableActions.size()){
             program.duplicateAt(index);
             Action duplicate = program.getAction(index + 1);
             observableActions.add(index + 1 , duplicate);
@@ -211,7 +211,7 @@ public class MainViewModel {
     }
     public BooleanBinding canMoveDown() {
         return Bindings.createBooleanBinding(() -> {
-            int idx = selectedIndex.get();
+            int idx = getSelectedIndex();
             return idx >= 0 && idx < observableActions.size() - 1;
         }, observableActions, selectedIndex);
     }
@@ -243,6 +243,9 @@ public class MainViewModel {
         return selectedIndex;
     }
 
+    public int getSelectedIndex() {
+        return selectedIndex.get();
+    }
 
     public IntegerProperty executionStepProperty() { return executionStep; }
     public ExecutionContext getExecutionContext()   { return executionContext; }
