@@ -49,6 +49,7 @@ public class MainViewModel {
         selectedIndex.set(-1);
         program.resetExecution();
         executionStep.set(0);
+       programLoaded.set(false);
     }
 
     // Zone de detail: choisir quel template d'info aficher
@@ -190,7 +191,7 @@ public class MainViewModel {
         program.resetExecution();
         executionContext.reset();
         executionStep.set(0);
-        selectedIndex.set(observableActions.isEmpty() ? -1 : 0); 
+     //   selectedIndex.set(observableActions.isEmpty() ? -1 : 0);
     }
 
     public void saveToFile(File file) {

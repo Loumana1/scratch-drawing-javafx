@@ -1,5 +1,6 @@
 package scratch.view;
 
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
@@ -11,13 +12,15 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import scratch.model.ExecutionContext;
+import scratch.model.Segment;
 import scratch.viewmodel.MainViewModel;
 
 public class SceneView extends VBox {
 
     private static final double SIZE = 500;
     private static final int GRID = 40;
-
+    private final Button btnNext = new Button("Suivant");
+    private final Button btnReset = new Button("Charger");
     private final Canvas canvas;
     private final MainViewModel viewModel;
 
@@ -40,18 +43,52 @@ public class SceneView extends VBox {
         drawGrid();
 
 
-        Button btnReset = new Button("Ré-initialiser");
-        Button btnNext = new Button("Suivant");
+
 
         HBox buttons = new HBox(10);
         buttons.setAlignment(Pos.CENTER);
         buttons.getChildren().addAll(btnReset, btnNext);
 
         getChildren().addAll(title, canvasBox, buttons);
+
+
+        //config
+        configActions();
+        configButtonsDisabling();
+
+    }
+
+//Connection excution action
+    private void configActions() {
         btnReset.setOnAction(e -> {
-            viewModel.resetExecution();
-            drawGrid();           // Redessin immédiat après reset
+            if (viewModel.programLoadedProperty().get()) {
+                viewModel.resetExecution();
+                viewModel.loadOnScene();
+            } else {
+               viewModel.loadOnScene();
+            }
+            drawGrid();
+
+
         });
+        btnNext.setOnAction(e -> {
+            viewModel.executeNext();
+            drawGrid();
+        });
+    }
+
+//connextion Desacitver bouttons
+    private void configButtonsDisabling() {
+        btnReset.disableProperty().bind(
+                Bindings.isEmpty(viewModel.getObservableActions()));
+
+        btnNext.disableProperty().bind(
+                viewModel.programLoadedProperty().not()
+                        .or(viewModel.canExecuteNext().not()));
+
+        viewModel.programLoadedProperty().addListener((obs, old, nw) ->
+                btnReset.setText(nw ? "Ré-initialiser" : "Charger"));
+
     }
 
     private void drawGrid() {
@@ -77,13 +114,18 @@ public class SceneView extends VBox {
         gc.setLineWidth(1);
         gc.strokeRect(0, 0, SIZE, SIZE);
 
+        //dessin du segment
+        for (Segment seg : ctx.getSegments()) {
+            gc.strokeLine(seg.getX1(), seg.getY1(), seg.getX2(), seg.getY3());
+        }
         drawCursor(gc, ctx.getX(), ctx.getY(), ctx.getDirection());
     }
 
     private void drawCursor(GraphicsContext gc, int x, int y, int direction) {
 
       //  GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.save();
+
+
         double cx = SIZE / 2.0;
         double cy = SIZE / 2.0;
 
@@ -97,14 +139,37 @@ public class SceneView extends VBox {
         double rightY = cy + 8;
 
         gc.setFill(Color.CYAN);
+
         gc.fillPolygon(
                 new double[]{topX, leftX, rightX},
                 new double[]{topY, leftY, rightY},
                 3
         );
 
+
+
         gc.setFill(Color.BLACK);
         gc.fillOval(topX - 2, topY - 2, 4, 4);
         gc.restore();
+
+
+        /*
+        fonctionne bien car segment aligné avec mvmt curseur
+
+        gc.save();
+        gc.translate(x, y);       //  utilise x, y
+        gc.rotate(direction);
+
+        double s = 10;
+        gc.setFill(Color.CYAN);
+        gc.fillPolygon(
+                new double[]{0, -s * 0.8, s * 0.8},
+                new double[]{-s, s * 0.8, s * 0.8}, 3);
+        gc.setFill(Color.BLACK);
+        gc.fillOval(-2, -s - 2, 4, 4);
+
+        gc.restore();
+
+         */
     }
 }
