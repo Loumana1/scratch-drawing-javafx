@@ -35,6 +35,11 @@ public class ProgramView extends VBox {
         addListeners();
         configurationBindings();
 
+        // Quand on clique sur la liste, on met à jour l'index sélectionné dans le ViewModel
+        programList.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
+            viewModel.selectedIndexProperty().set(newVal.intValue());
+        });
+
         programList.setCellFactory(lv -> new ListCell<>() {
 
             @Override
@@ -131,6 +136,6 @@ public class ProgramView extends VBox {
         btnClear.disableProperty().bind(Bindings.isEmpty(viewModel.getObservableActions()));
         btnUp.disableProperty().bind(viewModel.canMoveUp().not());
         btnDown.disableProperty().bind(viewModel.canMoveDown().not());
-        btnDuplicate.disableProperty().bind(viewModel.canDuplicate());
+        btnDuplicate.disableProperty().bind(viewModel.canDuplicate().not());
     }
 }

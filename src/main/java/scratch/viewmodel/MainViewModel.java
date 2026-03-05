@@ -44,6 +44,8 @@ public class MainViewModel {
         program.addAction(action);
         observableActions.add(action);
         selectedIndex.set(-1);
+        program.resetExecution();
+        executionStep.set(0);
     }
 
     // Zone de detail: choisir quel template d'info aficher
@@ -101,6 +103,8 @@ public class MainViewModel {
             Action action = observableActions.remove(index);
             observableActions.add(index - 1 ,  action);
             this.selectedIndex.set(selectedIndex.get() - 1);
+            program.resetExecution();
+            executionStep.set(0);
         }
     }
 
@@ -112,6 +116,8 @@ public class MainViewModel {
             Action action = observableActions.remove(index);
             observableActions.add(index + 1 , action);
             this.selectedIndex.set(selectedIndex.get() + 1);
+            program.resetExecution();
+            executionStep.set(0);
         }
 
     }
@@ -124,6 +130,8 @@ public class MainViewModel {
             Action duplicate = program.getAction(index + 1);
             observableActions.add(index + 1 , duplicate);
             selectedIndex.set(index + 1);
+            program.resetExecution();
+            executionStep.set(0);
         }
     }
 
@@ -132,6 +140,8 @@ public class MainViewModel {
         program.clear();
         observableActions.clear();
         selectedIndex.set(-1);
+        program.resetExecution();
+        executionStep.set(0);
     }
 
     //Boutton Suprrimer une action
@@ -154,7 +164,10 @@ public class MainViewModel {
                 this.selectedIndex.set(this.observableActions.size() - 1);
             }
             // Sinon on a supprimé un élément au milieu, l'index pointe maintenant sur l'élément suivant
+            program.resetExecution();
+            executionStep.set(0);
         }
+
     }
 
     //Execution du prochain instruction
@@ -188,6 +201,8 @@ public class MainViewModel {
             // errorMessage.set("Erreur chargement : " + e.getMessage());
             System.err.println("Erreur chargement : " + e.getMessage());
         }
+        program.resetExecution();
+        executionStep.set(0);
     }
 
 
