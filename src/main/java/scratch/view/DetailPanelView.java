@@ -54,6 +54,22 @@ public class DetailPanelView extends VBox {
         // cas
         switch (action.getType()) {
 
+            case TURN_LEFT ->{
+                configTextField("Tourner à gauche de",
+                        (ParameterizedAction) action, 1, 180);
+            txtValue.setText("90");
+            txtValue.setDisable(false);
+            }
+
+            case TURN_RIGHT -> {
+                configTextField("Tourner à droite de",
+                    (ParameterizedAction) action, 1, 180);
+            txtValue.setText("90");
+            txtValue.setDisable(false);
+            }
+
+
+
             case PEN_UP -> {
                 lblDetailTitle.setText("Lever le stylo");
                 txtValue.setText("0");

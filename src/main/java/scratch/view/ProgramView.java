@@ -1,5 +1,6 @@
 package scratch.view;
 
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -106,5 +107,10 @@ public class ProgramView extends VBox {
                 buttons,
                 detailPanel
         );
+
+        btnRemove.setOnAction(e -> viewModel.removeSelectedAction());
+        btnRemove.disableProperty().bind(viewModel.canRemove().not());
+        btnClear.setOnAction(e -> viewModel.clearProgram());
+        btnClear.disableProperty().bind(Bindings.isEmpty(viewModel.getObservableActions()));
     }
 }
