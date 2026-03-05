@@ -45,12 +45,12 @@ public class Program {
             Collections.swap(actions , index , index + 1);
     }
 
-    public void duplicateAt(int index ){
-
-        Action original = actions.get(index);
-        Action duplicate = createDuplicate(original);
-        actions.add(index + 1 , duplicate);
-
+    public void duplicateAt(int index){
+        if (index >= 0 && index < actions.size()) {
+            Action original = actions.get(index);
+            Action duplicate = createDuplicate(original);
+            actions.add(index + 1 , duplicate);
+        }
     }
 
     public void clear(){
