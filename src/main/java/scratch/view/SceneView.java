@@ -10,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import scratch.model.ExecutionContext;
 import scratch.viewmodel.MainViewModel;
 
 public class SceneView extends VBox {
@@ -18,9 +19,10 @@ public class SceneView extends VBox {
     private static final int GRID = 40;
 
     private final Canvas canvas;
+    private final MainViewModel viewModel;
 
     public SceneView(MainViewModel viewModel) {
-
+        this.viewModel = viewModel;
         setSpacing(8);
         setPadding(new Insets(10));
         setAlignment(Pos.TOP_LEFT);
@@ -36,7 +38,7 @@ public class SceneView extends VBox {
         canvasBox.setStyle("-fx-border-color: black; -fx-border-width: 1;");
 
         drawGrid();
-        drawCursor();
+
 
         Button btnReset = new Button("Ré-initialiser");
         Button btnNext = new Button("Suivant");
@@ -46,11 +48,16 @@ public class SceneView extends VBox {
         buttons.getChildren().addAll(btnReset, btnNext);
 
         getChildren().addAll(title, canvasBox, buttons);
+        btnReset.setOnAction(e -> {
+            viewModel.resetExecution();
+            drawGrid();           // Redessin immédiat après reset
+        });
     }
 
     private void drawGrid() {
 
         GraphicsContext gc = canvas.getGraphicsContext2D();
+        ExecutionContext ctx = viewModel.getExecutionContext();
 
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, SIZE, SIZE);
@@ -69,12 +76,14 @@ public class SceneView extends VBox {
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1);
         gc.strokeRect(0, 0, SIZE, SIZE);
+
+        drawCursor(gc, ctx.getX(), ctx.getY(), ctx.getDirection());
     }
 
-    private void drawCursor() {
+    private void drawCursor(GraphicsContext gc, int x, int y, int direction) {
 
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
+      //  GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.save();
         double cx = SIZE / 2.0;
         double cy = SIZE / 2.0;
 
@@ -96,5 +105,6 @@ public class SceneView extends VBox {
 
         gc.setFill(Color.BLACK);
         gc.fillOval(topX - 2, topY - 2, 4, 4);
+        gc.restore();
     }
 }

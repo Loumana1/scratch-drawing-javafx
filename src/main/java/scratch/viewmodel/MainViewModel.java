@@ -8,6 +8,9 @@ import javafx.collections.ObservableList;
 import scratch.model.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -183,6 +186,30 @@ public class MainViewModel {
         }
     }
 
+    public void resetExecution() {
+        program.resetExecution();
+        executionContext.reset();
+        executionStep.set(0);
+        selectedIndex.set(observableActions.isEmpty() ? -1 : 0); 
+    }
+
+    public void saveToFile(File file) {
+        try {
+            List<String> lines = new ArrayList<>();
+            for (Action action : program.getActions()) {
+                String type = action.getType().name();
+                int value = 0;
+                if (action instanceof ParameterizedAction p) {
+                    value = p.getValue();
+                }
+                lines.add(type + ";" + value);
+            }
+            Files.write(file.toPath(), lines);
+            errorMessage.set("");
+        } catch (IOException e) {
+            errorMessage.set("Erreur : " + e.getMessage());
+        }
+    }
 
     //Sauvegarde des Actions
     public  void loadFromFile(File file){
