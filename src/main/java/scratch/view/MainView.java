@@ -4,6 +4,9 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.*;
 import scratch.model.Action;
 import scratch.viewmodel.MainViewModel;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 
 import javafx.geometry.Insets;
 
@@ -44,6 +47,20 @@ public class MainView extends BorderPane {
                         programListView.getSelectionModel().select(nw.intValue()));
 
 
+        MenuBar menuBar = new MenuBar();
+
+        Menu fileMenu = new Menu("File");
+
+        MenuItem newItem = new MenuItem("New...");
+        MenuItem openItem = new MenuItem("Open...");
+        MenuItem saveItem = new MenuItem("Save As...");
+        MenuItem exitItem = new MenuItem("Exit");
+
+        fileMenu.getItems().addAll(newItem, openItem, saveItem, exitItem);
+
+        menuBar.getMenus().add(fileMenu);
+
+        setTop(menuBar);
 
 
         setLeft(palette);
