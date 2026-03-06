@@ -65,17 +65,15 @@ public class DetailPanelView extends TitledPane {
             case TURN_LEFT ->{
                 configTextField("Tourner à gauche de ",
                         (ParameterizedAction) action, 1, 180);
-            txtValue.setText(String.valueOf(TurnLeftAction.DEFAULT_VALUE));
             txtValue.setDisable(false);
             txtValue.setVisible(true);
             lblPixels.setVisible(true);
-            lblPixels.setText("degres");
+            lblPixels.setText(" Degres");
             }
 
             case TURN_RIGHT -> {
                 configTextField("Tourner à droite de ",
                     (ParameterizedAction) action, 1, 180);
-            txtValue.setText(String.valueOf(TurnRightAction.DEFAULT_VALUE));
             txtValue.setDisable(false);
             txtValue.setVisible(true);
             lblPixels.setVisible(true);
@@ -87,6 +85,7 @@ public class DetailPanelView extends TitledPane {
                 txtValue.setText("0");
                 txtValue.setDisable(true);
                 lblPixels.setVisible(false);
+                lblError.setVisible(false);
             }
 
             case PEN_DOWN -> {
@@ -94,11 +93,12 @@ public class DetailPanelView extends TitledPane {
                 txtValue.setText("0");
                 txtValue.setDisable(true);
                 lblPixels.setVisible(false);
+                lblError.setVisible(false);
             }
 
             case MOVE_FORWARD -> {
-                lblDetailTitle.setText("Avance de ");
-                txtValue.setText("0");
+                configTextField("Avance de ",
+                        (ParameterizedAction) action, 1, 100);
                 txtValue.setDisable(false);
                 txtValue.setVisible(true);
                 lblPixels.setVisible(true);
@@ -138,5 +138,4 @@ public class DetailPanelView extends TitledPane {
         });
         txtValue.textProperty().addListener(currentListener);
     }
-
 }
