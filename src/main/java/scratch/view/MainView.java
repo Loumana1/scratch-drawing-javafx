@@ -3,6 +3,7 @@ package scratch.view;
 import javafx.application.Platform;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
 import scratch.model.Action;
 import scratch.viewmodel.MainViewModel;
 import javafx.scene.control.Menu;
@@ -13,6 +14,8 @@ import javafx.geometry.Insets;
 
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+
+import java.io.File;
 
 
 public class MainView extends BorderPane {
@@ -55,6 +58,29 @@ public class MainView extends BorderPane {
         MenuItem newItem = new MenuItem("New...");
         newItem.setOnAction(e -> viewModel.newProgram());
         MenuItem openItem = new MenuItem("Open...");
+        openItem.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Ouvrir");
+
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Scratch files (*.scr)", "*.scr")
+            );
+
+            File defaultDir = new File("data");
+
+            if (defaultDir.exists() && defaultDir.isDirectory()) {
+                fileChooser.setInitialDirectory(defaultDir);
+            } else {
+                fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+            }
+
+            File file = fileChooser.showOpenDialog(getScene().getWindow());
+
+            if (file != null) {
+                viewModel.loadFromFile(file);
+            }
+        });
+
         MenuItem saveItem = new MenuItem("Save As...");
         MenuItem exitItem = new MenuItem("Exit");
         exitItem.setOnAction(e -> Platform.exit());
