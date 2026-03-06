@@ -52,6 +52,7 @@ public class MainView extends BorderPane {
         Menu fileMenu = new Menu("File");
 
         MenuItem newItem = new MenuItem("New...");
+        newItem.setOnAction(e -> viewModel.newProgram());
         MenuItem openItem = new MenuItem("Open...");
         MenuItem saveItem = new MenuItem("Save As...");
         MenuItem exitItem = new MenuItem("Exit");

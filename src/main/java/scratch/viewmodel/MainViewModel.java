@@ -290,7 +290,15 @@ public class MainViewModel {
         };
     }
 
-
+    public void newProgram() {
+        program.clear();
+        observableActions.clear();
+        selectedIndex.set(-1);
+        executionContext.reset();
+        program.resetExecution();
+        programLoadedProperty().set(false);
+        executionStep.set(executionStep.get() + 1);
+    }
 
 
 //----------------------- GETTERS POUR VUE ------------------------
