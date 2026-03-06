@@ -51,6 +51,8 @@ public class MainView extends BorderPane {
                         programListView.getSelectionModel().select(nw.intValue()));
 
 
+        //pre refactoring1
+
         MenuBar menuBar = new MenuBar();
 
         Menu fileMenu = new Menu("File");
