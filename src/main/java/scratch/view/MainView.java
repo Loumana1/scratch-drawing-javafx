@@ -10,13 +10,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 
-import javafx.geometry.Insets;
-
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
-
 import java.io.File;
-
 
 public class MainView extends BorderPane {
 
@@ -26,56 +20,40 @@ public class MainView extends BorderPane {
 
     public MainView(MainViewModel viewModel) {
         this.viewModel = viewModel;
-    //Gauche
+
         PaletteView palette = new PaletteView(viewModel);
         ProgramView program = new ProgramView(viewModel);
         SceneView scene = new SceneView(viewModel);
 
-        //
-
-
-        //
         HBox center = new HBox(20);
         center.getChildren().addAll(program, scene);
 
-        //detailview
         programListView.setItems(viewModel.getObservableActions());
 
-
-        // Synchro sélection ListView -ViewModel
         programListView.getSelectionModel().selectedIndexProperty()
                 .addListener((obs, old, nw) ->
                         viewModel.selectedIndexProperty().setValue(nw.intValue()));
+
         viewModel.selectedIndexProperty()
                 .addListener((obs, old, nw) ->
                         programListView.getSelectionModel().select(nw.intValue()));
 
+        setTop(createMenuBar());
+        setLeft(palette);
+        setCenter(center);
+    }
 
-        //pre refactoring1
-
+    private MenuBar createMenuBar() {
         MenuBar menuBar = new MenuBar();
 
         Menu fileMenu = new Menu("File");
 
         MenuItem newItem = new MenuItem("New...");
         newItem.setOnAction(e -> viewModel.newProgram());
+
         MenuItem openItem = new MenuItem("Open...");
         openItem.setOnAction(e -> {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Ouvrir");
-
-            fileChooser.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter("Scratch files (*.scr)", "*.scr")
-            );
-
-            File defaultDir = new File("data");
-
-            if (defaultDir.exists() && defaultDir.isDirectory()) {
-                fileChooser.setInitialDirectory(defaultDir);
-            } else {
-                fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-            }
-
+            FileChooser fileChooser = createScratchFileChooser("Ouvrir");
             File file = fileChooser.showOpenDialog(getScene().getWindow());
 
             if (file != null) {
@@ -85,21 +63,7 @@ public class MainView extends BorderPane {
 
         MenuItem saveItem = new MenuItem("Save As...");
         saveItem.setOnAction(e -> {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Enregistrer sous");
-
-            fileChooser.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter("Scratch files (*.scr)", "*.scr")
-            );
-
-            File defaultDir = new File("data");
-
-            if (defaultDir.exists() && defaultDir.isDirectory()) {
-                fileChooser.setInitialDirectory(defaultDir);
-            } else {
-                fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-            }
-
+            FileChooser fileChooser = createScratchFileChooser("Enregistrer sous");
             fileChooser.setInitialFileName("programme.scr");
 
             File file = fileChooser.showSaveDialog(getScene().getWindow());
@@ -111,17 +75,32 @@ public class MainView extends BorderPane {
                 viewModel.saveToFile(file);
             }
         });
+
         MenuItem exitItem = new MenuItem("Exit");
         exitItem.setOnAction(e -> Platform.exit());
 
         fileMenu.getItems().addAll(newItem, openItem, saveItem, exitItem);
-
         menuBar.getMenus().add(fileMenu);
 
-        setTop(menuBar);
+        return menuBar;
+    }
 
+    private FileChooser createScratchFileChooser(String title) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(title);
 
-        setLeft(palette);
-        setCenter(center);
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Scratch files (*.scr)", "*.scr")
+        );
+
+        File defaultDir = new File("data");
+
+        if (defaultDir.exists() && defaultDir.isDirectory()) {
+            fileChooser.setInitialDirectory(defaultDir);
+        } else {
+            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        }
+
+        return fileChooser;
     }
 }
