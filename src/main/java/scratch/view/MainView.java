@@ -82,6 +82,33 @@ public class MainView extends BorderPane {
         });
 
         MenuItem saveItem = new MenuItem("Save As...");
+        saveItem.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Enregistrer sous");
+
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Scratch files (*.scr)", "*.scr")
+            );
+
+            File defaultDir = new File("data");
+
+            if (defaultDir.exists() && defaultDir.isDirectory()) {
+                fileChooser.setInitialDirectory(defaultDir);
+            } else {
+                fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+            }
+
+            fileChooser.setInitialFileName("programme.scr");
+
+            File file = fileChooser.showSaveDialog(getScene().getWindow());
+
+            if (file != null) {
+                if (!file.getName().toLowerCase().endsWith(".scr")) {
+                    file = new File(file.getAbsolutePath() + ".scr");
+                }
+                viewModel.saveToFile(file);
+            }
+        });
         MenuItem exitItem = new MenuItem("Exit");
         exitItem.setOnAction(e -> Platform.exit());
 
