@@ -1,5 +1,6 @@
 package scratch.view;
 
+import javafx.application.Platform;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.*;
 import scratch.model.Action;
@@ -56,6 +57,7 @@ public class MainView extends BorderPane {
         MenuItem openItem = new MenuItem("Open...");
         MenuItem saveItem = new MenuItem("Save As...");
         MenuItem exitItem = new MenuItem("Exit");
+        exitItem.setOnAction(e -> Platform.exit());
 
         fileMenu.getItems().addAll(newItem, openItem, saveItem, exitItem);
 
