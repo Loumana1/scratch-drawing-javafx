@@ -32,7 +32,6 @@ public class MainView extends BorderPane {
         center.getChildren().addAll(program, scene);
 
         //detailview
-        DetailPanelView detailPanelView = new DetailPanelView(viewModel, programListView);
         programListView.setItems(viewModel.getObservableActions());
 
 

@@ -82,9 +82,6 @@ public class SceneView extends VBox {
         btnReset.disableProperty().bind(
                 Bindings.isEmpty(viewModel.getObservableActions()));
 
-        btnNext.disableProperty().bind(
-                viewModel.programLoadedProperty().not()
-                        .or(viewModel.canExecuteNext().not()));
 
         viewModel.programLoadedProperty().addListener((obs, old, nw) ->
                 btnReset.setText(nw ? "Ré-initialiser" : "Charger"));
@@ -116,13 +113,13 @@ public class SceneView extends VBox {
 
         //dessin du segment
         for (Segment seg : ctx.getSegments()) {
-            gc.strokeLine(seg.getX1(), seg.getY1(), seg.getX2(), seg.getY3());
+            gc.strokeLine(seg.getX1(), seg.getY1(), seg.getX2(), seg.getY2());
         }
         drawCursor(gc, ctx.getX(), ctx.getY(), ctx.getDirection());
     }
 
     private void drawCursor(GraphicsContext gc, int x, int y, int direction) {
-
+/*
       //  GraphicsContext gc = canvas.getGraphicsContext2D();
 
 
@@ -153,8 +150,8 @@ public class SceneView extends VBox {
         gc.restore();
 
 
-        /*
-        fonctionne bien car segment aligné avec mvmt curseur
+  */
+        //fonctionne bien car segment aligné avec mvmt curseur
 
         gc.save();
         gc.translate(x, y);       //  utilise x, y
@@ -170,6 +167,6 @@ public class SceneView extends VBox {
 
         gc.restore();
 
-         */
+
     }
 }
