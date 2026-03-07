@@ -186,6 +186,24 @@ public class MainViewModel {
             }
         }
     }
+    // UC19 — Charger sur scène
+    public void loadOnScene() {
+        executionContext.reset();
+        program.resetExecution();
+        executionStep.set(0);
+
+        // Valider le programme avant de le charger
+        if (!program.isValid(executionContext)) {
+            errorMessage.set("Programme invalide : vérifiez vos actions");
+            programLoaded.set(false);
+            return;
+        }
+
+        // Re-reset après la validation
+        executionContext.reset();
+        program.resetExecution();
+        programLoaded.set(true);
+    }
 
     public void resetExecution() {
         program.resetExecution();
@@ -246,7 +264,7 @@ public class MainViewModel {
     public BooleanBinding canExecuteNext() {
         return Bindings.createBooleanBinding(
                 () -> program.hasNext(),
-                executionStep
+                executionStep,programLoaded
         );
     }
     public BooleanBinding canMoveUp() {

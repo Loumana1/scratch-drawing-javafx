@@ -26,7 +26,7 @@ public class TurnRightAction  extends ParameterizedAction{
 
     @Override
     public void execute(ExecutionContext e) {
-        e.turnLeft(getValue());
+        e.turnRight(getValue());
     }
 
     @Override

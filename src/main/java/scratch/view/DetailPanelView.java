@@ -1,14 +1,17 @@
 package scratch.view;
 
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import javafx.geometry.Insets;
 import scratch.model.Action;
 import scratch.model.ParameterizedAction;
+import scratch.model.TurnLeftAction;
+import scratch.model.TurnRightAction;
 import scratch.viewmodel.MainViewModel;
 
-public class DetailPanelView extends VBox {
+public class DetailPanelView extends TitledPane {
 
     private final MainViewModel viewModel;
     private final ListView<Action> programListView;  // Référence pour refresh()
@@ -16,7 +19,10 @@ public class DetailPanelView extends VBox {
     private final Label lblDetailTitle = new Label("(aucune action sélectionnée)");
     private final TextField txtValue = new TextField();
     private final Label lblError = new Label("Error valeur");
+    private final Label lblPixels = new Label("");
 
+    private HBox detailPane = new HBox();
+    private javafx.beans.value.ChangeListener<String> currentListener ;
 
 
 
@@ -26,12 +32,14 @@ public class DetailPanelView extends VBox {
         this.programListView = programListView;
 
         // ----------------- Style  ----------
+        setText("Détails de l'action");
         lblError.setStyle("-fx-text-fill: red;");
         lblError.setVisible(false);
-        txtValue.setDisable(true);
-        txtValue.setMaxWidth(150);
+        txtValue.setVisible(false);
+        txtValue.setMaxWidth(40);
         // ---------Layout--------
-        getChildren().addAll(lblDetailTitle, txtValue, lblError);
+        detailPane.getChildren().addAll(lblDetailTitle, txtValue, lblPixels, lblError);
+        setContent(detailPane);
 
         //-----------Listener -------------------
         viewModel.selectedIndexProperty().addListener((obs, old, nw) -> updateDetailPane());
@@ -55,54 +63,79 @@ public class DetailPanelView extends VBox {
         switch (action.getType()) {
 
             case TURN_LEFT ->{
-                configTextField("Tourner à gauche de",
+                configTextField("Tourner à gauche de ",
                         (ParameterizedAction) action, 1, 180);
-            txtValue.setText("90");
             txtValue.setDisable(false);
+            txtValue.setVisible(true);
+            lblPixels.setVisible(true);
+            lblPixels.setText(" Degres");
             }
 
             case TURN_RIGHT -> {
-                configTextField("Tourner à droite de",
+                configTextField("Tourner à droite de ",
                     (ParameterizedAction) action, 1, 180);
-            txtValue.setText("90");
             txtValue.setDisable(false);
+            txtValue.setVisible(true);
+            lblPixels.setVisible(true);
+            lblPixels.setText(" Degres");
             }
-
-
 
             case PEN_UP -> {
-                lblDetailTitle.setText("Lever le stylo");
+                lblDetailTitle.setText("Lever le stylo ");
                 txtValue.setText("0");
                 txtValue.setDisable(true);
+                lblPixels.setVisible(false);
+                lblError.setVisible(false);
             }
+
             case PEN_DOWN -> {
-                lblDetailTitle.setText("Abaisser le stylo");
+                lblDetailTitle.setText("Abaisser le stylo ");
                 txtValue.setText("0");
                 txtValue.setDisable(true);
+                lblPixels.setVisible(false);
+                lblError.setVisible(false);
             }
+
+            case MOVE_FORWARD -> {
+                configTextField("Avance de ",
+                        (ParameterizedAction) action, 1, 100);
+                txtValue.setDisable(false);
+                txtValue.setVisible(true);
+                lblPixels.setVisible(true);
+                lblPixels.setText(" Pixels");
+            }
+
         }
     }
     private void configTextField(String title, ParameterizedAction action, int min, int max) {
         lblDetailTitle.setText(title);
+
+        if (currentListener != null){
+            txtValue.textProperty().removeListener(currentListener);
+        }
+
         txtValue.setText(String.valueOf(action.getValue()));
         txtValue.setDisable(false);
 
         // validation txt
-        txtValue.textProperty().addListener((obs, old, text) -> {
+        currentListener = ((obs, old, text) -> {
             try {
                 int val = Integer.parseInt(text);
 
                 if (val < min || val > max) { // pas dans les born
                     lblError.setVisible(true);
+                    lblError.setManaged(true);
                 } else {
                     lblError.setVisible(false);
+                    lblError.setManaged(false);
                     action.setValue(val);
                     programListView.refresh();
                 }
             } catch (NumberFormatException e) { // pans un chiffre
                 lblError.setVisible(true);
+                lblError.setManaged(true);
             }
         });
+        txtValue.textProperty().addListener(currentListener);
     }
-
 }
