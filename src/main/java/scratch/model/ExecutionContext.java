@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExecutionContext {
-    private static final int DEFAULT_X = 200;
-    private static final int DEFAULT_Y = 200 ;
+    private static final int DEFAULT_X = 250;
+    private static final int DEFAULT_Y = 250 ;
     private static final int DEFAULT_DIRECTION = 0 ;
     private static final boolean DEFAULT_PEN_DOWN = true ;
 
