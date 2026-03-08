@@ -75,6 +75,10 @@ public class PaletteView extends VBox {
 
         Button addButton = new Button("Ajouter au programme");
 
+        addButton.disableProperty().bind(
+                listView.getSelectionModel().selectedItemProperty().isNull()
+        );
+
         addButton.setOnAction(e -> {
 
             int index = listView.getSelectionModel().getSelectedIndex();
