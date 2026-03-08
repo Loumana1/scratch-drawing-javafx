@@ -111,7 +111,7 @@ public class SceneView extends VBox {
             gc.strokeLine(0, y + 0.5, SIZE, y + 0.5);
         }
 
-        gc.setStroke(Color.BLACK);
+        gc.setStroke(Color.RED);
         gc.setLineWidth(1);
         gc.strokeRect(0, 0, SIZE, SIZE);
 
