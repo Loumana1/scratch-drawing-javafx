@@ -82,7 +82,9 @@ public class SceneView extends VBox {
     private void configButtonsDisabling() {
         btnReset.disableProperty().bind(
                 Bindings.isEmpty(viewModel.getObservableActions()));
-
+        btnNext.disableProperty().bind(
+                viewModel.programLoadedProperty().not()
+                        .or(viewModel.canExecuteNext().not()));
 
         viewModel.programLoadedProperty().addListener((obs, old, nw) ->
                 btnReset.setText(nw ? "Ré-initialiser" : "Charger"));
