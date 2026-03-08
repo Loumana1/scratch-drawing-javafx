@@ -186,7 +186,7 @@ public class MainViewModel {
             }
         }
     }
-    // UC19 — Charger sur scène
+  //Charger sur scène
     public void loadOnScene() {
         executionContext.reset();
         program.resetExecution();
@@ -279,6 +279,22 @@ public class MainViewModel {
     public BooleanBinding canDuplicate() {
         return canRemove();
     }
+
+    public BooleanBinding canLoad() {
+        return Bindings.createBooleanBinding(
+                () -> {
+                    if (observableActions.isEmpty()) return false;
+                    ExecutionContext contextTemp = new ExecutionContext();
+                    for (Action action : observableActions) {
+                        if (!action.isValid(contextTemp)) return false;
+                        action.execute(contextTemp);
+                    }
+                    return true;
+                },
+                observableActions, executionStep
+        );
+    }
+
 
     private Action createAction(ActionType type) {
         return switch (type) {
