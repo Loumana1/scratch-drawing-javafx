@@ -18,7 +18,7 @@ import scratch.viewmodel.MainViewModel;
 public class SceneView extends VBox {
 
     private static final double SIZE = 500;
-    private static final int GRID = 40;
+    private static final int GRID = 50;
     private final Button btnNext = new Button("Suivant");
     private final Button btnReset = new Button("Charger");
     private final Canvas canvas;
@@ -111,54 +111,24 @@ public class SceneView extends VBox {
             gc.strokeLine(0, y + 0.5, SIZE, y + 0.5);
         }
 
-        gc.setStroke(Color.RED);
-        gc.setLineWidth(1);
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(2);
         gc.strokeRect(0, 0, SIZE, SIZE);
 
         //dessin du segment
         for (Segment seg : ctx.getSegments()) {
+            gc.setStroke(Color.RED);
             gc.strokeLine(seg.getX1(), seg.getY1(), seg.getX2(), seg.getY2());
+
         }
         drawCursor(gc, ctx.getX(), ctx.getY(), ctx.getDirection());
     }
 
     private void drawCursor(GraphicsContext gc, int x, int y, int direction) {
-/*
-      //  GraphicsContext gc = canvas.getGraphicsContext2D();
 
-
-        double cx = SIZE / 2.0;
-        double cy = SIZE / 2.0;
-
-        double topX = cx;
-        double topY = cy - 10;
-
-        double leftX = cx - 8;
-        double leftY = cy + 8;
-
-        double rightX = cx + 8;
-        double rightY = cy + 8;
-
-        gc.setFill(Color.CYAN);
-
-        gc.fillPolygon(
-                new double[]{topX, leftX, rightX},
-                new double[]{topY, leftY, rightY},
-                3
-        );
-
-
-
-        gc.setFill(Color.BLACK);
-        gc.fillOval(topX - 2, topY - 2, 4, 4);
-        gc.restore();
-
-
-  */
-        //fonctionne bien car segment aligné avec mvmt curseur
 
         gc.save();
-        gc.translate(x, y);       //  utilise x, y
+        gc.translate(x, y);
         gc.rotate(direction);
 
         double s = 10;
