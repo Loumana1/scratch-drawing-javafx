@@ -21,7 +21,7 @@ public class DetailPanelView extends TitledPane {
     private final Label lblError = new Label("Error valeur");
     private final Label lblPixels = new Label("");
 
-    private HBox detailPane = new HBox();
+    private VBox detailPane = new VBox(5);
     private javafx.beans.value.ChangeListener<String> currentListener ;
 
 
@@ -38,8 +38,11 @@ public class DetailPanelView extends TitledPane {
         txtValue.setVisible(false);
         txtValue.setMaxWidth(40);
         // ---------Layout--------
-        detailPane.getChildren().addAll(lblDetailTitle, txtValue, lblPixels, lblError);
+        HBox row = new HBox(5);
+        row.getChildren().addAll(lblDetailTitle, txtValue, lblPixels);
+        detailPane.getChildren().addAll(row, lblError);
         setContent(detailPane);
+
 
         //-----------Listener -------------------
         viewModel.selectedIndexProperty().addListener((obs, old, nw) -> updateDetailPane());

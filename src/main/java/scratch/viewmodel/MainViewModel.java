@@ -106,7 +106,7 @@ public class MainViewModel {
             program.moveUp(selectedIndex.get());
             Action action = observableActions.remove(index);
             observableActions.add(index - 1 ,  action);
-            this.selectedIndex.set(selectedIndex.get() - 1);
+            this.selectedIndex.set(index - 1);
             program.resetExecution();
             executionStep.set(0);
         }
@@ -119,7 +119,7 @@ public class MainViewModel {
             program.moveDown(index);
             Action action = observableActions.remove(index);
             observableActions.add(index + 1 , action);
-            this.selectedIndex.set(selectedIndex.get() + 1);
+            this.selectedIndex.set(index + 1);
             program.resetExecution();
             executionStep.set(0);
         }

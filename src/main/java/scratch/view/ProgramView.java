@@ -37,8 +37,14 @@ public class ProgramView extends VBox {
 
         // Quand on clique sur la liste, on met à jour l'index sélectionné dans le ViewModel
         programList.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
-            viewModel.selectedIndexProperty().set(newVal.intValue());
+            if (newVal.intValue() >= 0) {
+                viewModel.selectedIndexProperty().set(newVal.intValue());
+            }
         });
+        viewModel.selectedIndexProperty().addListener((obs, old, nw) -> {
+            programList.getSelectionModel().select(nw.intValue());
+        });
+
 
         programList.setCellFactory(lv -> new ListCell<>() {
 
