@@ -61,6 +61,7 @@ public class DetailPanelView extends TitledPane {
             lblDetailTitle.setText("(aucune action sélectionnée)");
             txtValue.setText("");
             txtValue.setDisable(true);
+            lblError.setManaged(false);
             return;
         }
 
@@ -74,6 +75,7 @@ public class DetailPanelView extends TitledPane {
             txtValue.setVisible(true);
             lblPixels.setVisible(true);
             lblPixels.setText(" Degres");
+            lblError.setManaged(false);
             }
 
             case TURN_RIGHT -> {
@@ -83,6 +85,7 @@ public class DetailPanelView extends TitledPane {
             txtValue.setVisible(true);
             lblPixels.setVisible(true);
             lblPixels.setText(" Degres");
+            lblError.setManaged(false);
             }
 
             case PEN_UP -> {
@@ -91,6 +94,7 @@ public class DetailPanelView extends TitledPane {
                 txtValue.setDisable(true);
                 lblPixels.setVisible(false);
                 lblError.setVisible(false);
+                lblError.setManaged(false);
             }
 
             case PEN_DOWN -> {
@@ -99,6 +103,7 @@ public class DetailPanelView extends TitledPane {
                 txtValue.setDisable(true);
                 lblPixels.setVisible(false);
                 lblError.setVisible(false);
+                lblError.setManaged(false);
             }
 
             case MOVE_FORWARD -> {
@@ -108,6 +113,7 @@ public class DetailPanelView extends TitledPane {
                 txtValue.setVisible(true);
                 lblPixels.setVisible(true);
                 lblPixels.setText(" Pixels");
+                lblError.setManaged(false);
             }
 
         }
