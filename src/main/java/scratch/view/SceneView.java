@@ -55,6 +55,7 @@ public class SceneView extends VBox {
         //config
         configActions();
         configButtonsDisabling();
+        viewModel.executionStepProperty().addListener((obs, oldVal, newVal) -> drawGrid());
 
     }
 
@@ -87,6 +88,8 @@ public class SceneView extends VBox {
                 btnReset.setText(nw ? "Ré-initialiser" : "Charger"));
 
     }
+
+
 
     private void drawGrid() {
 
