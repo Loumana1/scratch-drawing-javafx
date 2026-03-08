@@ -1,5 +1,6 @@
 package scratch.view;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -39,6 +40,7 @@ public class DetailPanelView extends TitledPane {
         txtValue.setMaxWidth(40);
         // ---------Layout--------
         HBox row = new HBox(5);
+        row.setAlignment(Pos.CENTER_LEFT);
         row.getChildren().addAll(lblDetailTitle, txtValue, lblPixels);
         detailPane.getChildren().addAll(row, lblError);
         setContent(detailPane);
