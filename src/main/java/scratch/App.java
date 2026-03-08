@@ -7,18 +7,30 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import scratch.model.Program;
+import scratch.view.MainView;
+import scratch.view.PaletteView;
+import scratch.viewmodel.MainViewModel;
 
 public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Label label = new Label("Hello ANC4 2526");
-        label.setFont(new Font(25));
-        Pane pane = new StackPane();
-        pane.getChildren().add(label);
-        Scene scene = new Scene(pane, 640, 480);
+
+        Program program = new Program();
+
+        MainViewModel viewModel = new MainViewModel(program);
+
+        MainView mainView = new MainView(viewModel);
+
+        Scene scene = new Scene(mainView, 1400, 800);
+
         primaryStage.setTitle("Scratch");
         primaryStage.setScene(scene);
+
+        primaryStage.setMinWidth(1200);
+        primaryStage.setMinHeight(700);
+
         primaryStage.show();
     }
 
