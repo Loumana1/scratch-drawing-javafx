@@ -28,7 +28,7 @@ public class MainViewModel {
 
     private final StringProperty errorMessage = new SimpleStringProperty("");
     private final BooleanProperty programLoaded = new SimpleBooleanProperty(false);
-
+    private final StringProperty turtleState = new SimpleStringProperty("");
 
 
     public MainViewModel(Program program) {
@@ -178,6 +178,10 @@ public class MainViewModel {
     public void executeNext(){
         if (program.hasNext()){
             program.executeNext(executionContext);
+
+            // Met à jour la zone info pour l'état de la tortue et des variables
+            turtleState.set(buildTurtleStateString());
+
             //Declenche le redessin du Canvas
             executionStep.set(executionStep.get() + 1);
             if (program.hasNext()){
@@ -249,6 +253,24 @@ public class MainViewModel {
         }
         program.resetExecution();
         executionStep.set(0);
+    }
+
+    // ---------- Zone info --------------
+    public StringProperty turtleStateProperty() {
+        return turtleState;
+    }
+
+    private String buildTurtleStateString() {
+        int x = executionContext.getX();
+        int y = executionContext.getY();
+        int direction = executionContext.getDirection();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Tortue: ").append("x = ").append(x)
+                .append(", y = ").append(y)
+                .append(", direction = ").append(direction).append("°");
+
+        return sb.toString();
     }
 
 
@@ -330,6 +352,14 @@ public class MainViewModel {
 
     public int getSelectedIndex() {
         return selectedIndex.get();
+    }
+
+
+    private final ObservableList<VariableRow> observableVariables =
+            FXCollections.observableArrayList();
+
+    public ObservableList<VariableRow> getObservableVariables() {
+        return observableVariables;
     }
 
     public IntegerProperty executionStepProperty() { return executionStep; }

@@ -7,13 +7,15 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import scratch.model.ExecutionContext;
 import scratch.model.Segment;
-import scratch.viewmodel.MainViewModel;
+import scratch.viewmodel.*;
 
 public class SceneView extends VBox {
 
@@ -23,7 +25,10 @@ public class SceneView extends VBox {
     private final Button btnReset = new Button("Charger");
     private final Canvas canvas;
     private final MainViewModel viewModel;
-
+    private final Label lblTurtle = new Label();
+    private final Label lblVariablesTitle = new Label("Variables");
+    private final TableView<VariableRow> tableVariables =
+            new TableView<>();
     public SceneView(MainViewModel viewModel) {
         this.viewModel = viewModel;
         setSpacing(8);
@@ -49,7 +54,32 @@ public class SceneView extends VBox {
         buttons.setAlignment(Pos.CENTER);
         buttons.getChildren().addAll(btnReset, btnNext);
 
-        getChildren().addAll(title, canvasBox, buttons);
+
+
+        //Zone info
+        TableColumn<VariableRow, String> colName = new TableColumn<>("Nom");
+        colName.setCellValueFactory(data -> data.getValue().nameProperty());
+        TableColumn<VariableRow, Number> colValue = new TableColumn<>("Valeur");
+        colValue.setCellValueFactory(data -> data.getValue().valueProperty());
+        tableVariables.getColumns().addAll(colName, colValue);
+        tableVariables.setItems(viewModel.getObservableVariables());
+        tableVariables.setPlaceholder(new Label("Aucun contenu dans la table"));
+
+        lblTurtle.textProperty().bind(viewModel.turtleStateProperty());
+        lblTurtle.setStyle("-fx-font-size: 12px;");
+        lblVariablesTitle.setStyle("-fx-font-weight: bold;");
+
+
+        getChildren().addAll(
+                title,
+                canvasBox,
+
+                lblTurtle,
+                lblVariablesTitle,
+                tableVariables,
+
+
+                buttons);
 
 
         //config
