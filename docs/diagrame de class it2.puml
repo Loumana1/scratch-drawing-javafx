@@ -1,0 +1,127 @@
+@startuml Domain Class Diagram - Scratch-like (Iteration 2)
+
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam classAttributeIconSize 0
+
+' === Colors ===
+skinparam class {
+  BackgroundColor #E8F5E9
+  BorderColor #2E7D32
+  FontColor #1B5E20
+}
+skinparam abstractClass {
+  BackgroundColor #E3F2FD
+  BorderColor #1565C0
+}
+skinparam enum {
+  BackgroundColor #F3E5F5
+  BorderColor #7B1FA2
+}
+
+title Domain class diagram - Iteration 2\n(Variables, Loops & Dynamic Execution)
+
+' ================= ACTION TYPES =================
+rectangle "**Action types**" as pkg_types #F3E5F5 {
+  enum ActionType {
+    MOVE_FORWARD
+    TURN_LEFT
+    TURN_RIGHT
+    PEN_UP
+    PEN_DOWN
+    VAR_DECLARATION
+    VAR_ASSIGNMENT
+    INCREMENT_VARIABLE
+    REPEAT
+    END_REPEAT
+  }
+}
+
+' ================= PARAMETERS (Literal or Var) =================
+rectangle "**Values**" as pkg_values #FFFDE7 {
+    interface ValueProvider {
+        + getValue(context : ExecutionContext) : int
+    }
+    class LiteralValue implements ValueProvider {
+        - value : int
+    }
+    class VariableReference implements ValueProvider {
+        - varName : String
+    }
+}
+
+' ================= ACTIONS (Command pattern) =================
+rectangle "**Actions**" as pkg_actions #E8F5E9 {
+  abstract class Action {
+    + {abstract} execute(context : ExecutionContext) : void
+    + getType() : ActionType
+  }
+
+  abstract class ParameterizedAction extends Action {
+    # valueProvider : ValueProvider
+  }
+
+  class MoveForwardAction extends ParameterizedAction
+  class TurnLeftAction extends ParameterizedAction
+  class TurnRightAction extends ParameterizedAction
+
+  class PenUpAction extends Action
+  class PenDownAction extends Action
+
+  ' Nouvelles actions variables
+  class VarDeclarationAction extends Action {
+    - varName : String
+  }
+
+  class VarAssignmentAction extends Action {
+    - varName : String
+    - valueProvider : ValueProvider
+  }
+
+  class IncrementVariableAction extends Action {
+    - varName : String
+    - valueProvider : ValueProvider
+  }
+
+  ' La Boucle (Pattern Composite)
+  class RepeatAction extends Action {
+    - countProvider : ValueProvider
+    - children : List<Action>
+    + addAction(action : Action) : void
+  }
+}
+
+' ================= EXECUTION CONTEXT =================
+rectangle "**Execution**" as pkg_exec #E1F5FE {
+  class ExecutionContext {
+    - x : double
+    - y : double
+    - direction : int
+    - penDown : boolean
+    - variables : Map<String, Integer>
+    - segments : List<Segment>
+    --
+    + move(distance : int) : void
+    + turn(angle : int) : void
+    + getVariable(name : String) : int
+    + setVariable(name : String, val : int) : void
+    + declareVariable(name : String) : void
+  }
+
+  class Segment {
+    - x1, y1, x2, y2 : int
+  }
+}
+
+' ================= RELATIONSHIPS =================
+Program "1" o-- "*" Action : contains
+RepeatAction "1" *-- "*" Action : body
+ParameterizedAction --> ValueProvider
+VarAssignmentAction --> ValueProvider
+IncrementVariableAction --> ValueProvider
+RepeatAction --> ValueProvider
+
+Action ..> ExecutionContext : execute()
+ExecutionContext "1" *-- "*" Segment
+
+@enduml
