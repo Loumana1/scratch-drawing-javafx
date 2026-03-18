@@ -1,6 +1,8 @@
 package scratch.model;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 public class ExecutionContext {
@@ -12,6 +14,7 @@ public class ExecutionContext {
     private int x , y , direction ;
     private boolean penDown ;
     private List<Segment> segments ;
+    private Deque<int[]> repeatStack = new ArrayDeque<>();
 
     public ExecutionContext(){
         this.segments = new ArrayList<>();
@@ -48,6 +51,7 @@ public class ExecutionContext {
         direction = DEFAULT_DIRECTION ;
         penDown = DEFAULT_PEN_DOWN ;
         segments.clear();
+        repeatStack.clear();
     }
 
     // GETTERS
@@ -55,15 +59,12 @@ public class ExecutionContext {
     public int getX() {
         return x;
     }
-
     public int getY() {
         return y;
     }
-
     public int getDirection() {
         return direction;
     }
-
     public List<Segment> getSegments() {
         return segments;
     }
@@ -73,4 +74,25 @@ public class ExecutionContext {
     public boolean isPenDown(){
         return penDown;
     }
+
+    // Empiler nouvelle Boucle
+    public void pushRepeat(int repeatIndex , int iterations) {
+        repeatStack.push(new int[]{ repeatIndex , iterations });
+    }
+
+    // Regarder la boucle en cours sans retirer
+    public int[] peekRepeat() {
+        return repeatStack.peek();
+    }
+
+    // Retirer la boucle
+    public void popRepeat() {
+        repeatStack.pop();
+    }
+
+    // Y a t il une boucle active
+    public boolean hasRepeat() {
+        return !repeatStack.isEmpty();
+    }
+
 }

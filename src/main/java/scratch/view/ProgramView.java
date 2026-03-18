@@ -95,6 +95,17 @@ public class ProgramView extends VBox {
                         label.setTextFill(Color.GREEN);
                         label.setText("Abaisser stylo");
                     }
+                    case REPEAT -> {
+                        RepeatAction a = (RepeatAction) action;
+                        circle.setFill(Color.CHOCOLATE);
+                        label.setTextFill(Color.CHOCOLATE);
+                        label.setText(a.toString());
+                    }
+                    case END_REPEAT -> {
+                        circle.setFill(Color.CHOCOLATE);
+                        label.setTextFill(Color.CHOCOLATE);
+                        label.setText("Fin Repeter");
+                    }
                 }
 
                 HBox box = new HBox(10, circle, label);

@@ -78,7 +78,47 @@ public class Program {
 
     public void executeNext(ExecutionContext context){
         if (!hasNext()) throw new IllegalStateException("Pas d'action suivante");
-        actions.get(currenIndex++).execute(context);
+
+
+        Action a = actions.get(currenIndex);
+
+        if ( a instanceof RepeatAction ra) {
+            int n = ra.resolveCount(context);
+            if (n <= 0) {
+                currenIndex = findEndRepeat(currenIndex) + 1;
+            }else {
+                context.pushRepeat(currenIndex , n - 1);
+                currenIndex++ ;
+            }
+        } else if (a instanceof EndRepeatAction) {
+            if (context.hasRepeat()) {
+                int[] top = context.peekRepeat();
+                if (top[1] > 0) {
+                    top[1]--;
+                    currenIndex = top[0] + 1;
+                } else {
+                    context.popRepeat();
+                    currenIndex++;
+                }
+            } else {
+                currenIndex++;
+            }
+        } else {
+            a.execute(context);
+            currenIndex++;
+        }
+    }
+    private int findEndRepeat(int from) {
+        int count = 0 ;
+        for (int i = from; i < actions.size(); i++) {
+            if (actions.get(i) instanceof RepeatAction)
+                count++ ;
+            else if (actions.get(i) instanceof  EndRepeatAction) {
+                if (--count == 0)
+                    return  i;
+            }
+        }
+        return actions.size() -1;
     }
 
     public boolean hasNext(){
@@ -111,6 +151,13 @@ public class Program {
             case TURN_RIGHT -> new TurnRightAction(((ParameterizedAction)original).getValue()) ;
             case PEN_UP -> new PenUpAction();
             case PEN_DOWN -> new PenDownAction();
+            case REPEAT -> {
+                var r = (RepeatAction) original;
+                yield r.isCountIsVar()
+                        ? new RepeatAction(r.getCountVarName())
+                        : new RepeatAction(r.getCount());
+            }
+            case END_REPEAT -> new EndRepeatAction();
         };
     }
 }

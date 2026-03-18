@@ -303,6 +303,8 @@ public class MainViewModel {
             case TURN_RIGHT -> new TurnRightAction();
             case PEN_UP -> new PenUpAction();
             case PEN_DOWN -> new PenDownAction();
+            case REPEAT -> new RepeatAction(4);
+            case END_REPEAT -> new EndRepeatAction();
         };
     }
 
