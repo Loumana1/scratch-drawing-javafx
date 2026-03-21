@@ -176,19 +176,27 @@ public class MainViewModel {
 
     //Execution du prochain instruction
     public void executeNext(){
-        if (program.hasNext()){
-            program.executeNext(executionContext);
-
-            // Met à jour la zone info pour l'état de la tortue et des variables
-            turtleState.set(buildTurtleStateString());
-
-            //Declenche le redessin du Canvas
-            executionStep.set(executionStep.get() + 1);
-            if (program.hasNext()){
-                //Next Action
-                selectedIndex.set(program.getCurrenIndex());
-            }
+        if (!program.hasNext()) {
+            return;
         }
+            try {
+
+
+                program.executeNext(executionContext);
+
+                // Met à jour la zone info pour l'état de la tortue et des variables
+                turtleState.set(buildTurtleStateString());
+
+                //Declenche le redessin du Canvas
+                executionStep.set(executionStep.get() + 1);
+                if (program.hasNext()) {
+                    //Next Action
+                    selectedIndex.set(program.getCurrenIndex());
+                }
+            } catch (ExecutionException e) {
+                errorMessage.set(e.getMessage());
+            }
+
     }
   //Charger sur scène
     public void loadOnScene() {
@@ -196,17 +204,27 @@ public class MainViewModel {
         program.resetExecution();
         executionStep.set(0);
 
-        // Valider le programme avant de le charger
-        if (!program.isValid(executionContext)) {
-            errorMessage.set("Programme invalide : vérifiez vos actions");
+        try {
+
+
+            // Valider le programme avant de le charger
+            if (!program.isValid(executionContext)) {
+                errorMessage.set("Programme invalide : vérifiez vos actions");
+                programLoaded.set(false);
+                return;
+            }
+        } catch (ExecutionException e) {
+            errorMessage.set("Programme invalide : " + e.getMessage());
             programLoaded.set(false);
             return;
         }
+            // Re-reset après la validation
+            executionContext.reset();
+            program.resetExecution();
+            programLoaded.set(true);
+            turtleState.set(buildTurtleStateString());
 
-        // Re-reset après la validation
-        executionContext.reset();
-        program.resetExecution();
-        programLoaded.set(true);
+
     }
 
     public void resetExecution() {

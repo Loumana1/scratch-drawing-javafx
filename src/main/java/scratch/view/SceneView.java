@@ -29,6 +29,7 @@ public class SceneView extends VBox {
     private final Label lblVariablesTitle = new Label("Variables");
     private final TableView<VariableRow> tableVariables =
             new TableView<>();
+    private final Label lblError = new Label();
     public SceneView(MainViewModel viewModel) {
         this.viewModel = viewModel;
         setSpacing(8);
@@ -69,11 +70,15 @@ public class SceneView extends VBox {
         lblTurtle.setStyle("-fx-font-size: 12px;");
         lblVariablesTitle.setStyle("-fx-font-weight: bold;");
 
+        lblError.textProperty().bind(viewModel.errorMessageProperty());
+        lblError.setTextFill(Color.RED);
+        lblError.setWrapText(true);
+
 
         getChildren().addAll(
                 title,
                 canvasBox,
-
+                lblError,
                 lblTurtle,
                 lblVariablesTitle,
                 tableVariables,

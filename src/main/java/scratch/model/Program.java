@@ -77,8 +77,13 @@ public class Program {
     }
 
     public void executeNext(ExecutionContext context){
-        if (!hasNext()) throw new IllegalStateException("Pas d'action suivante");
-        actions.get(currenIndex++).execute(context);
+        if (!hasNext())
+            throw new IllegalStateException("Pas d'action suivante");
+        //s’arrêter sur l’action fautive
+        Action action = actions.get(currenIndex);
+        action.execute(context);
+        currenIndex++;
+
     }
 
     public boolean hasNext(){
