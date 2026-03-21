@@ -261,16 +261,14 @@ public class MainViewModel {
     }
 
     private String buildTurtleStateString() {
-        int x = executionContext.getX();
-        int y = executionContext.getY();
+        int x = executionContext.getPositionTortueX();
+        int y = executionContext.getPositionTortueY();
         int direction = executionContext.getDirection();
+        int angleAffiche = Math.min(direction, 360 - direction);
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("Tortue: ").append("x = ").append(x)
-                .append(", y = ").append(y)
-                .append(", direction = ").append(direction).append("°");
-
-        return sb.toString();
+        return "Tortue: " + "x = " + x +
+                ", y = " + y +
+                ", direction = " + angleAffiche + "°";
     }
 
 
