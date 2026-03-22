@@ -82,8 +82,6 @@ public class SceneView extends VBox {
                 lblTurtle,
                 lblVariablesTitle,
                 tableVariables,
-
-
                 buttons);
 
 
