@@ -18,6 +18,8 @@ public class MainViewModel {
 
     private final Program program;
     private final ObservableList<Action> observableActions;
+    private final ObservableList<VariableRow> observableVariables =
+            FXCollections.observableArrayList();
     // -1 = aucune sélection
     private final IntegerProperty selectedIndex = new SimpleIntegerProperty(-1);
 
@@ -193,8 +195,11 @@ public class MainViewModel {
                     //Next Action
                     selectedIndex.set(program.getCurrenIndex());
                 }
+                errorMessage.set("");
             } catch (ExecutionException e) {
-                errorMessage.set(e.getMessage());
+                selectedIndex.set(program.getCurrenIndex());
+                String msg = e.getMessage();
+                errorMessage.set(msg != null && !msg.isBlank() ? msg : "Erreur d'exécution");
             }
 
     }
@@ -213,8 +218,11 @@ public class MainViewModel {
                 programLoaded.set(false);
                 return;
             }
+            errorMessage.set("");
         } catch (ExecutionException e) {
-            errorMessage.set("Programme invalide : " + e.getMessage());
+            String detail = e.getMessage();
+            errorMessage.set("Programme invalide : "
+                    + (detail != null && !detail.isBlank() ? detail : "erreur inconnue"));
             programLoaded.set(false);
             return;
         }
@@ -230,7 +238,9 @@ public class MainViewModel {
     public void resetExecution() {
         program.resetExecution();
         executionContext.reset();
+        turtleState.set(buildTurtleStateString());
         executionStep.set(0);
+        errorMessage.set("");
      //   selectedIndex.set(observableActions.isEmpty() ? -1 : 0);
     }
 
@@ -371,8 +381,7 @@ public class MainViewModel {
     }
 
 
-    private final ObservableList<VariableRow> observableVariables =
-            FXCollections.observableArrayList();
+
 
     public ObservableList<VariableRow> getObservableVariables() {
         return observableVariables;
