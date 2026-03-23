@@ -111,14 +111,14 @@ public class SceneView extends VBox {
         getChildren().addAll(
                 title,
                 canvasBox,
-                modeBox,
-                speedBox,
-                autoButtons,
                 lblError,
                 lblTurtle,
                 lblVariablesTitle,
                 tableVariables,
-                buttons);
+                modeBox,
+                autoButtons,
+                buttons,
+                speedBox);
 
 
         //config
