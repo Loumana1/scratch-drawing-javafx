@@ -37,7 +37,7 @@ public class ExecutionContext {
         direction = (direction - angle + 360) % 360 ;
     }
     public void turnRight(int angle){
-        direction = (direction - angle) % 360 ;
+        direction = (direction + angle) % 360 ;
     }
     public void penUp(){
         this.penDown = false ;

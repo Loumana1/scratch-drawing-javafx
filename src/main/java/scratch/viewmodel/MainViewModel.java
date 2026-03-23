@@ -308,15 +308,10 @@ public class MainViewModel {
 
     public BooleanBinding canLoad() {
         return Bindings.createBooleanBinding(
-                () -> {
-                    if (observableActions.isEmpty()) return false;
-                    ExecutionContext contextTemp = new ExecutionContext();
-                    for (Action action : observableActions) {
-                        if (!action.isValid(contextTemp)) return false;
-                        action.execute(contextTemp);
-                    }
-                    return true;
-                },
+
+                () -> !observableActions.isEmpty()
+                        && program.isValid(new ExecutionContext()),
+
                 observableActions, executionStep
         );
     }
