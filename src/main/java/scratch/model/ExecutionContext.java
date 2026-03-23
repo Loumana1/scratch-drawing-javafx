@@ -62,6 +62,14 @@ public class ExecutionContext {
     public int getY() {
         return y;
     }
+    public int getPositionTortueX() {
+        return x - DEFAULT_X;
+    }
+
+    public int getPositionTortueY() {
+        return DEFAULT_Y - y;
+    }
+
     public int getDirection() {
         return direction;
     }
