@@ -81,14 +81,10 @@ public class PaletteView extends VBox {
         );
 
         addButton.setOnAction(e -> {
-
-            int index = listView.getSelectionModel().getSelectedIndex();
-
-            if (index == 0) viewModel.addAction(ActionType.MOVE_FORWARD);
-            if (index == 1) viewModel.addAction(ActionType.TURN_LEFT);
-            if (index == 2) viewModel.addAction(ActionType.TURN_RIGHT);
-            if (index == 3) viewModel.addAction(ActionType.PEN_UP);
-            if (index == 4) viewModel.addAction(ActionType.PEN_DOWN);
+            ActionType selected = listView.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                viewModel.addAction(selected);
+            }
         });
 
         // Double_clic
