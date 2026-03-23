@@ -5,5 +5,7 @@ public enum ActionType {
     TURN_LEFT,
     TURN_RIGHT,
     PEN_UP,
-    PEN_DOWN
+    PEN_DOWN,
+    REPEAT,
+    END_REPEAT
 }
