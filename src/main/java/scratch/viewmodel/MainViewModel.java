@@ -70,36 +70,7 @@ public class MainViewModel {
     //actions peuvent être supprimées une fois que createAction() gère tous les types
     // et que la PaletteView appelle addAction(type)
 
-    /*
-    //Button pen up
-    public void addPenUp() {
-        PenUpAction action = new PenUpAction();
-        // mis a jou du model
-        this.program.addAction(action);
-        // ajoute de l'action dans list observabl
-        // C'est CET AJOUT qui va prévenir les Listeners dans Vue
-        this.observableActions.add(action);
-        this.selectedIndex.set(this.observableActions.size() - 1);
-    }
-
-
-
-    //Button pen down
-    public void addPenDown() {
-        PenDownAction action = new PenDownAction();
-        this.program.addAction(action);
-        this.observableActions.add(action);
-        this.selectedIndex.set(this.observableActions.size() - 1);
-    }
-    //Turn Right
-    public void addTurnRight() {
-        TurnRightAction action = new TurnRightAction(90);
-        this.program.addAction(action);
-        this.observableActions.add(action);
-        this.selectedIndex.set(this.observableActions.size() - 1);
-    }
-
-     */
+    
 
     //Move Up
     public void moveUp() {
@@ -380,7 +351,40 @@ public class MainViewModel {
         return selectedIndex.get();
     }
 
+    public ActionDetail getSelectedActionDetail() {
+        Action action = getSelectedAction();
+        if (action == null) return null;
+        return switch (action.getType()) {
+            case TURN_LEFT -> {
+                ParameterizedAction p = (ParameterizedAction) action;
+                yield new ActionDetail("Tourner à gauche de ", true, " Degres", p.getValue());
+            }
+            case TURN_RIGHT -> {
+                ParameterizedAction p = (ParameterizedAction) action;
+                yield new ActionDetail("Tourner à droite de ", true, " Degres", p.getValue());
+            }
+            case MOVE_FORWARD -> {
+                ParameterizedAction p = (ParameterizedAction) action;
+                yield new ActionDetail("Avance de ", true, " Pixels", p.getValue());
+            }
+            case PEN_UP -> new ActionDetail("Lever le stylo ", false, "", 0);
+            case PEN_DOWN -> new ActionDetail("Abaisser le stylo ", false, "", 0);
+        };
+    }
 
+    public boolean tryUpdateSelectedActionValue(int newValue) {
+        Action action = getSelectedAction();
+        if (!(action instanceof ParameterizedAction p)) return false;
+        int oldValue = p.getValue();
+        p.setValue(newValue);
+        ExecutionContext temp = new ExecutionContext();
+        boolean ok = action.isValid(temp);
+        if (!ok) {
+            p.setValue(oldValue); // on annule cote modèle
+            return false;
+        }
+        return true;
+    }
 
 
     public ObservableList<VariableRow> getObservableVariables() {
