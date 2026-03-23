@@ -20,6 +20,19 @@ public class Program {
         actions.add(action);
 
     }
+    //insertion au "milieu" du program
+    public void insertAction(int index, Action action) {
+        if (action == null) {
+            throw new IllegalArgumentException("Action null");
+        }
+        if (index < 0 || index >= actions.size()) {
+            actions.add(action);
+        } else {
+            actions.add(index + 1, action);
+        }
+    }
+
+
     public void removeAction(int index) {
        //index valide ?
         if (index >= 0 && index < actions.size()) {
