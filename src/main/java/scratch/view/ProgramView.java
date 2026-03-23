@@ -97,14 +97,20 @@ public class ProgramView extends VBox {
                     }
                     case REPEAT -> {
                         RepeatAction a = (RepeatAction) action;
-                        circle.setFill(Color.CHOCOLATE);
-                        label.setTextFill(Color.CHOCOLATE);
+                        circle.setFill(Color.LIGHTSEAGREEN);
+                        label.setTextFill(Color.LIGHTSEAGREEN);
                         label.setText(a.toString());
                     }
                     case END_REPEAT -> {
-                        circle.setFill(Color.CHOCOLATE);
-                        label.setTextFill(Color.CHOCOLATE);
+                        circle.setFill(Color.LIGHTSEAGREEN);
+                        label.setTextFill(Color.LIGHTSEAGREEN);
                         label.setText("Fin Repeter");
+                    }
+                    case VAR_DECLARATION -> {
+                        VarDeclarationAction a = (VarDeclarationAction) action;
+                        circle.setFill(Color.LIGHTSEAGREEN);
+                        label.setTextFill(Color.LIGHTSEAGREEN);
+                        label.setText(a.toString());
                     }
                 }
 

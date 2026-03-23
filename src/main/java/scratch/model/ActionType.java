@@ -6,6 +6,9 @@ public enum ActionType {
     TURN_RIGHT,
     PEN_UP,
     PEN_DOWN,
+    VAR_DECLARATION,
+    VAR_ASSIGNMENT,
+    INCREMENT_VARIABLE,
     REPEAT,
     END_REPEAT
 }

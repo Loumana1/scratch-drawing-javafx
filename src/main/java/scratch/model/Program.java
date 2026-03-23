@@ -62,11 +62,23 @@ public class Program {
 
     public boolean isValid(ExecutionContext context) {
 
-        //  une copie du contexte pour la simulation
+        // une copie du contexte pour la simulation
         ExecutionContext tempContext = new ExecutionContext();
         tempContext.reset();
 
+        boolean instructionSeen = false;
+
         for (Action action : actions) {
+
+
+            if (action instanceof VarDeclarationAction) {
+                if (instructionSeen) {
+                    return false;
+                }
+            } else {
+                instructionSeen = true;
+            }
+
             if (!action.isValid(tempContext)) {
                 return false;
             }

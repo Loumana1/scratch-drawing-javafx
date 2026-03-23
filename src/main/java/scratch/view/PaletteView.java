@@ -60,7 +60,7 @@ public class PaletteView extends VBox {
                             case MOVE_FORWARD -> Color.BLUE;
                             case TURN_LEFT, TURN_RIGHT -> Color.RED;
                             case PEN_UP, PEN_DOWN -> Color.GREEN;
-                            case REPEAT , END_REPEAT -> Color.CHOCOLATE;
+                            case REPEAT , END_REPEAT , VAR_DECLARATION , VAR_ASSIGNMENT, INCREMENT_VARIABLE -> Color.LIGHTSEAGREEN;
                         };
                         circle.setFill(color);
                         label.setTextFill(color);
@@ -111,6 +111,9 @@ public class PaletteView extends VBox {
             case PEN_DOWN -> "Abaisser le stylo";
             case REPEAT -> "Repeter";
             case END_REPEAT -> "Fin Repeter";
+            case VAR_ASSIGNMENT -> "Assignation";
+            case VAR_DECLARATION -> "Déclaration variable";
+            case INCREMENT_VARIABLE -> "Inc/Dec variable";
         };
     }
 }
