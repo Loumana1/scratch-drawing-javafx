@@ -103,10 +103,17 @@ public class SceneView extends VBox {
         lblError.setTextFill(Color.RED);
         lblError.setWrapText(true);
 
+        HBox modeBox = new HBox(10 , rbManual , rbAuto);
+        HBox speedBox = new HBox(8 , speedLabel , speedSlider);
+        HBox autoButtons = new HBox(8 , btnExecute , btnStop);
+
 
         getChildren().addAll(
                 title,
                 canvasBox,
+                modeBox,
+                speedBox,
+                autoButtons,
                 lblError,
                 lblTurtle,
                 lblVariablesTitle,
