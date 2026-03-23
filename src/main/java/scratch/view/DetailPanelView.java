@@ -70,7 +70,7 @@ public class DetailPanelView extends TitledPane {
 
             case TURN_LEFT ->{
                 configTextField("Tourner à gauche de ",
-                        (ParameterizedAction) action, 1, 180);
+                        (ParameterizedAction) action);
             txtValue.setDisable(false);
             txtValue.setVisible(true);
             lblPixels.setVisible(true);
@@ -80,7 +80,7 @@ public class DetailPanelView extends TitledPane {
 
             case TURN_RIGHT -> {
                 configTextField("Tourner à droite de ",
-                    (ParameterizedAction) action, 1, 180);
+                    (ParameterizedAction) action);
             txtValue.setDisable(false);
             txtValue.setVisible(true);
             lblPixels.setVisible(true);
@@ -108,7 +108,7 @@ public class DetailPanelView extends TitledPane {
 
             case MOVE_FORWARD -> {
                 configTextField("Avance de ",
-                        (ParameterizedAction) action, 1, 100);
+                        (ParameterizedAction) action);
                 txtValue.setDisable(false);
                 txtValue.setVisible(true);
                 lblPixels.setVisible(true);
@@ -118,7 +118,7 @@ public class DetailPanelView extends TitledPane {
 
         }
     }
-    private void configTextField(String title, ParameterizedAction action, int min, int max) {
+    private void configTextField(String title, ParameterizedAction action) {
         lblDetailTitle.setText(title);
 
         if (currentListener != null){
@@ -130,16 +130,24 @@ public class DetailPanelView extends TitledPane {
 
         // validation txt
         currentListener = ((obs, old, text) -> {
+            lblError.setVisible(false);
+            lblError.setManaged(false);
+
             try {
                 int val = Integer.parseInt(text);
+                int oldValue = action.getValue();
+                action.setValue(val);
 
-                if (val < min || val > max) { // pas dans les born
+                // Le modèle décide via isValid
+                scratch.model.ExecutionContext temp = new scratch.model.ExecutionContext();
+                boolean ok = action.isValid(temp);
+
+                if (!ok) {
+                    // on remets si invalide
+                    action.setValue(oldValue);
                     lblError.setVisible(true);
                     lblError.setManaged(true);
                 } else {
-                    lblError.setVisible(false);
-                    lblError.setManaged(false);
-                    action.setValue(val);
                     programListView.refresh();
                 }
             } catch (NumberFormatException e) { // pans un chiffre
