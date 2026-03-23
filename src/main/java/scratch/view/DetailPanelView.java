@@ -5,11 +5,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import javafx.geometry.Insets;
 import scratch.model.Action;
-import scratch.model.ParameterizedAction;
-import scratch.model.TurnLeftAction;
-import scratch.model.TurnRightAction;
+
+import scratch.viewmodel.ActionDetail;
 import scratch.viewmodel.MainViewModel;
 
 public class DetailPanelView extends TitledPane {
@@ -53,96 +51,82 @@ public class DetailPanelView extends TitledPane {
 
 
     private void updateDetailPane() {
-        Action action = viewModel.getSelectedAction();
-        lblError.setVisible(false);  // reset pour chaque changement
 
-        //Default : pas d'action
-        if (action == null) {
+        lblError.setVisible(false);
+        lblError.setManaged(false);
+
+        ActionDetail detail = viewModel.getSelectedActionDetail();
+
+        if (detail == null) {
             lblDetailTitle.setText("(aucune action sélectionnée)");
             txtValue.setText("");
             txtValue.setDisable(true);
+            txtValue.setVisible(false);
+            lblPixels.setVisible(false);
+            if (currentListener != null) {
+                txtValue.textProperty().removeListener(currentListener);
+                currentListener = null;
+            }
+            return;
+        }
+
+        lblDetailTitle.setText(detail.getTitle());
+
+        if (!detail.isValueEditable()) {
+            // PEN_UP / PEN_DOWN : pas de champ à modifier
+            txtValue.setText("0");
+            txtValue.setDisable(true);
+            txtValue.setVisible(false);
+            lblPixels.setVisible(false);
+
+            if (currentListener != null) {
+                txtValue.textProperty().removeListener(currentListener);
+                currentListener = null;
+            }
+            lblError.setVisible(false);
             lblError.setManaged(false);
             return;
         }
 
-        // cas
-        switch (action.getType()) {
+        // Actions paramétrées : champ visible + validation déléguée au VM
+        txtValue.setDisable(false);
+        txtValue.setVisible(true);
+        lblPixels.setVisible(true);
+        lblPixels.setText(detail.getUnitText());
+        txtValue.setText(String.valueOf(detail.getValue()));
 
-            case TURN_LEFT ->{
-                configTextField("Tourner à gauche de ",
-                        (ParameterizedAction) action, 1, 180);
-            txtValue.setDisable(false);
-            txtValue.setVisible(true);
-            lblPixels.setVisible(true);
-            lblPixels.setText(" Degres");
-            lblError.setManaged(false);
-            }
+        configTextField();
 
-            case TURN_RIGHT -> {
-                configTextField("Tourner à droite de ",
-                    (ParameterizedAction) action, 1, 180);
-            txtValue.setDisable(false);
-            txtValue.setVisible(true);
-            lblPixels.setVisible(true);
-            lblPixels.setText(" Degres");
-            lblError.setManaged(false);
-            }
 
-            case PEN_UP -> {
-                lblDetailTitle.setText("Lever le stylo ");
-                txtValue.setText("0");
-                txtValue.setDisable(true);
-                lblPixels.setVisible(false);
-                lblError.setVisible(false);
-                lblError.setManaged(false);
-            }
-
-            case PEN_DOWN -> {
-                lblDetailTitle.setText("Abaisser le stylo ");
-                txtValue.setText("0");
-                txtValue.setDisable(true);
-                lblPixels.setVisible(false);
-                lblError.setVisible(false);
-                lblError.setManaged(false);
-            }
-
-            case MOVE_FORWARD -> {
-                configTextField("Avance de ",
-                        (ParameterizedAction) action, 1, 100);
-                txtValue.setDisable(false);
-                txtValue.setVisible(true);
-                lblPixels.setVisible(true);
-                lblPixels.setText(" Pixels");
-                lblError.setManaged(false);
-            }
-
-        }
     }
-    private void configTextField(String title, ParameterizedAction action, int min, int max) {
-        lblDetailTitle.setText(title);
+
+    private void configTextField() {
+        lblError.setVisible(false);
+        lblError.setManaged(false);
 
         if (currentListener != null){
             txtValue.textProperty().removeListener(currentListener);
         }
 
-        txtValue.setText(String.valueOf(action.getValue()));
-        txtValue.setDisable(false);
 
         // validation txt
         currentListener = ((obs, old, text) -> {
-            try {
-                int val = Integer.parseInt(text);
+            lblError.setVisible(false);
+            lblError.setManaged(false);
 
-                if (val < min || val > max) { // pas dans les born
+
+            try {
+                //verfie via vue model
+                int val = Integer.parseInt(text);
+                boolean ok = viewModel.tryUpdateSelectedActionValue(val);
+
+                if (!ok) {
                     lblError.setVisible(true);
                     lblError.setManaged(true);
                 } else {
-                    lblError.setVisible(false);
-                    lblError.setManaged(false);
-                    action.setValue(val);
                     programListView.refresh();
                 }
-            } catch (NumberFormatException e) { // pans un chiffre
+            } catch (NumberFormatException e) {
                 lblError.setVisible(true);
                 lblError.setManaged(true);
             }
