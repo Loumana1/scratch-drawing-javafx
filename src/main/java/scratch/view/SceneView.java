@@ -5,10 +5,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -27,9 +24,16 @@ public class SceneView extends VBox {
     private final MainViewModel viewModel;
     private final Label lblTurtle = new Label();
     private final Label lblVariablesTitle = new Label("Variables");
-    private final TableView<VariableRow> tableVariables =
-            new TableView<>();
+    private final TableView<VariableRow> tableVariables = new TableView<>();
     private final Label lblError = new Label();
+    private final RadioButton rbManual = new RadioButton("Execution manuelle");
+    private final RadioButton rbAuto = new RadioButton("Execution automatique");
+    private final ToggleGroup modelGroup = new ToggleGroup();
+    private final Slider speedSlider = new Slider(0.01 , 5.0 , 1.0);
+    private final Label speedLabel = new Label("1.0 s");
+    private final Button btnExecute = new Button("Executer");
+    private final Button btnStop = new Button("Arreter");
+
     public SceneView(MainViewModel viewModel) {
         this.viewModel = viewModel;
         setSpacing(8);
@@ -54,6 +58,31 @@ public class SceneView extends VBox {
         HBox buttons = new HBox(10);
         buttons.setAlignment(Pos.CENTER);
         buttons.getChildren().addAll(btnReset, btnNext);
+        rbManual.setToggleGroup(modelGroup);
+        rbAuto.setToggleGroup(modelGroup);
+        rbManual.setSelected(true);
+        speedSlider.setVisible(false);
+        speedLabel.setVisible(false);
+        speedSlider.setShowTickLabels(true);
+        speedSlider.setShowTickMarks(true);
+
+        modelGroup.selectedToggleProperty().addListener((obs, old , nw) ->{
+            boolean isAuto = (nw == rbAuto);
+            viewModel.autoModeProperty().set(isAuto);
+            speedSlider.setVisible(isAuto);
+            speedLabel.setVisible(isAuto);
+            if (!isAuto) viewModel.stopAutoExecution();
+        });
+
+        speedSlider.valueProperty().addListener((obs , old , nw) ->{
+            viewModel.speedProperty().set(nw.doubleValue());
+            speedLabel.setText(String.format("%.2f s", nw.doubleValue()));
+            if (viewModel.isAutoMode() && viewModel.programLoadedProperty().get()){
+                viewModel.startAutoExecution();
+            }
+        });
+        btnExecute.setOnAction(e -> viewModel.startAutoExecution());
+        btnStop.setOnAction(e-> viewModel.stopAutoExecution());
 
 
 
@@ -74,10 +103,17 @@ public class SceneView extends VBox {
         lblError.setTextFill(Color.RED);
         lblError.setWrapText(true);
 
+        HBox modeBox = new HBox(10 , rbManual , rbAuto);
+        HBox speedBox = new HBox(8 , speedLabel , speedSlider);
+        HBox autoButtons = new HBox(8 , btnExecute , btnStop);
+
 
         getChildren().addAll(
                 title,
                 canvasBox,
+                modeBox,
+                speedBox,
+                autoButtons,
                 lblError,
                 lblTurtle,
                 lblVariablesTitle,

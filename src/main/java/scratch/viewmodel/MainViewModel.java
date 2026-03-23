@@ -1,15 +1,19 @@
 package scratch.viewmodel;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.util.Duration;
 import scratch.model.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +36,9 @@ public class MainViewModel {
     private final BooleanProperty programLoaded = new SimpleBooleanProperty(false);
     private final StringProperty turtleState = new SimpleStringProperty("");
 
+    private final BooleanProperty autoMode = new SimpleBooleanProperty(false);
+    private final DoubleProperty speed = new SimpleDoubleProperty(1.0);
+    private Timeline autoTimeline ;
 
     public MainViewModel(Program program) {
         this.program = program;
@@ -337,6 +344,29 @@ public class MainViewModel {
         executionStep.set(executionStep.get() + 1);
     }
 
+    public void startAutoExecution(){
+        stopAutoExecution();
+
+        autoTimeline = new Timeline(
+                new KeyFrame(Duration.seconds(speed.get()), e -> {
+                    if (program.hasNext()){
+                        executeNext();
+                    } else {
+                        stopAutoExecution();
+                    }
+                })
+        );
+        autoTimeline.setCycleCount(Timeline.INDEFINITE);
+        autoTimeline.play();
+    }
+
+    public void stopAutoExecution(){
+        if (autoTimeline != null){
+            autoTimeline.stop();
+            autoTimeline = null ;
+        }
+    }
+
 
 //----------------------- GETTERS POUR VUE ------------------------
 
@@ -435,4 +465,8 @@ public class MainViewModel {
     public ExecutionContext getExecutionContext()   { return executionContext; }
     public StringProperty errorMessageProperty()   { return errorMessage; }
     public BooleanProperty programLoadedProperty() { return programLoaded; }
+    public BooleanProperty autoModeProperty() { return  autoMode; }
+    public boolean isAutoMode() { return autoMode.get(); }
+    public DoubleProperty speedProperty() { return speed;}
+    public double getSpeed() { return speed.get(); }
 }
