@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import scratch.model.*;
 import scratch.viewmodel.MainViewModel;
+import javafx.geometry.Pos;
 
 public class ProgramView extends VBox {
 
@@ -112,9 +113,20 @@ public class ProgramView extends VBox {
                         label.setTextFill(Color.LIGHTSEAGREEN);
                         label.setText(a.toString());
                     }
+                    case INCREMENT_VARIABLE -> {
+                        circle.setFill(Color.LIGHTSEAGREEN);
+                        label.setTextFill(Color.LIGHTSEAGREEN);
+                        label.setText(action.toString());
+                    }
+                    case VAR_ASSIGNMENT -> {
+                        circle.setFill(Color.LIGHTSEAGREEN);
+                        label.setTextFill(Color.LIGHTSEAGREEN);
+                        label.setText(action.toString());
+                    }
                 }
 
                 HBox box = new HBox(10, circle, label);
+                box.setAlignment(Pos.CENTER_LEFT);
                 box.setPadding(new Insets(5, 0, 5, 5));
 
                 setGraphic(box);

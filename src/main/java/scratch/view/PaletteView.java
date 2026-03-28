@@ -9,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import scratch.model.ActionType;
 import scratch.viewmodel.MainViewModel;
-
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
@@ -66,6 +66,7 @@ public class PaletteView extends VBox {
                         label.setTextFill(color);
 
                         HBox box = new HBox(10, circle, label);
+                        box.setAlignment(Pos.CENTER_LEFT);
                         box.setPadding(new Insets(5, 0, 5, 5));
 
                         setGraphic(box);

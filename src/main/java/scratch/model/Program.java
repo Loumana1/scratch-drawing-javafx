@@ -170,6 +170,9 @@ public class Program {
                         : new RepeatAction(r.getCount());
             }
             case END_REPEAT -> new EndRepeatAction();
+            case VAR_DECLARATION -> new VarDeclarationAction();
+            case VAR_ASSIGNMENT, INCREMENT_VARIABLE -> throw new UnsupportedOperationException("Pas encore codé !");
+
         };
     }
 }

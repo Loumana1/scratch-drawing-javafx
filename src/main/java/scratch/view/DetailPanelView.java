@@ -55,6 +55,25 @@ public class DetailPanelView extends TitledPane {
         lblError.setVisible(false);
         lblError.setManaged(false);
 
+        Action action = viewModel.getSelectedAction();
+        if (action != null && action.getType() == scratch.model.ActionType.VAR_DECLARATION) {
+            scratch.model.VarDeclarationAction varAction = (scratch.model.VarDeclarationAction) action;
+            lblDetailTitle.setText("Déclaration de la variable ");
+
+            txtValue.setDisable(false);
+            txtValue.setVisible(true);
+            lblPixels.setVisible(false);
+
+            if (currentListener != null) {
+                txtValue.textProperty().removeListener(currentListener);
+                currentListener = null;
+            }
+
+            txtValue.setText(varAction.getVarName());
+            configVarTextField(varAction);
+            return;
+        }
+
         ActionDetail detail = viewModel.getSelectedActionDetail();
 
         if (detail == null) {
@@ -98,6 +117,25 @@ public class DetailPanelView extends TitledPane {
         configTextField();
 
 
+    }
+
+    private void configVarTextField(scratch.model.VarDeclarationAction action) {
+        lblError.setVisible(false);
+        lblError.setManaged(false);
+
+        currentListener = ((obs, old, text) -> {
+            if (text == null || text.isBlank() || !text.matches("^[a-zA-Z_][a-zA-Z0-9_]*$")) {
+                lblError.setText("Erreur valeur");
+                lblError.setVisible(true);
+                lblError.setManaged(true);
+            } else {
+                lblError.setVisible(false);
+                lblError.setManaged(false);
+                action.setVarName(text);
+                programListView.refresh();
+            }
+        });
+        txtValue.textProperty().addListener(currentListener);
     }
 
     private void configTextField() {

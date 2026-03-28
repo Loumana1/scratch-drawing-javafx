@@ -331,6 +331,8 @@ public class MainViewModel {
             case PEN_DOWN -> new PenDownAction();
             case REPEAT -> new RepeatAction(4);
             case END_REPEAT -> new EndRepeatAction();
+            case VAR_DECLARATION -> new VarDeclarationAction();
+            case VAR_ASSIGNMENT, INCREMENT_VARIABLE -> throw new UnsupportedOperationException("Pas encore codé !");
         };
     }
 
@@ -411,6 +413,11 @@ public class MainViewModel {
                 yield new ActionDetail("Repeter ", true, " fois", r.getCount());
             }
             case END_REPEAT -> new ActionDetail("Fin repeter", false, "", 0);
+            case VAR_DECLARATION -> new ActionDetail("Déclaration de la variable", false, "", 0);
+            case VAR_ASSIGNMENT -> new ActionDetail("Assignation", false, "", 0);
+            case INCREMENT_VARIABLE -> new ActionDetail("Inc/Dec variable", false, "", 0);
+
+
         };
     }
 
