@@ -311,7 +311,16 @@ public class MainViewModel {
                 () -> {
                     if (observableActions.isEmpty()) return false;
                     ExecutionContext contextTemp = new ExecutionContext();
+                    boolean instructionSeen = false;
+
                     for (Action action : observableActions) {
+
+                        if (action.getType() == scratch.model.ActionType.VAR_DECLARATION) {
+                            if (instructionSeen) return false;
+                        } else {
+                            instructionSeen = true; 
+                        }
+
                         if (!action.isValid(contextTemp)) return false;
                         action.execute(contextTemp);
                     }
