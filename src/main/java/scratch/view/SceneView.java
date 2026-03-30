@@ -61,6 +61,10 @@ public class SceneView extends VBox {
         rbManual.setToggleGroup(modelGroup);
         rbAuto.setToggleGroup(modelGroup);
         rbManual.setSelected(true);
+        btnExecute.setVisible(false);
+        btnExecute.setManaged(false);
+        btnStop.setVisible(false);
+        btnStop.setManaged(false);
         speedSlider.setVisible(false);
         speedLabel.setVisible(false);
         speedSlider.setShowTickLabels(true);
@@ -69,10 +73,26 @@ public class SceneView extends VBox {
         modelGroup.selectedToggleProperty().addListener((obs, old , nw) ->{
             boolean isAuto = (nw == rbAuto);
             viewModel.autoModeProperty().set(isAuto);
+
+            // Slider vitesse
             speedSlider.setVisible(isAuto);
+            speedSlider.setManaged(isAuto);
             speedLabel.setVisible(isAuto);
+            speedLabel.setManaged(isAuto);
+
+            // Boutons auto (Exécuter / Arrêter)
+            btnExecute.setVisible(isAuto);
+            btnExecute.setManaged(isAuto);
+            btnStop.setVisible(isAuto);
+            btnStop.setManaged(isAuto);
+
+            // Bouton manuel (Suivant)
+            btnNext.setVisible(!isAuto);
+            btnNext.setManaged(!isAuto);
+
             if (!isAuto) viewModel.stopAutoExecution();
         });
+
 
         speedSlider.valueProperty().addListener((obs , old , nw) ->{
             viewModel.speedProperty().set(nw.doubleValue());
@@ -111,14 +131,14 @@ public class SceneView extends VBox {
         getChildren().addAll(
                 title,
                 canvasBox,
-                modeBox,
-                speedBox,
-                autoButtons,
                 lblError,
                 lblTurtle,
                 lblVariablesTitle,
                 tableVariables,
-                buttons);
+                modeBox,
+                autoButtons,
+                buttons,
+                speedBox);
 
 
         //config
@@ -156,7 +176,7 @@ public class SceneView extends VBox {
                         .or(viewModel.canExecuteNext().not()));
         viewModel.programLoadedProperty().addListener((obs, old, nw) ->
                 btnReset.setText(nw ? "Ré-initialiser" : "Charger"));
-
+        btnExecute.disableProperty().bind(viewModel.programLoadedProperty().not());
     }
 
 
