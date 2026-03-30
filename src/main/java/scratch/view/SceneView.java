@@ -66,9 +66,13 @@ public class SceneView extends VBox {
         btnStop.setVisible(false);
         btnStop.setManaged(false);
         speedSlider.setVisible(false);
+        speedSlider.setManaged(false);
         speedLabel.setVisible(false);
         speedSlider.setShowTickLabels(true);
         speedSlider.setShowTickMarks(true);
+        speedSlider.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(speedSlider, javafx.scene.layout.Priority.ALWAYS);
+
 
         modelGroup.selectedToggleProperty().addListener((obs, old , nw) ->{
             boolean isAuto = (nw == rbAuto);
@@ -123,9 +127,16 @@ public class SceneView extends VBox {
         lblError.setTextFill(Color.RED);
         lblError.setWrapText(true);
 
-        HBox modeBox = new HBox(10 , rbManual , rbAuto);
-        HBox speedBox = new HBox(8 , speedLabel , speedSlider);
-        HBox autoButtons = new HBox(8 , btnExecute , btnStop);
+        HBox modeBox = new HBox(10, rbAuto, rbManual);
+        modeBox.setAlignment(Pos.CENTER);
+
+        HBox speedBox = new HBox(speedSlider);
+        speedBox.setMaxWidth(Double.MAX_VALUE);
+
+
+        HBox buttonsBox = new HBox(10, btnReset, btnExecute, btnStop, btnNext);
+        buttonsBox.setAlignment(Pos.CENTER);
+
 
 
         getChildren().addAll(
@@ -136,8 +147,7 @@ public class SceneView extends VBox {
                 lblVariablesTitle,
                 tableVariables,
                 modeBox,
-                autoButtons,
-                buttons,
+                buttonsBox,
                 speedBox);
 
 
