@@ -341,7 +341,8 @@ public class MainViewModel {
             case REPEAT -> new RepeatAction(4);
             case END_REPEAT -> new EndRepeatAction();
             case VAR_DECLARATION -> new VarDeclarationAction();
-            case VAR_ASSIGNMENT, INCREMENT_VARIABLE -> throw new UnsupportedOperationException("Pas encore codé !");
+            case VAR_ASSIGNMENT -> new VarAssignmentAction();
+            case INCREMENT_VARIABLE -> new IncrementVariableAction();
         };
     }
 
@@ -468,6 +469,30 @@ public class MainViewModel {
                 return false;
             }
             return ok;
+        }
+        return false;
+    }
+
+    public boolean tryUpdateSelectedActionWithText(String text) {
+        Action action = getSelectedAction();
+        if (action == null) return false;
+
+        // 1. Si on tape un chiffre (ex: "30", "-15"), on réutilise l'ancienne logique
+        if (text.matches("^-?\\d+$")) {
+            return tryUpdateSelectedActionValue(Integer.parseInt(text));
+        }
+
+        // 2. Sinon, si on tape un nom de variable (ex: "var", "score")
+        if (text.matches("^[a-zA-Z_][a-zA-Z0-9_]*$")) {
+            if (action instanceof ParameterizedAction p) {
+                p.setVarName(text);
+                return true;
+            }
+            if (action instanceof RepeatAction r) {
+                r.setCountVarName(text);
+                r.setCountIsVar(true);
+                return true;
+            }
         }
         return false;
     }

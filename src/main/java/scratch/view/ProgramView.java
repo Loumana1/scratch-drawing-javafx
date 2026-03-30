@@ -68,21 +68,24 @@ public class ProgramView extends VBox {
                         MoveForwardAction a = (MoveForwardAction) action;
                         circle.setFill(Color.BLUE);
                         label.setTextFill(Color.BLUE);
-                        label.setText("Avancer de " + a.getValue());
+                        String displayVal = a.isVar() ? a.getVarName() : String.valueOf(a.getValue());
+                        label.setText("Avancer de " + displayVal);
                     }
 
                     case TURN_LEFT -> {
                         TurnLeftAction a = (TurnLeftAction) action;
                         circle.setFill(Color.RED);
                         label.setTextFill(Color.RED);
-                        label.setText("Tourner à gauche de " + a.getValue());
+                        String displayVal = a.isVar() ? a.getVarName() : String.valueOf(a.getValue());
+                        label.setText("Tourner à gauche de " + displayVal);
                     }
 
                     case TURN_RIGHT -> {
                         TurnRightAction a = (TurnRightAction) action;
                         circle.setFill(Color.RED);
                         label.setTextFill(Color.RED);
-                        label.setText("Tourner à droite de " + a.getValue());
+                        String displayVal = a.isVar() ? a.getVarName() : String.valueOf(a.getValue());
+                        label.setText("Tourner à droite de " + displayVal);
                     }
 
                     case PEN_UP -> {

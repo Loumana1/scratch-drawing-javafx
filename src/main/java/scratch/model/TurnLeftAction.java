@@ -24,13 +24,15 @@ public class TurnLeftAction extends ParameterizedAction {
     }
 
     @Override
-    public void execute(ExecutionContext e) {
-        e.turnLeft(getValue());
+    public boolean isValid(ExecutionContext e) {
+        if (isVar()) return true;
+        return isValueValid(getValue());
     }
 
     @Override
-    public boolean isValid(ExecutionContext e) {
-        return isValueValid(getValue());
+    public void execute(ExecutionContext e) {
+        int realValue = resolveValue(e);
+        e.turnLeft(realValue);
     }
 
     @Override
