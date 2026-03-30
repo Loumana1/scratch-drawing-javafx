@@ -9,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import scratch.model.ActionType;
 import scratch.viewmodel.MainViewModel;
-
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
@@ -60,12 +60,13 @@ public class PaletteView extends VBox {
                             case MOVE_FORWARD -> Color.BLUE;
                             case TURN_LEFT, TURN_RIGHT -> Color.RED;
                             case PEN_UP, PEN_DOWN -> Color.GREEN;
-                            case REPEAT , END_REPEAT -> Color.CHOCOLATE;
+                            case REPEAT , END_REPEAT , VAR_DECLARATION , VAR_ASSIGNMENT, INCREMENT_VARIABLE -> Color.LIGHTSEAGREEN;
                         };
                         circle.setFill(color);
                         label.setTextFill(color);
 
                         HBox box = new HBox(10, circle, label);
+                        box.setAlignment(Pos.CENTER_LEFT);
                         box.setPadding(new Insets(5, 0, 5, 5));
 
                         setGraphic(box);
@@ -111,6 +112,9 @@ public class PaletteView extends VBox {
             case PEN_DOWN -> "Abaisser le stylo";
             case REPEAT -> "Repeter";
             case END_REPEAT -> "Fin Repeter";
+            case VAR_ASSIGNMENT -> "Assignation";
+            case VAR_DECLARATION -> "Déclaration variable";
+            case INCREMENT_VARIABLE -> "Inc/Dec variable";
         };
     }
 }

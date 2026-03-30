@@ -118,7 +118,6 @@ public class MainViewModel {
             selectedIndex.set(index + 1);
             program.resetExecution();
             executionStep.set(0);
-            programLoaded.set(false);
         }
     }
 
@@ -129,7 +128,6 @@ public class MainViewModel {
         selectedIndex.set(-1);
         program.resetExecution();
         executionStep.set(0);
-        programLoaded.set(false);
     }
 
     //Boutton Suprrimer une action
@@ -154,7 +152,6 @@ public class MainViewModel {
             // Sinon on a supprimé un élément au milieu, l'index pointe maintenant sur l'élément suivant
             program.resetExecution();
             executionStep.set(0);
-            programLoaded.set(false);
         }
 
     }
@@ -180,7 +177,6 @@ public class MainViewModel {
                 }
                 errorMessage.set("");
             } catch (ExecutionException e) {
-                stopAutoExecution();
                 selectedIndex.set(program.getCurrenIndex());
                 String msg = e.getMessage();
                 errorMessage.set(msg != null && !msg.isBlank() ? msg : "Erreur d'exécution");
@@ -329,6 +325,9 @@ public class MainViewModel {
             case PEN_DOWN -> new PenDownAction();
             case REPEAT -> new RepeatAction(4);
             case END_REPEAT -> new EndRepeatAction();
+            case VAR_DECLARATION -> new VarDeclarationAction();
+            case VAR_ASSIGNMENT -> new VarAssignmentAction();
+            case INCREMENT_VARIABLE -> new IncrementVariableAction();
         };
     }
 
@@ -409,6 +408,11 @@ public class MainViewModel {
                 yield new ActionDetail("Repeter ", true, " fois", r.getCount());
             }
             case END_REPEAT -> new ActionDetail("Fin repeter", false, "", 0);
+            case VAR_DECLARATION -> new ActionDetail("Déclaration de la variable", false, "", 0);
+            case VAR_ASSIGNMENT -> new ActionDetail("Assignation", false, "", 0);
+            case INCREMENT_VARIABLE -> new ActionDetail("Inc/Dec variable", false, "", 0);
+
+
         };
     }
 
@@ -450,6 +454,30 @@ public class MainViewModel {
                 return false;
             }
             return ok;
+        }
+        return false;
+    }
+
+    public boolean tryUpdateSelectedActionWithText(String text) {
+        Action action = getSelectedAction();
+        if (action == null) return false;
+
+        // 1. Si on tape un chiffre (ex: "30", "-15"), on réutilise l'ancienne logique
+        if (text.matches("^-?\\d+$")) {
+            return tryUpdateSelectedActionValue(Integer.parseInt(text));
+        }
+
+        // 2. Sinon, si on tape un nom de variable (ex: "var", "score")
+        if (text.matches("^[a-zA-Z_][a-zA-Z0-9_]*$")) {
+            if (action instanceof ParameterizedAction p) {
+                p.setVarName(text);
+                return true;
+            }
+            if (action instanceof RepeatAction r) {
+                r.setCountVarName(text);
+                r.setCountIsVar(true);
+                return true;
+            }
         }
         return false;
     }

@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import scratch.model.*;
 import scratch.viewmodel.MainViewModel;
+import javafx.geometry.Pos;
 
 public class ProgramView extends VBox {
 
@@ -67,21 +68,24 @@ public class ProgramView extends VBox {
                         MoveForwardAction a = (MoveForwardAction) action;
                         circle.setFill(Color.BLUE);
                         label.setTextFill(Color.BLUE);
-                        label.setText("Avancer de " + a.getValue());
+                        String displayVal = a.isVar() ? a.getVarName() : String.valueOf(a.getValue());
+                        label.setText("Avancer de " + displayVal);
                     }
 
                     case TURN_LEFT -> {
                         TurnLeftAction a = (TurnLeftAction) action;
                         circle.setFill(Color.RED);
                         label.setTextFill(Color.RED);
-                        label.setText("Tourner à gauche de " + a.getValue());
+                        String displayVal = a.isVar() ? a.getVarName() : String.valueOf(a.getValue());
+                        label.setText("Tourner à gauche de " + displayVal);
                     }
 
                     case TURN_RIGHT -> {
                         TurnRightAction a = (TurnRightAction) action;
                         circle.setFill(Color.RED);
                         label.setTextFill(Color.RED);
-                        label.setText("Tourner à droite de " + a.getValue());
+                        String displayVal = a.isVar() ? a.getVarName() : String.valueOf(a.getValue());
+                        label.setText("Tourner à droite de " + displayVal);
                     }
 
                     case PEN_UP -> {
@@ -97,18 +101,35 @@ public class ProgramView extends VBox {
                     }
                     case REPEAT -> {
                         RepeatAction a = (RepeatAction) action;
-                        circle.setFill(Color.CHOCOLATE);
-                        label.setTextFill(Color.CHOCOLATE);
+                        circle.setFill(Color.LIGHTSEAGREEN);
+                        label.setTextFill(Color.LIGHTSEAGREEN);
                         label.setText(a.toString());
                     }
                     case END_REPEAT -> {
-                        circle.setFill(Color.CHOCOLATE);
-                        label.setTextFill(Color.CHOCOLATE);
+                        circle.setFill(Color.LIGHTSEAGREEN);
+                        label.setTextFill(Color.LIGHTSEAGREEN);
                         label.setText("Fin Repeter");
+                    }
+                    case VAR_DECLARATION -> {
+                        VarDeclarationAction a = (VarDeclarationAction) action;
+                        circle.setFill(Color.LIGHTSEAGREEN);
+                        label.setTextFill(Color.LIGHTSEAGREEN);
+                        label.setText(a.toString());
+                    }
+                    case INCREMENT_VARIABLE -> {
+                        circle.setFill(Color.LIGHTSEAGREEN);
+                        label.setTextFill(Color.LIGHTSEAGREEN);
+                        label.setText(action.toString());
+                    }
+                    case VAR_ASSIGNMENT -> {
+                        circle.setFill(Color.LIGHTSEAGREEN);
+                        label.setTextFill(Color.LIGHTSEAGREEN);
+                        label.setText(action.toString());
                     }
                 }
 
                 HBox box = new HBox(10, circle, label);
+                box.setAlignment(Pos.CENTER_LEFT);
                 box.setPadding(new Insets(5, 0, 5, 5));
 
                 setGraphic(box);

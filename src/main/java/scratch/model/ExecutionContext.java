@@ -4,6 +4,8 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ExecutionContext {
     private static final int DEFAULT_X = 250;
@@ -15,12 +17,32 @@ public class ExecutionContext {
     private boolean penDown ;
     private List<Segment> segments ;
     private Deque<int[]> repeatStack = new ArrayDeque<>();
+    private Map<String, Integer> variables;
 
     public ExecutionContext(){
         this.segments = new ArrayList<>();
+        this.variables = new HashMap<>();
         reset();
     }
+
+
     // FONCTION
+
+
+    public void declareVariable(String name) {
+        variables.put(name, 0);
+    }
+
+    public void setVariable(String name, int val) {
+        if (variables.containsKey(name)) {
+            variables.put(name, val);
+        }
+    }
+
+    public int getVariable(String name) {
+        return variables.getOrDefault(name, 0);
+    }
+
 
     public void move(int distance){
         double radians =  Math.toRadians(direction -90);
@@ -52,6 +74,7 @@ public class ExecutionContext {
         penDown = DEFAULT_PEN_DOWN ;
         segments.clear();
         repeatStack.clear();
+        variables.clear();
     }
 
     // GETTERS
