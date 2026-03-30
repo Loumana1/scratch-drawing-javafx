@@ -89,6 +89,7 @@ public class MainViewModel {
             this.selectedIndex.set(index - 1);
             program.resetExecution();
             executionStep.set(0);
+            programLoaded.set(false);
         }
     }
 
@@ -102,6 +103,7 @@ public class MainViewModel {
             this.selectedIndex.set(index + 1);
             program.resetExecution();
             executionStep.set(0);
+            programLoaded.set(false);
         }
 
     }
@@ -116,6 +118,7 @@ public class MainViewModel {
             selectedIndex.set(index + 1);
             program.resetExecution();
             executionStep.set(0);
+            programLoaded.set(false);
         }
     }
 
@@ -126,6 +129,7 @@ public class MainViewModel {
         selectedIndex.set(-1);
         program.resetExecution();
         executionStep.set(0);
+        programLoaded.set(false);
     }
 
     //Boutton Suprrimer une action
@@ -150,6 +154,7 @@ public class MainViewModel {
             // Sinon on a supprimé un élément au milieu, l'index pointe maintenant sur l'élément suivant
             program.resetExecution();
             executionStep.set(0);
+            programLoaded.set(false);
         }
 
     }
@@ -175,6 +180,7 @@ public class MainViewModel {
                 }
                 errorMessage.set("");
             } catch (ExecutionException e) {
+                stopAutoExecution();
                 selectedIndex.set(program.getCurrenIndex());
                 String msg = e.getMessage();
                 errorMessage.set(msg != null && !msg.isBlank() ? msg : "Erreur d'exécution");
@@ -308,16 +314,8 @@ public class MainViewModel {
 
     public BooleanBinding canLoad() {
         return Bindings.createBooleanBinding(
-                () -> {
-                    if (observableActions.isEmpty()) return false;
-                    ExecutionContext contextTemp = new ExecutionContext();
-                    for (Action action : observableActions) {
-                        if (!action.isValid(contextTemp)) return false;
-                        action.execute(contextTemp);
-                    }
-                    return true;
-                },
-                observableActions, executionStep
+                () -> !observableActions.isEmpty(),
+                observableActions
         );
     }
 
