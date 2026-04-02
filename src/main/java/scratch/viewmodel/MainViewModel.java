@@ -53,14 +53,23 @@ public class MainViewModel {
     // Methode générique---> la Palette passe le type,  ViewModel crée l'action
     public void addAction(ActionType type) {
         Action action = createAction(type);
-        program.addAction(action);
-        observableActions.add(action);
-        selectedIndex.set(-1);
+
+        int idx = selectedIndex.get();
+
+        if (idx >= 0 && idx < observableActions.size()) {
+            program.insertAction(idx, action);
+            observableActions.add(idx + 1, action);
+            selectedIndex.set(idx + 1);
+        } else {
+            program.addAction(action);
+            observableActions.add(action);
+            selectedIndex.set(observableActions.size() - 1);
+        }
         program.resetExecution();
         executionStep.set(0);
-       programLoaded.set(false);
+        programLoaded.set(false);
+        turtleState.set(buildTurtleStateString());
     }
-
     // Zone de detail: choisir quel template d'info aficher
     public Action getSelectedAction() {
         int idx = selectedIndex.get();
