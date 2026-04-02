@@ -9,69 +9,93 @@ import java.util.Map;
 
 public class ExecutionContext {
     private static final int DEFAULT_X = 250;
-    private static final int DEFAULT_Y = 250 ;
-    private static final int DEFAULT_DIRECTION = 0 ;
-    private static final boolean DEFAULT_PEN_DOWN = true ;
+    private static final int DEFAULT_Y = 250;
+    private static final int DEFAULT_DIRECTION = 0;
+    private static final boolean DEFAULT_PEN_DOWN = true;
 
-    private int x , y , direction ;
-    private boolean penDown ;
-    private List<Segment> segments ;
+    private int x, y, direction;
+    private boolean penDown;
+    private List<Segment> segments;
     private Deque<int[]> repeatStack = new ArrayDeque<>();
-    private Map<String, Integer> variables;
+    private final Map<String, Integer> variables;
 
-    public ExecutionContext(){
+    public ExecutionContext() {
         this.segments = new ArrayList<>();
         this.variables = new HashMap<>();
         reset();
     }
 
-
     // FONCTION
 
-
     public void declareVariable(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Nom de variable vide");
+        }
+
+        if (!name.matches("[A-Za-z_][A-Za-z0-9_]*")) {
+            throw new IllegalArgumentException("Nom de variable invalide : " + name);
+        }
+        if (variables.containsKey(name)) {
+            throw new IllegalArgumentException("Variable déjà déclarée : " + name);
+        }
         variables.put(name, 0);
     }
 
+    public boolean hasVariable(String name) {
+        return variables.containsKey(name);
+    }
+
     public void setVariable(String name, int val) {
-        if (variables.containsKey(name)) {
-            variables.put(name, val);
+        if (!variables.containsKey(name)) {
+            throw new IllegalArgumentException("Variable non déclarée : " + name);
         }
+        variables.put(name, val);
     }
 
     public int getVariable(String name) {
-        return variables.getOrDefault(name, 0);
+        if (!variables.containsKey(name)) {
+            throw new IllegalArgumentException("Variable non déclarée : " + name);
+        }
+        return variables.get(name);
     }
 
+    public Map<String, Integer> getVariablesSnapshot() {
+        return new HashMap<>(variables);
+    }
 
-    public void move(int distance){
-        double radians =  Math.toRadians(direction -90);
-        int oldX = x , oldY = y ;
+    public void move(int distance) {
+        double radians = Math.toRadians(direction - 90);
+        int oldX = x, oldY = y;
 
         x += (int) Math.round(distance * Math.cos(radians));
         y += (int) Math.round(distance * Math.sin(radians));
 
         if (penDown) {
-            segments.add(new Segment(oldX , oldY , x , y));
+            segments.add(new Segment(oldX, oldY, x, y));
         }
     }
-    public void turnLeft(int angle){
-        direction = (direction - angle + 360) % 360 ;
+
+    public void turnLeft(int angle) {
+        direction = (direction - angle + 360) % 360;
     }
-    public void turnRight(int angle){
-        direction = (direction + angle) % 360 ;
+
+    public void turnRight(int angle) {
+        direction = (direction + angle) % 360;
     }
-    public void penUp(){
-        this.penDown = false ;
+
+    public void penUp() {
+        this.penDown = false;
     }
-    public void penDown(){
-        this.penDown = true ;
+
+    public void penDown() {
+        this.penDown = true;
     }
-    public void reset(){
-        x = DEFAULT_X ;
-        y = DEFAULT_Y ;
-        direction = DEFAULT_DIRECTION ;
-        penDown = DEFAULT_PEN_DOWN ;
+
+    public void reset() {
+        x = DEFAULT_X;
+        y = DEFAULT_Y;
+        direction = DEFAULT_DIRECTION;
+        penDown = DEFAULT_PEN_DOWN;
         segments.clear();
         repeatStack.clear();
         variables.clear();
@@ -82,9 +106,11 @@ public class ExecutionContext {
     public int getX() {
         return x;
     }
+
     public int getY() {
         return y;
     }
+
     public int getPositionTortueX() {
         return x - DEFAULT_X;
     }
@@ -96,19 +122,22 @@ public class ExecutionContext {
     public int getDirection() {
         return direction;
     }
+
     public List<Segment> getSegments() {
         return segments;
     }
-    public int getSegmentsCount(List<Segment> segments){
+
+    public int getSegmentsCount(List<Segment> segments) {
         return segments.size();
     }
-    public boolean isPenDown(){
+
+    public boolean isPenDown() {
         return penDown;
     }
 
     // Empiler nouvelle Boucle
-    public void pushRepeat(int repeatIndex , int iterations) {
-        repeatStack.push(new int[]{ repeatIndex , iterations });
+    public void pushRepeat(int repeatIndex, int iterations) {
+        repeatStack.push(new int[] { repeatIndex, iterations });
     }
 
     // Regarder la boucle en cours sans retirer

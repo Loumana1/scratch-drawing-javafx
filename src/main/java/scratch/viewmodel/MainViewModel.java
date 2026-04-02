@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public class MainViewModel {
@@ -177,7 +178,7 @@ public class MainViewModel {
 
 
                 program.executeNext(executionContext);
-
+                refreshVariablesFromContext();
                 // Met à jour la zone info pour l'état de la tortue et des variables
                 turtleState.set(buildTurtleStateString());
 
@@ -223,6 +224,7 @@ public class MainViewModel {
             executionContext.reset();
             program.resetExecution();
             programLoaded.set(true);
+            refreshVariablesFromContext();
             turtleState.set(buildTurtleStateString());
 
 
@@ -231,6 +233,7 @@ public class MainViewModel {
     public void resetExecution() {
         program.resetExecution();
         executionContext.reset();
+        refreshVariablesFromContext();
         turtleState.set(buildTurtleStateString());
         executionStep.set(0);
         errorMessage.set("");
@@ -287,9 +290,7 @@ public class MainViewModel {
         int direction = executionContext.getDirection();
         int angleAffiche = Math.min(direction, 360 - direction);
 
-        return "Tortue: " + "x = " + x +
-                ", y = " + y +
-                ", direction = " + angleAffiche + "°";
+        return "Tortue : x = " + x + ", y = " + y + ", direction = " + angleAffiche + " °";
     }
 
 
@@ -495,6 +496,14 @@ public class MainViewModel {
         return false;
     }
 
+
+    private void refreshVariablesFromContext() {
+        observableVariables.clear();
+        Map<String, Integer> vars = executionContext.getVariablesSnapshot();
+        for (Map.Entry<String, Integer> entry : vars.entrySet()) {
+            observableVariables.add(new VariableRow(entry.getKey(), entry.getValue()));
+        }
+    }
 
     public ObservableList<VariableRow> getObservableVariables() {
         return observableVariables;
