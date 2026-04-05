@@ -123,10 +123,6 @@ public class SceneView extends VBox {
         lblTurtle.setStyle("-fx-font-size: 12px;");
         lblVariablesTitle.setStyle("-fx-font-weight: bold;");
 
-        lblError.textProperty().bind(viewModel.errorMessageProperty());
-        lblError.setTextFill(Color.RED);
-        lblError.setWrapText(true);
-
         HBox modeBox = new HBox(10, rbAuto, rbManual);
         modeBox.setAlignment(Pos.CENTER);
 
@@ -142,7 +138,6 @@ public class SceneView extends VBox {
         getChildren().addAll(
                 title,
                 canvasBox,
-                lblError,
                 lblTurtle,
                 lblVariablesTitle,
                 tableVariables,

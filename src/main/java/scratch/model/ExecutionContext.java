@@ -47,14 +47,17 @@ public class ExecutionContext {
 
     public void setVariable(String name, int val) {
         if (!variables.containsKey(name)) {
-            throw new IllegalArgumentException("Variable non déclarée : " + name);
+            throw new ExecutionException("Variable non déclarée : " + name);
         }
         variables.put(name, val);
     }
 
     public int getVariable(String name) {
+        //getOrDefault faisait croire qu’une var inexistante vaut default
+        //on veux verifier le key (var) et envoyer une erreur
+        // si elle existe pas  avant de la consulter son value
         if (!variables.containsKey(name)) {
-            throw new IllegalArgumentException("Variable non déclarée : " + name);
+            throw new ExecutionException("Variable indéfinie : " + name);
         }
         return variables.get(name);
     }

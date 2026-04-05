@@ -18,6 +18,7 @@ public class DetailPanelView extends TitledPane {
     private final TextField txtValue = new TextField();
     private final Label lblError = new Label("Error valeur");
     private final Label lblPixels = new Label("");
+    private final Label lblRuntimeError = new Label();
 
     private final TextField txtTargetVar;
     private final Label lblAssignValue;
@@ -58,6 +59,11 @@ public class DetailPanelView extends TitledPane {
 
         detailPane.getChildren().addAll(row, lblError);
         setContent(detailPane);
+
+        lblRuntimeError.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+        lblRuntimeError.setWrapText(true);
+        lblRuntimeError.textProperty().bind(viewModel.errorMessageProperty());
+        detailPane.getChildren().add(lblRuntimeError);
 
         viewModel.selectedIndexProperty().addListener((obs, old, nw) -> updateDetailPane());
     }

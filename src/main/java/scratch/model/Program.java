@@ -73,32 +73,39 @@ public class Program {
 
     //Methodes d'execution
 
-    public boolean isValid(ExecutionContext context) {
+    public Boolean isValid(ExecutionContext context) {
 
         // une copie du contexte pour la simulation
+        //Sert essentiellemnt a definir  si le boutton chargé va etre actif
+        // si on repart d’un contexte initial (reset),
+        // et on reinsert tout les action,
+        // est-ce que ce programme est cohérent ?
         ExecutionContext tempContext = new ExecutionContext();
         tempContext.reset();
 
         boolean instructionSeen = false;
+        try {
+            for (Action action : actions) {
 
-        for (Action action : actions) {
 
+                if (action instanceof VarDeclarationAction) {
+                    if (instructionSeen) {
+                        return false;
+                    }
+                } else {
+                    instructionSeen = true;
+                }
 
-            if (action instanceof VarDeclarationAction) {
-                if (instructionSeen) {
+                if (!action.isValid(tempContext)) {
                     return false;
                 }
-            } else {
-                instructionSeen = true;
+                action.execute(tempContext);
             }
+            return true;
+        } catch (ExecutionException e) {
 
-            if (!action.isValid(tempContext)) {
-                return false;
-            }
-            action.execute(tempContext);
+            return true;
         }
-
-        return true;
     }
 
     public void executeNext(ExecutionContext context){

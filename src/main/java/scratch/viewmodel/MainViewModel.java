@@ -40,6 +40,7 @@ public class MainViewModel {
     private final BooleanProperty autoMode = new SimpleBooleanProperty(false);
     private final DoubleProperty speed = new SimpleDoubleProperty(1.0);
     private Timeline autoTimeline ;
+    private final IntegerProperty programChangeCounter = new SimpleIntegerProperty(0);
 
     public MainViewModel(Program program) {
         this.program = program;
@@ -70,8 +71,11 @@ public class MainViewModel {
         executionStep.set(0);
         programLoaded.set(false);
         turtleState.set(buildTurtleStateString());
+        notifyProgramChanged();
     }
-    // Zone de detail: choisir quel template d'info aficher
+
+
+
     public Action getSelectedAction() {
         int idx = selectedIndex.get();
         // quel index est sélectionné ?
@@ -84,8 +88,7 @@ public class MainViewModel {
         return null;
 
     }
-    //actions peuvent être supprimées une fois que createAction() gère tous les types
-    // et que la PaletteView appelle addAction(type)
+
 
 
 
@@ -101,6 +104,7 @@ public class MainViewModel {
             executionStep.set(0);
             programLoaded.set(false);
         }
+        notifyProgramChanged();
     }
 
     //Move Down
@@ -115,6 +119,7 @@ public class MainViewModel {
             executionStep.set(0);
             programLoaded.set(false);
         }
+        notifyProgramChanged();
 
     }
 
@@ -130,6 +135,7 @@ public class MainViewModel {
             executionStep.set(0);
             programLoaded.set(false);
         }
+        notifyProgramChanged();
     }
 
     // Boutton vider
@@ -140,6 +146,12 @@ public class MainViewModel {
         program.resetExecution();
         executionStep.set(0);
         programLoaded.set(false);
+        errorMessage.set("");
+        executionContext.reset();
+        refreshVariablesFromContext();
+        turtleState.set(buildTurtleStateString());
+        stopAutoExecution();
+        notifyProgramChanged();
     }
 
     //Boutton Suprrimer une action
@@ -153,7 +165,7 @@ public class MainViewModel {
             //supp de la liste Observable m-a-j la Vue graphic)
             this.observableActions.remove(index);
 
-            // Si la liste est maintenant vide, on désélectionne (-1)
+            // Si la liste est maintenant vide, on désélectionne
             if (this.observableActions.isEmpty()) {
                 this.selectedIndex.set(-1);
             }
@@ -161,11 +173,12 @@ public class MainViewModel {
             else if (index >= this.observableActions.size()) {
                 this.selectedIndex.set(this.observableActions.size() - 1);
             }
-            // Sinon on a supprimé un élément au milieu, l'index pointe maintenant sur l'élément suivant
+            // Sinon on a supprimé un élément au milieu
             program.resetExecution();
             executionStep.set(0);
             programLoaded.set(false);
         }
+        notifyProgramChanged();
 
     }
 
@@ -179,13 +192,12 @@ public class MainViewModel {
 
                 program.executeNext(executionContext);
                 refreshVariablesFromContext();
-                // Met à jour la zone info pour l'état de la tortue et des variables
+                // Met à jour la zone info
                 turtleState.set(buildTurtleStateString());
 
                 //Declenche le redessin du Canvas
                 executionStep.set(executionStep.get() + 1);
                 if (program.hasNext()) {
-                    //Next Action
                     selectedIndex.set(program.getCurrenIndex());
                 }
                 errorMessage.set("");
@@ -203,7 +215,7 @@ public class MainViewModel {
         program.resetExecution();
         executionStep.set(0);
 
-        try {
+
 
 
             // Valider le programme avant de le charger
@@ -213,14 +225,7 @@ public class MainViewModel {
                 return;
             }
             errorMessage.set("");
-        } catch (ExecutionException e) {
-            String detail = e.getMessage();
-            errorMessage.set("Programme invalide : "
-                    + (detail != null && !detail.isBlank() ? detail : "erreur inconnue"));
-            programLoaded.set(false);
-            return;
-        }
-            // Re-reset après la validation
+
             executionContext.reset();
             program.resetExecution();
             programLoaded.set(true);
@@ -324,9 +329,14 @@ public class MainViewModel {
 
     public BooleanBinding canLoad() {
         return Bindings.createBooleanBinding(
-                () -> !observableActions.isEmpty(),
-                observableActions
+                () -> !observableActions.isEmpty()
+                && program.isValid(new ExecutionContext()),
+        observableActions,
+                programChangeCounter
         );
+    }
+    private void notifyProgramChanged() {
+        programChangeCounter.set(programChangeCounter.get() + 1);
     }
 
 
@@ -377,7 +387,10 @@ public class MainViewModel {
             autoTimeline = null ;
         }
     }
-
+    public void notifyProgramContentChanged() {
+        errorMessage.set("");
+        notifyProgramChanged();
+    }
 
 //----------------------- GETTERS POUR VUE ------------------------
 

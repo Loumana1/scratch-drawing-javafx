@@ -134,9 +134,23 @@ public class ProgramView extends VBox {
 
                 setGraphic(box);
                 setText(null);
+
+                // Encadrer en rouge erreur
+                boolean hasError = viewModel.errorMessageProperty().get() != null
+                        && !viewModel.errorMessageProperty().get().isEmpty();
+                boolean isSelected = getIndex() == viewModel.getSelectedIndex();
+                if (hasError && isSelected) {
+                    setStyle("-fx-border-color: red; -fx-border-width: 2;");
+                } else {
+                    setStyle("");
+                }
+                setGraphic(box);
+                setText(null);
+
             }
         });
-
+        // Forcer le rrefresh qd nouvelle erreur
+        viewModel.errorMessageProperty().addListener((obs, old, nw) -> programList.refresh());
         HBox buttons = new HBox(10);
 
 
