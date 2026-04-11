@@ -119,7 +119,8 @@ public class Program {
 
         Action a = actions.get(currenIndex);
 
-        if ( a instanceof RepeatAction ra) {
+        if ( a.getType() == ActionType.REPEAT) {
+            RepeatAction ra = (RepeatAction) a ;
             int n = ra.resolveCount(context);
             if (n <= 0) {
                 currenIndex = findEndRepeat(currenIndex) + 1;
@@ -127,7 +128,7 @@ public class Program {
                 context.pushRepeat(currenIndex , n - 1);
                 currenIndex++ ;
             }
-        } else if (a instanceof EndRepeatAction) {
+        } else if (a.getType() == ActionType.END_REPEAT) {
             if (context.hasRepeat()) {
                 int[] top = context.peekRepeat();
                 if (top[1] > 0) {
@@ -148,9 +149,9 @@ public class Program {
     private int findEndRepeat(int from) {
         int count = 0 ;
         for (int i = from; i < actions.size(); i++) {
-            if (actions.get(i) instanceof RepeatAction)
+            if (actions.get(i).getType() == ActionType.REPEAT)
                 count++ ;
-            else if (actions.get(i) instanceof  EndRepeatAction) {
+            else if (actions.get(i).getType() == ActionType.END_REPEAT) {
                 if (--count == 0)
                     return  i;
             }
