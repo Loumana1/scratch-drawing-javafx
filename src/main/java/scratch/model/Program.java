@@ -84,10 +84,9 @@ public class Program {
         tempContext.reset();
 
         boolean instructionSeen = false;
+        int repeatDepth = 0;
         try {
             for (Action action : actions) {
-
-
                 if (action instanceof VarDeclarationAction) {
                     if (instructionSeen) {
                         return false;
@@ -95,13 +94,19 @@ public class Program {
                 } else {
                     instructionSeen = true;
                 }
+                if (action instanceof RepeatAction){
+                    repeatDepth++;
+                } else if (action instanceof EndRepeatAction) {
+                    repeatDepth--;
+                    if (repeatDepth < 0) return false;
+                }
 
                 if (!action.isValid(tempContext)) {
                     return false;
                 }
                 action.execute(tempContext);
             }
-            return true;
+            return repeatDepth == 0;
         } catch (ExecutionException e) {
 
             return false;
