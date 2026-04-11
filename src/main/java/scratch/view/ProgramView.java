@@ -127,10 +127,27 @@ public class ProgramView extends VBox {
                         label.setText(action.toString());
                     }
                 }
+                // Profondeur d indentation
+                int depth = 0 ;
+                int currentIdx = getIndex();
+                for (int i = 0; i < currentIdx; i++) {
+                    Action a = getListView().getItems().get(i);
+                    if (a.getType() == ActionType.REPEAT)
+                        depth++;
+                    else if (a.getType() == ActionType.END_REPEAT)
+                        depth--;
+                }
+                // EndRepeat au meme niveau que repeat
+                if (action.getType() == ActionType.END_REPEAT)
+                    depth--;
+                if (depth < 0)
+                    depth = 0 ;
+
+                int leftPadding = 5 + (depth * 20);
 
                 HBox box = new HBox(10, circle, label);
                 box.setAlignment(Pos.CENTER_LEFT);
-                box.setPadding(new Insets(5, 0, 5, 5));
+                box.setPadding(new Insets(5, 0, 5, leftPadding));
 
                 setGraphic(box);
                 setText(null);

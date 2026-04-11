@@ -31,7 +31,7 @@ public class RepeatAction extends Action {
 
     @Override
     public boolean isValid(ExecutionContext e) {
-        return countIsVar || count > 0;
+        return countIsVar || count > 0 ;
     }
 
     @Override
