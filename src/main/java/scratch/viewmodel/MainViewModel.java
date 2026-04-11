@@ -41,7 +41,6 @@ public class MainViewModel {
     private final DoubleProperty speed = new SimpleDoubleProperty(1.0);
     private Timeline autoTimeline ;
     private final IntegerProperty programChangeCounter = new SimpleIntegerProperty(0);
-
     public MainViewModel(Program program) {
         this.program = program;
         // initialisation liste observable
@@ -205,7 +204,7 @@ public class MainViewModel {
                 stopAutoExecution();
                 selectedIndex.set(program.getCurrenIndex());
                 String msg = e.getMessage();
-                errorMessage.set(msg != null && !msg.isBlank() ? msg : "Erreur d'exécution");
+                errorMessage.set(msg != null && !msg.isBlank() ? msg : "Runtime");
             }
 
     }
@@ -220,7 +219,7 @@ public class MainViewModel {
 
             // Valider le programme avant de le charger
             if (!program.isValid(executionContext)) {
-                errorMessage.set("Programme invalide : vérifiez vos actions");
+                errorMessage.set("Runtime");
                 programLoaded.set(false);
                 return;
             }

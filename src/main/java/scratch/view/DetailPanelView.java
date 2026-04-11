@@ -27,6 +27,7 @@ public class DetailPanelView extends TitledPane {
 
     private VBox detailPane = new VBox(5);
     private javafx.beans.value.ChangeListener<String> currentListener;
+    private javafx.beans.value.ChangeListener<String> targetVarListener;
 
     public DetailPanelView(MainViewModel viewModel, ListView<Action> programListView) {
         this.viewModel = viewModel;
@@ -69,6 +70,8 @@ public class DetailPanelView extends TitledPane {
     }
 
     private void updateDetailPane() {
+        detachTargetVarListener();
+
         lblError.setVisible(false);
         lblError.setManaged(false);
 
@@ -228,6 +231,7 @@ public class DetailPanelView extends TitledPane {
                 lblError.setManaged(false);
                 action.setVarName(text);
                 programListView.refresh();
+                viewModel.notifyProgramContentChanged();
             }
         });
         txtValue.textProperty().addListener(currentListener);
@@ -260,6 +264,7 @@ public class DetailPanelView extends TitledPane {
                 lblError.setManaged(true);
             } else {
                 programListView.refresh();
+                viewModel.notifyProgramContentChanged();
             }
         });
         txtValue.textProperty().addListener(currentListener);
@@ -270,7 +275,7 @@ public class DetailPanelView extends TitledPane {
         lblError.setVisible(false);
         lblError.setManaged(false);
 
-        txtTargetVar.textProperty().addListener((obs, old, text) -> {
+            targetVarListener = (obs, old, text) ->{
             if (text == null || text.isBlank() || !text.matches("^[a-zA-Z_][a-zA-Z0-9_]*$")) {
                 lblError.setText("Erreur : Nom cible invalide");
                 lblError.setVisible(true);
@@ -280,8 +285,10 @@ public class DetailPanelView extends TitledPane {
                 lblError.setManaged(false);
                 action.setTargetVar(text);
                 programListView.refresh();
+                viewModel.notifyProgramContentChanged();
             }
-        });
+        };
+        txtTargetVar.textProperty().addListener(targetVarListener);
 
         currentListener = ((obs, old, text) -> {
             if (text == null || text.isBlank() || (!text.matches("^-?\\d+$") && !text.matches("^[a-zA-Z_][a-zA-Z0-9_]*$"))) {
@@ -293,6 +300,7 @@ public class DetailPanelView extends TitledPane {
                 lblError.setManaged(false);
                 action.setValue(text);
                 programListView.refresh();
+                viewModel.notifyProgramContentChanged();
             }
         });
         txtValue.textProperty().addListener(currentListener);
@@ -316,7 +324,7 @@ public class DetailPanelView extends TitledPane {
         lblError.setVisible(false);
         lblError.setManaged(false);
 
-        txtTargetVar.textProperty().addListener((obs, old, text) -> {
+        targetVarListener = (obs, old, text) -> {
             if (text == null || text.isBlank() || !text.matches("^[a-zA-Z_][a-zA-Z0-9_]*$")) {
                 lblError.setText("Erreur : Nom cible invalide");
                 lblError.setVisible(true);
@@ -326,8 +334,10 @@ public class DetailPanelView extends TitledPane {
                 lblError.setManaged(false);
                 action.setTargetVar(text);
                 programListView.refresh();
+                viewModel.notifyProgramContentChanged();
             }
-        });
+        };
+        txtTargetVar.textProperty().addListener(targetVarListener);
 
         currentListener = ((obs, old, text) -> {
             if (text == null || text.isBlank() || (!text.matches("^-?\\d+$") && !text.matches("^[a-zA-Z_][a-zA-Z0-9_]*$"))) {
@@ -339,6 +349,7 @@ public class DetailPanelView extends TitledPane {
                 lblError.setManaged(false);
                 action.setValue(text);
                 programListView.refresh();
+                viewModel.notifyProgramContentChanged();
             }
         });
         txtValue.textProperty().addListener(currentListener);
@@ -355,5 +366,12 @@ public class DetailPanelView extends TitledPane {
             int newVal = currentVal + delta;
             txtValue.setText(String.valueOf(newVal));
         } catch (NumberFormatException ex) {}
+    }
+
+    private void detachTargetVarListener() {
+        if (targetVarListener != null) {
+            txtTargetVar.textProperty().removeListener(targetVarListener);
+            targetVarListener = null;
+        }
     }
 }

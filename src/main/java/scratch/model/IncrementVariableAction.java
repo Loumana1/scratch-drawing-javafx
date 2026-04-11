@@ -28,14 +28,26 @@ public class IncrementVariableAction extends Action {
         // On récupère la valeur actuelle de la variable
         int currentVal = e.getVariable(targetVar);
         // On additionne les deux et on sauvegarde !
-        e.setVariable(targetVar, currentVal + step);
+
+        int newVal = currentVal + step;
+        if (newVal > 100) {
+            throw new ExecutionException(
+                    "La variable " + targetVar + " dépasse 100 (" + newVal + ")");
+        }
+        e.setVariable(targetVar, newVal);
     }
 
     @Override
     public boolean isValid(ExecutionContext e) {
         if (targetVar == null || targetVar.isBlank()) return false;
         if (value == null || value.isBlank()) return false;
-        return true;
+        if (!e.hasVariable(targetVar)) return false;
+        try {
+            Integer.parseInt(value.trim());
+            return true;
+        } catch (NumberFormatException ex) {
+            return e.hasVariable(value.trim());
+        }
     }
 
     private int resolveValue(String valStr, ExecutionContext e) {

@@ -24,6 +24,10 @@ public class VarAssignmentAction extends Action{
     @Override
     public void execute(ExecutionContext e) {
         int resolvedValue = resolveValue(value, e);
+        if (resolvedValue > 100) {
+            throw new ExecutionException(
+                    "La variable " + targetVar + " dépasse 100 (" + resolvedValue + ")");
+        }
         e.setVariable(targetVar, resolvedValue);
     }
 
@@ -31,7 +35,13 @@ public class VarAssignmentAction extends Action{
     public boolean isValid(ExecutionContext e) {
         if (targetVar == null || targetVar.isBlank()) return false;
         if (value == null || value.isBlank()) return false;
-        return true;
+        if (!e.hasVariable(targetVar)) return false;
+        try {
+            Integer.parseInt(value.trim());
+            return true;
+        } catch (NumberFormatException ex) {
+            return e.hasVariable(value.trim());
+        }
     }
 
     // Petite méthode magique pour lire soit un chiffre, soit une autre variable

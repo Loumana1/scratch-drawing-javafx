@@ -33,7 +33,7 @@ public class TurnRightAction  extends ParameterizedAction{
     @Override
     public void execute(ExecutionContext e) {
         int realValue = resolveValue(e);
-        e.turnLeft(realValue);
+        e.turnRight(realValue);
     }
 
     @Override

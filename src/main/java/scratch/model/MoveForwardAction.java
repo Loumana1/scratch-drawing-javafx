@@ -15,7 +15,11 @@ public class MoveForwardAction extends ParameterizedAction{
     @Override
     public boolean isValid(ExecutionContext e) {
         if (isVar()) {
-            return true;
+            String name = getVarName();
+            if (name == null || name.isBlank()) {
+                return false;
+            }
+            return e.hasVariable(name);
         }
         return isValueValid(getValue());
     }
