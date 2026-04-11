@@ -14,14 +14,21 @@ public class MoveForwardAction extends ParameterizedAction{
 
     @Override
     public boolean isValid(ExecutionContext e) {
+        if (isVar()) {
+            String name = getVarName();
+            if (name == null || name.isBlank()) {
+                return false;
+            }
+            return e.hasVariable(name);
+        }
         return isValueValid(getValue());
     }
 
     @Override
     public void execute(ExecutionContext e) {
-        e.move(getValue());
+        int realValue = resolveValue(e);
+        e.move(realValue);
     }
-
     @Override
     protected boolean isValueValid(int value) {
         return value >= MIN_VALUE && value <= MAX_VALUE;

@@ -20,6 +20,19 @@ public class Program {
         actions.add(action);
 
     }
+    //insertion au "milieu" du program
+    public void insertAction(int index, Action action) {
+        if (action == null) {
+            throw new IllegalArgumentException("Action null");
+        }
+        if (index < 0 || index >= actions.size()) {
+            actions.add(action);
+        } else {
+            actions.add(index + 1, action);
+        }
+    }
+
+
     public void removeAction(int index) {
        //index valide ?
         if (index >= 0 && index < actions.size()) {
@@ -60,20 +73,39 @@ public class Program {
 
     //Methodes d'execution
 
-    public boolean isValid(ExecutionContext context) {
+    public Boolean isValid(ExecutionContext context) {
 
-        //  une copie du contexte pour la simulation
+        // une copie du contexte pour la simulation
+        //Sert essentiellemnt a definir  si le boutton chargé va etre actif
+        // si on repart d’un contexte initial (reset),
+        // et on reinsert tout les action,
+        // est-ce que ce programme est cohérent ?
         ExecutionContext tempContext = new ExecutionContext();
         tempContext.reset();
 
-        for (Action action : actions) {
-            if (!action.isValid(tempContext)) {
-                return false;
-            }
-            action.execute(tempContext);
-        }
+        boolean instructionSeen = false;
+        try {
+            for (Action action : actions) {
 
-        return true;
+
+                if (action instanceof VarDeclarationAction) {
+                    if (instructionSeen) {
+                        return false;
+                    }
+                } else {
+                    instructionSeen = true;
+                }
+
+                if (!action.isValid(tempContext)) {
+                    return false;
+                }
+                action.execute(tempContext);
+            }
+            return true;
+        } catch (ExecutionException e) {
+
+            return false;
+        }
     }
 
     public void executeNext(ExecutionContext context){
@@ -158,6 +190,10 @@ public class Program {
                         : new RepeatAction(r.getCount());
             }
             case END_REPEAT -> new EndRepeatAction();
+            case VAR_DECLARATION -> new VarDeclarationAction();
+            case VAR_ASSIGNMENT -> new VarAssignmentAction();
+            case INCREMENT_VARIABLE -> new IncrementVariableAction();
+
         };
     }
 }

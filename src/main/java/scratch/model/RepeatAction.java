@@ -18,8 +18,7 @@ public class RepeatAction extends Action {
 
     public int resolveCount(ExecutionContext ctx) {
         if (countIsVar) {
-            // TODO: remplacer par ctx.getVariable(countVarName) quand Zie aura fini
-            return count;
+            return ctx.getVariable(countVarName);
         }
         return count;
     }
