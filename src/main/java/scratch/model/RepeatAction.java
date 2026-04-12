@@ -31,7 +31,13 @@ public class RepeatAction extends Action {
 
     @Override
     public boolean isValid(ExecutionContext e) {
-        return countIsVar || count > 0 ;
+        if (countIsVar) {
+            if (countVarName == null || countVarName.isBlank()) {
+                return false;
+            }
+            return e.hasVariable(countVarName);
+        }
+        return count > 0;
     }
 
     @Override
@@ -83,4 +89,42 @@ public class RepeatAction extends Action {
             return getType().name() + ";" + count;
         }
     }
+
+    @Override
+    public String getTitle() {
+        return "Repeter ";
+    }
+
+    @Override
+    public String getUnit() {
+        return " fois";
+    }
+
+    @Override
+    public boolean isValueEditable() {
+        return true;
+    }
+
+    @Override
+    public int getNumericValue() {
+        return count;
+    }
+
+    @Override
+    public boolean updateValue(int newValue) {
+        if (newValue > 0) {
+            this.count = newValue;
+            this.countIsVar = false;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateVariable(String varName) {
+        this.countVarName = varName;
+        this.countIsVar = true;
+        return true;
+    }
+
 }

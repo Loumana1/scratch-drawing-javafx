@@ -24,4 +24,7 @@ public class PenUpAction extends Action {
     public String format() {
         return "PEN_UP;";
     }
+
+    @Override
+    public String getTitle() { return "Lever le stylo"; }
 }

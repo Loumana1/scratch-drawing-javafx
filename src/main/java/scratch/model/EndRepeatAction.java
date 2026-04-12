@@ -30,4 +30,7 @@ public class EndRepeatAction extends Action {
     public String format() {
         return "END_REPEAT;";
     }
+
+    @Override
+    public String getTitle() { return "Fin repeter"; }
 }

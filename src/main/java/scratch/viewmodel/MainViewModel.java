@@ -41,10 +41,13 @@ public class MainViewModel {
     private final DoubleProperty speed = new SimpleDoubleProperty(1.0);
     private Timeline autoTimeline ;
     private final IntegerProperty programChangeCounter = new SimpleIntegerProperty(0);
+
+
     public MainViewModel(Program program) {
         this.program = program;
-        // initialisation liste observable
         this.observableActions = FXCollections.observableArrayList(program.getActions());
+        turtleState.set(buildTurtleStateString());
+        refreshVariablesFromContext();
     }
 
 
@@ -181,7 +184,7 @@ public class MainViewModel {
 
     }
 
-    //Execution du prochain instruction
+
     public void executeNext(){
         if (!program.hasNext()) {
             return;
@@ -191,7 +194,7 @@ public class MainViewModel {
 
                 program.executeNext(executionContext);
                 refreshVariablesFromContext();
-                // Met à jour la zone info
+       
                 turtleState.set(buildTurtleStateString());
 
                 //Declenche le redessin du Canvas
@@ -202,7 +205,13 @@ public class MainViewModel {
                 errorMessage.set("");
             } catch (ExecutionException e) {
                 stopAutoExecution();
-                selectedIndex.set(program.getCurrenIndex());
+
+                if (observableActions.isEmpty()) {
+                    selectedIndex.set(-1);
+                } else {
+                    selectedIndex.set(program.getCurrenIndex());
+                }
+
                 String msg = e.getMessage();
                 errorMessage.set(msg != null && !msg.isBlank() ? msg : "Runtime");
             }
@@ -210,6 +219,7 @@ public class MainViewModel {
     }
   //Charger sur scène
     public void loadOnScene() {
+    
         executionContext.reset();
         program.resetExecution();
         executionStep.set(0);
@@ -219,7 +229,6 @@ public class MainViewModel {
 
             // Valider le programme avant de le charger
             if (!program.isValid(executionContext)) {
-                errorMessage.set("Runtime");
                 programLoaded.set(false);
                 return;
             }
@@ -230,6 +239,12 @@ public class MainViewModel {
             programLoaded.set(true);
             refreshVariablesFromContext();
             turtleState.set(buildTurtleStateString());
+            //desectionner si list vide 
+            if (observableActions.isEmpty()) {
+                selectedIndex.set(-1);
+            } else {
+                selectedIndex.set(program.getCurrenIndex());
+            }
 
 
     }
@@ -241,7 +256,13 @@ public class MainViewModel {
         turtleState.set(buildTurtleStateString());
         executionStep.set(0);
         errorMessage.set("");
-     //   selectedIndex.set(observableActions.isEmpty() ? -1 : 0);
+
+
+     if (observableActions.isEmpty()) {
+        selectedIndex.set(-1);
+    } else {
+        selectedIndex.set(0);
+    }
     }
 
     public void saveToFile(File file) {
@@ -301,8 +322,14 @@ public class MainViewModel {
     }
     public BooleanBinding canExecuteNext() {
         return Bindings.createBooleanBinding(
-                () -> program.hasNext(),
-                executionStep,programLoaded
+                () -> {
+                    String err = errorMessage.get();
+                    boolean Error = err != null && !err.isBlank();
+                    return program.hasNext() &&  !Error;
+                },
+                executionStep,
+                programLoaded,
+                errorMessage
         );
     }
     public BooleanBinding canMoveUp() {
@@ -401,98 +428,35 @@ public class MainViewModel {
     public ActionDetail getSelectedActionDetail() {
         Action action = getSelectedAction();
         if (action == null) return null;
-        return switch (action.getType()) {
-            case TURN_LEFT -> {
-                ParameterizedAction p = (ParameterizedAction) action;
-                yield new ActionDetail("Tourner à gauche de ", true, " Degres", p.getValue());
-            }
-            case TURN_RIGHT -> {
-                ParameterizedAction p = (ParameterizedAction) action;
-                yield new ActionDetail("Tourner à droite de ", true, " Degres", p.getValue());
-            }
-            case MOVE_FORWARD -> {
-                ParameterizedAction p = (ParameterizedAction) action;
-                yield new ActionDetail("Avance de ", true, " Pixels", p.getValue());
-            }
-            case PEN_UP -> new ActionDetail("Lever le stylo ", false, "", 0);
-            case PEN_DOWN -> new ActionDetail("Abaisser le stylo ", false, "", 0);
-            case REPEAT -> {
-                RepeatAction r = (RepeatAction) action;
-                // Toujours éditable, que ce soit un nombre ou une variable
-                yield new ActionDetail("Repeter ", true, " fois", r.getCount());
-            }
-            case END_REPEAT -> new ActionDetail("Fin repeter", false, "", 0);
-            case VAR_DECLARATION -> new ActionDetail("Déclaration de la variable", false, "", 0);
-            case VAR_ASSIGNMENT -> new ActionDetail("Assignation", false, "", 0);
-            case INCREMENT_VARIABLE -> new ActionDetail("Inc/Dec variable", false, "", 0);
 
-
-        };
+        return new ActionDetail(
+                action.getTitle(),
+                action.isValueEditable(),
+                action.getUnit(),
+                action.getNumericValue()
+        );
     }
 
     public boolean tryUpdateSelectedActionValue(int newValue) {
-
         Action action = getSelectedAction();
         if (action == null) return false;
 
-        ExecutionContext temp = new ExecutionContext();
-
-        // Cas MOVE_FORWARD / TURN_LEFT / TURN_RIGHT (ParameterizedAction)
-        if (action instanceof ParameterizedAction p) {
-            int oldValue = p.getValue();
-            p.setValue(newValue);
-
-            boolean ok = action.isValid(temp);
-            if (!ok) {
-                p.setValue(oldValue); // on annule cote modèle
-
-            }
-            return ok;
-        }
-
-        // Cas REPEAT (pas un ParameterizedAction)
-        if (action instanceof RepeatAction r) {
-            int oldCount = r.getCount();
-            boolean oldIsVar = r.isCountIsVar();
-            String oldVarName = r.getCountVarName();
-            // On force le mode "littéral" quand l'utilisateur édite un entier
-            r.setCount(newValue);
-            r.setCountIsVar(false);
-            r.setCountVarName(oldVarName); // garde la valeur si jamais
-
-            boolean ok = action.isValid(temp);
-            if (!ok) {
-                r.setCount(oldCount);
-                r.setCountIsVar(oldIsVar);
-                r.setCountVarName(oldVarName);
-                return false;
-            }
-            return ok;
-        }
-        return false;
+        return action.updateValue(newValue);
     }
+
 
     public boolean tryUpdateSelectedActionWithText(String text) {
         Action action = getSelectedAction();
         if (action == null) return false;
 
-        // 1. Si on tape un chiffre (ex: "30", "-15"), on réutilise l'ancienne logique
         if (text.matches("^-?\\d+$")) {
-            return tryUpdateSelectedActionValue(Integer.parseInt(text));
+            return action.updateValue(Integer.parseInt(text));
         }
 
-        // 2. Sinon, si on tape un nom de variable (ex: "var", "score")
         if (text.matches("^[a-zA-Z_][a-zA-Z0-9_]*$")) {
-            if (action instanceof ParameterizedAction p) {
-                p.setVarName(text);
-                return true;
-            }
-            if (action instanceof RepeatAction r) {
-                r.setCountVarName(text);
-                r.setCountIsVar(true);
-                return true;
-            }
+            return action.updateVariable(text);
         }
+
         return false;
     }
 

@@ -57,4 +57,14 @@ public class VarDeclarationAction extends Action {
     public String format() {
         return "VAR_DECLARATION;" + varName;
     }
+
+    @Override
+    public String getTitle() { return "Déclaration variable " + varName; }
+
+    @Override
+    public boolean isValueEditable() { return false; }
+    @Override
+    public String getUnit() { return ""; }
+    @Override
+    public int getNumericValue() { return 0; }
 }
