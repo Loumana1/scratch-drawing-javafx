@@ -78,7 +78,7 @@ public class Program {
 
         // une copie du contexte pour la simulation
         //Sert essentiellemnt a definir  si le boutton chargé va etre actif
-        // si on repart d’un contexte initial (reset),
+        // si on repart d'un contexte initial (reset),
         // et on reinsert tout les action,
         // est-ce que ce programme est cohérent ?
         ExecutionContext tempContext = new ExecutionContext();
@@ -107,11 +107,46 @@ public class Program {
                 }
                 action.execute(tempContext);
             }
+
+            // Vérifier variable repeat n'est pas modifiée dans la boucle
+            if (!checkRepeatVarNotModified()) {
+                return false;
+            }
+
             return repeatDepth == 0;
         } catch (ExecutionException e) {
 
             return false;
         }
+    }
+
+    private boolean checkRepeatVarNotModified() {
+        for (int i = 0; i < actions.size(); i++) {
+            Action action = actions.get(i);
+            if (action.getType() ==  ActionType.REPEAT) {
+                RepeatAction ra = (RepeatAction) action;
+                if (ra.isCountIsVar()) {
+                    String varName = ra.getCountVarName();
+                    int endIndex = findEndRepeat(i);
+                    // Parcourir le corps de la boucle (entre Repeat et EndRepeat)
+                    for (int j = i + 1; j < endIndex; j++) {
+                        Action inner = actions.get(j);
+                        if (inner.getType() == ActionType.INCREMENT_VARIABLE) {
+                            IncrementVariableAction inc = (IncrementVariableAction) inner;
+                            if (varName.equals(inc.getTargetVar())) {
+                                return false;
+                            }
+                        } else if (inner.getType() ==  ActionType.VAR_ASSIGNMENT) {
+                            VarAssignmentAction assign = (VarAssignmentAction) inner;
+                            if (varName.equals(assign.getTargetVar())) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     public void executeNext(ExecutionContext context){

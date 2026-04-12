@@ -418,11 +418,7 @@ public class MainViewModel {
             case PEN_DOWN -> new ActionDetail("Abaisser le stylo ", false, "", 0);
             case REPEAT -> {
                 RepeatAction r = (RepeatAction) action;
-                // Si le compteur est une variable =pas de champ entier côté UI
-                if (r.isCountIsVar()) {
-                    yield new ActionDetail("Repeter " + r.getCountVarName() + " fois", false, "", 0);
-                }
-                // Compteur littéral = champ entier éditable
+                // Toujours éditable, que ce soit un nombre ou une variable
                 yield new ActionDetail("Repeter ", true, " fois", r.getCount());
             }
             case END_REPEAT -> new ActionDetail("Fin repeter", false, "", 0);
