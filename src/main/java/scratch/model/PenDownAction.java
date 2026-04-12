@@ -16,5 +16,15 @@ public class PenDownAction extends Action {
     }
     @Override
     public ActionType getType() { return ActionType.PEN_DOWN; }
+
+    @Override
+    public Action duplicate() {
+        return new PenDownAction();
+    }
+
+    @Override
+    public String format() {
+        return "PEN_DOWN;";
+    }
 }
 

@@ -61,7 +61,8 @@ public class Program {
     public void duplicateAt(int index){
         if (index >= 0 && index < actions.size()) {
             Action original = actions.get(index);
-            Action duplicate = createDuplicate(original);
+            Action duplicate = original.duplicate();
+
             actions.add(index + 1 , duplicate);
         }
     }
@@ -177,29 +178,5 @@ public class Program {
 
     public int getCurrenIndex() {
         return currenIndex;
-    }
-
-    // Private Fonctions
-
-    private Action createDuplicate(Action original){
-
-        return switch (original.getType()) {
-            case MOVE_FORWARD -> new MoveForwardAction(((ParameterizedAction)original).getValue());
-            case TURN_LEFT -> new TurnLeftAction(((ParameterizedAction)original).getValue());
-            case TURN_RIGHT -> new TurnRightAction(((ParameterizedAction)original).getValue()) ;
-            case PEN_UP -> new PenUpAction();
-            case PEN_DOWN -> new PenDownAction();
-            case REPEAT -> {
-                var r = (RepeatAction) original;
-                yield r.isCountIsVar()
-                        ? new RepeatAction(r.getCountVarName())
-                        : new RepeatAction(r.getCount());
-            }
-            case END_REPEAT -> new EndRepeatAction();
-            case VAR_DECLARATION -> new VarDeclarationAction();
-            case VAR_ASSIGNMENT -> new VarAssignmentAction();
-            case INCREMENT_VARIABLE -> new IncrementVariableAction();
-
-        };
     }
 }

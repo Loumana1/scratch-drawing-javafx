@@ -40,4 +40,15 @@ public class TurnRightAction  extends ParameterizedAction{
     public ActionType getType() {
         return ActionType.TURN_RIGHT;
     }
+
+    @Override
+    public Action duplicate() {
+        if (isVar()) {
+            MoveForwardAction clone = new MoveForwardAction();
+            clone.setVarName(this.getVarName());
+            return clone;
+        } else {
+            return new MoveForwardAction(this.getValue());
+        }
+    }
 }
