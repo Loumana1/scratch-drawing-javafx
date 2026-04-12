@@ -44,4 +44,26 @@ public abstract class ParameterizedAction extends Action {
             return getType().name() + ";" + getValue();
         }
     }
+
+
+    @Override
+    public boolean isValueEditable() { return !isVar(); }
+
+    @Override
+    public int getNumericValue() { return getValue(); }
+
+    @Override
+    public boolean updateValue(int newValue) {
+        if (isValueValid(newValue)) {
+            setValue(newValue);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateVariable(String varName) {
+        setVarName(varName);
+        return true;
+    }
 }

@@ -86,18 +86,27 @@ public class Program {
 
         boolean instructionSeen = false;
         int repeatDepth = 0;
+        boolean hasVisualAction = false;
+
         try {
             for (Action action : actions) {
-                if (action instanceof VarDeclarationAction) {
+                if (action.getType() == ActionType.VAR_DECLARATION) {
                     if (instructionSeen) {
                         return false;
                     }
                 } else {
                     instructionSeen = true;
                 }
-                if (action instanceof RepeatAction){
+                if (action.getType() == ActionType.MOVE_FORWARD ||
+                        action.getType() == ActionType.TURN_LEFT ||
+                        action.getType() == ActionType.TURN_RIGHT ||
+                        action.getType() == ActionType.PEN_UP ||
+                        action.getType() == ActionType.PEN_DOWN) {
+                    hasVisualAction = true;
+                }
+                if (action.getType() == ActionType.REPEAT){
                     repeatDepth++;
-                } else if (action instanceof EndRepeatAction) {
+                } else if (action.getType() == ActionType.END_REPEAT) {
                     repeatDepth--;
                     if (repeatDepth < 0) return false;
                 }
@@ -108,12 +117,14 @@ public class Program {
                 action.execute(tempContext);
             }
 
+
             // Vérifier variable repeat n'est pas modifiée dans la boucle
             if (!checkRepeatVarNotModified()) {
                 return false;
             }
 
-            return repeatDepth == 0;
+            return repeatDepth == 0 && hasVisualAction;
+
         } catch (ExecutionException e) {
 
             return false;
@@ -156,8 +167,8 @@ public class Program {
         Action a = actions.get(currenIndex);
 
         if ( a.getType() == ActionType.REPEAT) {
-            RepeatAction ra = (RepeatAction) a ;
-            int n = ra.resolveCount(context);
+
+            int n = a.resolveCount(context);
             if (n <= 0) {
                 currenIndex = findEndRepeat(currenIndex) + 1;
             }else {

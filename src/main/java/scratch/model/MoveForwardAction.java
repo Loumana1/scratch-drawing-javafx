@@ -54,4 +54,25 @@ public class MoveForwardAction extends ParameterizedAction{
             return new MoveForwardAction(this.getValue());
         }
     }
+
+    @Override
+    public String getTitle() {
+        return  "Avance de ";
+    }
+
+    @Override
+    public String getUnit() {
+        return " Pixels";
+    }
+
+    @Override
+    public int getNumericValue() {
+        return this.getValue();
+    }
+
+    @Override
+    public boolean isValueEditable() {
+        return true;
+    }
+
 }

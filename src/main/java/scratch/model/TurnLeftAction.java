@@ -55,4 +55,24 @@ public class TurnLeftAction extends ParameterizedAction {
             return new TurnLeftAction(getValue());
         }
     }
+
+    @Override
+    public String getTitle() {
+        return "Tourner à gauche de ";
+    }
+
+    @Override
+    public String getUnit() {
+        return " Degrés";
+    }
+
+    @Override
+    public int getNumericValue() {
+        return this.getValue();
+    }
+
+    @Override
+    public boolean isValueEditable() {
+        return true;
+    }
 }

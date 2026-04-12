@@ -51,7 +51,9 @@ public class DetailPanelView extends TitledPane {
         setText("Détails de l'action");
         lblError.setStyle("-fx-text-fill: red;");
         lblError.setVisible(false);
+        lblError.setManaged(false);
         txtValue.setVisible(false);
+        txtValue.setManaged(false);
         txtValue.setMaxWidth(40);
 
         HBox row = new HBox(5);
@@ -99,7 +101,9 @@ public class DetailPanelView extends TitledPane {
 
             txtValue.setDisable(false);
             txtValue.setVisible(true);
+            txtValue.setManaged(true);
             lblPixels.setVisible(false);
+            lblPixels.setManaged(false);
 
             if (currentListener != null) {
                 txtValue.textProperty().removeListener(currentListener);
@@ -183,7 +187,9 @@ public class DetailPanelView extends TitledPane {
             txtValue.setText("");
             txtValue.setDisable(true);
             txtValue.setVisible(false);
+            txtValue.setManaged(false);
             lblPixels.setVisible(false);
+            lblPixels.setManaged(false);
             if (currentListener != null) {
                 txtValue.textProperty().removeListener(currentListener);
                 currentListener = null;
@@ -197,7 +203,9 @@ public class DetailPanelView extends TitledPane {
             txtValue.setText("0");
             txtValue.setDisable(true);
             txtValue.setVisible(false);
+            txtValue.setManaged(false);
             lblPixels.setVisible(false);
+            lblPixels.setManaged(false);
 
             if (currentListener != null) {
                 txtValue.textProperty().removeListener(currentListener);
@@ -210,7 +218,9 @@ public class DetailPanelView extends TitledPane {
 
         txtValue.setDisable(false);
         txtValue.setVisible(true);
+        txtValue.setManaged(true);
         lblPixels.setVisible(true);
+        lblPixels.setManaged(true);
         lblPixels.setText(detail.getUnitText());
 
         if (action instanceof scratch.model.ParameterizedAction p && p.isVar()) {

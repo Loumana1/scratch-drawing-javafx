@@ -26,5 +26,8 @@ public class PenDownAction extends Action {
     public String format() {
         return "PEN_DOWN;";
     }
+
+    @Override
+    public String getTitle() { return "Abaisser le stylo"; }
 }
 

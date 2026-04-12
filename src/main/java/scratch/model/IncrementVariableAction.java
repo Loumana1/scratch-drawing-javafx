@@ -77,4 +77,14 @@ public class IncrementVariableAction extends Action {
     public String format() {
         return getType().name() + ";" + this.targetVar + ";" + this.value;
     }
+
+    @Override
+    public String getTitle() { return "Inc/Dec variable : " + targetVar + " de " + value; }
+
+    @Override
+    public boolean isValueEditable() { return false; }
+    @Override
+    public String getUnit() { return ""; }
+    @Override
+    public int getNumericValue() { return 0; }
 }

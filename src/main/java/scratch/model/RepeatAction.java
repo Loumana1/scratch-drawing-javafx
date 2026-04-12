@@ -89,4 +89,42 @@ public class RepeatAction extends Action {
             return getType().name() + ";" + count;
         }
     }
+
+    @Override
+    public String getTitle() {
+        return "Repeter ";
+    }
+
+    @Override
+    public String getUnit() {
+        return " fois";
+    }
+
+    @Override
+    public boolean isValueEditable() {
+        return true;
+    }
+
+    @Override
+    public int getNumericValue() {
+        return count;
+    }
+
+    @Override
+    public boolean updateValue(int newValue) {
+        if (newValue > 0) {
+            this.count = newValue;
+            this.countIsVar = false;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateVariable(String varName) {
+        this.countVarName = varName;
+        this.countIsVar = true;
+        return true;
+    }
+
 }

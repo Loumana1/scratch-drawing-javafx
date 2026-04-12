@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ProgramFileService {
 
-    // --- LA SAUVEGARDE (C'est sûrement ici que ça bloquait !) ---
+
     public static void save(File file, List<Action> actions) throws IOException {
         try (PrintWriter writer = new PrintWriter(file)) {
             for (Action action : actions) {
@@ -21,7 +21,7 @@ public class ProgramFileService {
         }
     }
 
-    // --- LE CHARGEMENT ---
+
     public static List<Action> load(File file) throws IOException {
         List<Action> actions = new ArrayList<>();
         List<String> lines = Files.readAllLines(file.toPath());

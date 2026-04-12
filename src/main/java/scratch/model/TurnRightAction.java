@@ -33,7 +33,7 @@ public class TurnRightAction  extends ParameterizedAction{
             }
             return e.hasVariable(name);
         }
-        
+
         return isValueValid(getValue());
     }
 
@@ -54,8 +54,29 @@ public class TurnRightAction  extends ParameterizedAction{
             TurnRightAction clone = new TurnRightAction();
             clone.setVarName(this.getVarName());
             return clone;
-        } 
+        }
             return new TurnRightAction(getValue());
     }
- }
+
+
+    @Override
+    public String getTitle() {
+        return "Tourner à droite de ";
+    }
+
+    @Override
+    public String getUnit() {
+        return " Degrés";
+    }
+
+    @Override
+    public int getNumericValue() {
+        return this.getValue();
+    }
+
+    @Override
+    public boolean isValueEditable() {
+        return true;
+    }
+}
 
