@@ -72,5 +72,15 @@ public class VarAssignmentAction extends Action{
     public String format() {
         return "VAR_ASSIGNMENT;" + targetVar + ";" + value;
     }
+
+    @Override
+    public String getTitle() { return "Assignation : " + targetVar + " = " + value; }
+
+    @Override
+    public boolean isValueEditable() { return false; }
+    @Override
+    public String getUnit() { return ""; }
+    @Override
+    public int getNumericValue() { return 0; }
 }
 

@@ -42,11 +42,31 @@ public class TurnLeftAction extends ParameterizedAction {
     @Override
     public Action duplicate() {
         if (isVar()) {
-            MoveForwardAction clone = new MoveForwardAction();
+            TurnLeftAction clone = new TurnLeftAction(); // Utilise le bon type !
             clone.setVarName(this.getVarName());
             return clone;
         } else {
-            return new MoveForwardAction(this.getValue());
+            return new TurnLeftAction(this.getValue());
         }
+    }
+
+    @Override
+    public String getTitle() {
+        return "Tourner à gauche de ";
+    }
+
+    @Override
+    public String getUnit() {
+        return " Degrés";
+    }
+
+    @Override
+    public int getNumericValue() {
+        return this.getValue();
+    }
+
+    @Override
+    public boolean isValueEditable() {
+        return true;
     }
 }
