@@ -229,6 +229,7 @@ public class MainViewModel {
 
             // Valider le programme avant de le charger
             if (!program.isValid(executionContext)) {
+                errorMessage.set("Programme invalide");
                 programLoaded.set(false);
                 return;
             }

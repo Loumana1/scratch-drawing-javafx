@@ -40,6 +40,10 @@ public class TurnRightAction  extends ParameterizedAction{
     @Override
     public void execute(ExecutionContext e) {
         int realValue = resolveValue(e);
+        if (realValue < MIN_VALUE || realValue > MAX_VALUE) {
+            throw new ExecutionException(
+                    "Tourner à droite de " + realValue + " hors plage " + MIN_VALUE + "–" + MAX_VALUE);
+        }
         e.turnRight(realValue);
     }
 
