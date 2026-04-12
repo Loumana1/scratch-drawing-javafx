@@ -26,7 +26,14 @@ public class TurnRightAction  extends ParameterizedAction{
 
     @Override
     public boolean isValid(ExecutionContext e) {
-        if (isVar()) return true;
+        if (isVar()) {
+            String name = getVarName();
+            if (name == null || name.isBlank()) {
+                return false;
+            }
+            return e.hasVariable(name);
+        }
+        
         return isValueValid(getValue());
     }
 
@@ -44,11 +51,11 @@ public class TurnRightAction  extends ParameterizedAction{
     @Override
     public Action duplicate() {
         if (isVar()) {
-            MoveForwardAction clone = new MoveForwardAction();
+            TurnRightAction clone = new TurnRightAction();
             clone.setVarName(this.getVarName());
             return clone;
-        } else {
-            return new MoveForwardAction(this.getValue());
-        }
+        } 
+            return new TurnRightAction(getValue());
     }
-}
+ }
+
