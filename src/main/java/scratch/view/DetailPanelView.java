@@ -72,6 +72,11 @@ public class DetailPanelView extends TitledPane {
     private void updateDetailPane() {
         detachTargetVarListener();
 
+        if (currentListener != null) {
+            txtValue.textProperty().removeListener(currentListener);
+            currentListener = null;
+        }
+
         lblError.setVisible(false);
         lblError.setManaged(false);
 
