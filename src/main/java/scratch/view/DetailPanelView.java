@@ -215,6 +215,8 @@ public class DetailPanelView extends TitledPane {
 
         if (action instanceof scratch.model.ParameterizedAction p && p.isVar()) {
             txtValue.setText(p.getVarName());
+        } else if (action instanceof scratch.model.RepeatAction r && r.isCountIsVar()) {
+            txtValue.setText(r.getCountVarName());
         } else {
             txtValue.setText(String.valueOf(detail.getValue()));
         }
