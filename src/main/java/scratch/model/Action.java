@@ -13,6 +13,7 @@ public abstract class  Action {
     public int getNumericValue() { return 0; }
     public boolean updateValue(int newValue) { return false; }
     public boolean updateVariable(String varName) { return false; }
+    public String getExpression() { return String.valueOf(getNumericValue()); }
     public int resolveCount(ExecutionContext ctx) { return 0; }
 
 }
