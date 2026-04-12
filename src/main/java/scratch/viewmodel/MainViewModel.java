@@ -229,7 +229,6 @@ public class MainViewModel {
 
             // Valider le programme avant de le charger
             if (!program.isValid(executionContext)) {
-                errorMessage.set("Runtime");
                 programLoaded.set(false);
                 return;
             }
@@ -257,7 +256,13 @@ public class MainViewModel {
         turtleState.set(buildTurtleStateString());
         executionStep.set(0);
         errorMessage.set("");
-     //   selectedIndex.set(observableActions.isEmpty() ? -1 : 0);
+
+
+     if (observableActions.isEmpty()) {
+        selectedIndex.set(-1);
+    } else {
+        selectedIndex.set(0);
+    }
     }
 
     public void saveToFile(File file) {

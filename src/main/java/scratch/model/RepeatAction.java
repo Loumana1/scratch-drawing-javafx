@@ -31,7 +31,13 @@ public class RepeatAction extends Action {
 
     @Override
     public boolean isValid(ExecutionContext e) {
-        return countIsVar || count > 0 ;
+        if (countIsVar) {
+            if (countVarName == null || countVarName.isBlank()) {
+                return false;
+            }
+            return e.hasVariable(countVarName);
+        }
+        return count > 0;
     }
 
     @Override
