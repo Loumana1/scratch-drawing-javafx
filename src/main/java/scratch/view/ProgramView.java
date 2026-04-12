@@ -56,6 +56,7 @@ public class ProgramView extends VBox {
                 if (empty || action == null) {
                     setGraphic(null);
                     setText(null);
+                    setStyle("");
                     return;
                 }
 

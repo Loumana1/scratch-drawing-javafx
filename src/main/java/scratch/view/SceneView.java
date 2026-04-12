@@ -181,7 +181,8 @@ public class SceneView extends VBox {
                         .or(viewModel.canExecuteNext().not()));
         viewModel.programLoadedProperty().addListener((obs, old, nw) ->
                 btnReset.setText(nw ? "Ré-initialiser" : "Charger"));
-        btnExecute.disableProperty().bind(viewModel.programLoadedProperty().not());
+        btnExecute.disableProperty().bind(viewModel.canExecuteNext().not());
+        btnStop.disableProperty().bind(viewModel.canExecuteNext().not());
     }
 
 

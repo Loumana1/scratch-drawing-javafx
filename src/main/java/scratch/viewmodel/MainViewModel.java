@@ -41,10 +41,13 @@ public class MainViewModel {
     private final DoubleProperty speed = new SimpleDoubleProperty(1.0);
     private Timeline autoTimeline ;
     private final IntegerProperty programChangeCounter = new SimpleIntegerProperty(0);
+
+
     public MainViewModel(Program program) {
         this.program = program;
-        // initialisation liste observable
         this.observableActions = FXCollections.observableArrayList(program.getActions());
+        turtleState.set(buildTurtleStateString());
+        refreshVariablesFromContext();
     }
 
 
@@ -181,7 +184,7 @@ public class MainViewModel {
 
     }
 
-    //Execution du prochain instruction
+
     public void executeNext(){
         if (!program.hasNext()) {
             return;
@@ -191,7 +194,7 @@ public class MainViewModel {
 
                 program.executeNext(executionContext);
                 refreshVariablesFromContext();
-                // Met à jour la zone info
+       
                 turtleState.set(buildTurtleStateString());
 
                 //Declenche le redessin du Canvas
@@ -202,7 +205,13 @@ public class MainViewModel {
                 errorMessage.set("");
             } catch (ExecutionException e) {
                 stopAutoExecution();
-                selectedIndex.set(program.getCurrenIndex());
+
+                if (observableActions.isEmpty()) {
+                    selectedIndex.set(-1);
+                } else {
+                    selectedIndex.set(program.getCurrenIndex());
+                }
+
                 String msg = e.getMessage();
                 errorMessage.set(msg != null && !msg.isBlank() ? msg : "Runtime");
             }
@@ -210,6 +219,7 @@ public class MainViewModel {
     }
   //Charger sur scène
     public void loadOnScene() {
+    
         executionContext.reset();
         program.resetExecution();
         executionStep.set(0);
@@ -230,6 +240,12 @@ public class MainViewModel {
             programLoaded.set(true);
             refreshVariablesFromContext();
             turtleState.set(buildTurtleStateString());
+            //desectionner si list vide 
+            if (observableActions.isEmpty()) {
+                selectedIndex.set(-1);
+            } else {
+                selectedIndex.set(program.getCurrenIndex());
+            }
 
 
     }
@@ -309,8 +325,14 @@ public class MainViewModel {
     }
     public BooleanBinding canExecuteNext() {
         return Bindings.createBooleanBinding(
-                () -> program.hasNext(),
-                executionStep,programLoaded
+                () -> {
+                    String err = errorMessage.get();
+                    boolean Error = err != null && !err.isBlank();
+                    return program.hasNext() &&  !Error;
+                },
+                executionStep,
+                programLoaded,
+                errorMessage
         );
     }
     public BooleanBinding canMoveUp() {
