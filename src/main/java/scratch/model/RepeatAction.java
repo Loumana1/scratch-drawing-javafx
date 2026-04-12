@@ -64,4 +64,23 @@ public class RepeatAction extends Action {
     public String toString() {
         return "Repeter " + (countIsVar ? countVarName : count) + " fois";
     }
+
+
+    @Override
+    public Action duplicate() {
+        if (countIsVar) {
+            return new RepeatAction(this.countVarName);
+        } else {
+            return new RepeatAction(this.count);
+        }
+    }
+
+    @Override
+    public String format() {
+        if (countIsVar) {
+            return getType().name() + ";" + countVarName;
+        } else {
+            return getType().name() + ";" + count;
+        }
+    }
 }

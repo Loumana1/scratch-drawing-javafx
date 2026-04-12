@@ -35,4 +35,13 @@ public abstract class ParameterizedAction extends Action {
 
     protected abstract boolean isValueValid(int value);
     public abstract int getDefaultValue();
+
+    @Override
+    public String format() {
+        if (isVar()) {
+            return getType().name() + ";" + getVarName();
+        } else {
+            return getType().name() + ";" + getValue();
+        }
+    }
 }

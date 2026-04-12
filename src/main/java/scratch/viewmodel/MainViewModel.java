@@ -246,19 +246,11 @@ public class MainViewModel {
 
     public void saveToFile(File file) {
         try {
-            List<String> lines = new ArrayList<>();
-            for (Action action : program.getActions()) {
-                String type = action.getType().name();
-                int value = 0;
-                if (action instanceof ParameterizedAction p) {
-                    value = p.getValue();
-                }
-                lines.add(type + ";" + value);
-            }
-            Files.write(file.toPath(), lines);
+
+            ProgramFileService.save(file, program.getActions());
             errorMessage.set("");
         } catch (IOException e) {
-            errorMessage.set("Erreur : " + e.getMessage());
+            errorMessage.set("Erreur de sauvegarde : " + e.getMessage());
         }
     }
 

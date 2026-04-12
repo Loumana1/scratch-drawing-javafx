@@ -62,5 +62,15 @@ public class VarAssignmentAction extends Action{
     public String toString() {
         return "Assignation : " + targetVar + " = " + value;
     }
+
+    @Override
+    public Action duplicate() {
+        return new VarAssignmentAction(this.targetVar, this.value);
+    }
+
+    @Override
+    public String format() {
+        return "VAR_ASSIGNMENT;" + targetVar + ";" + value;
+    }
 }
 

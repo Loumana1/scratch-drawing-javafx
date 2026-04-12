@@ -47,4 +47,14 @@ public class VarDeclarationAction extends Action {
     public String toString() {
         return "Déclaration variable " + varName;
     }
+
+    @Override
+    public Action duplicate() {
+        return new VarDeclarationAction(this.varName);
+    }
+
+    @Override
+    public String format() {
+        return "VAR_DECLARATION;" + varName;
+    }
 }

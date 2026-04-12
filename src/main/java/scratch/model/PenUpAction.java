@@ -14,4 +14,14 @@ public class PenUpAction extends Action {
 
     @Override
     public ActionType getType() { return ActionType.PEN_UP; }
+
+    @Override
+    public Action duplicate() {
+        return new PenUpAction();
+    }
+
+    @Override
+    public String format() {
+        return "PEN_UP;";
+    }
 }

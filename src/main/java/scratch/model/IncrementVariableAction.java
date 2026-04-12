@@ -67,4 +67,14 @@ public class IncrementVariableAction extends Action {
     public String toString() {
         return "Inc/Dec variable : " + targetVar + " de " + value;
     }
+
+    @Override
+    public Action duplicate() {
+        return new IncrementVariableAction(this.targetVar, this.value);
+    }
+
+    @Override
+    public String format() {
+        return getType().name() + ";" + this.targetVar + ";" + this.value;
+    }
 }

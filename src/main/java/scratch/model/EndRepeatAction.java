@@ -20,4 +20,14 @@ public class EndRepeatAction extends Action {
     public String toString() {
         return "Fin repeter";
     }
+
+    @Override
+    public Action duplicate() {
+        return new EndRepeatAction();
+    }
+
+    @Override
+    public String format() {
+        return "END_REPEAT;";
+    }
 }
