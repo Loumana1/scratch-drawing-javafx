@@ -35,7 +35,7 @@ public class RepeatAction extends Action {
             if (countVarName == null || countVarName.isBlank()) {
                 return false;
             }
-            return e.hasVariable(countVarName);
+            return e.hasVariable(countVarName) && e.getVariable(countVarName) > 0;
         }
         return count > 0;
     }
@@ -127,4 +127,8 @@ public class RepeatAction extends Action {
         return true;
     }
 
+    @Override
+    public String getExpression() {
+        return isCountIsVar() ? getCountVarName() : String.valueOf(getCount());
+    }
 }

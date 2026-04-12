@@ -6,6 +6,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import scratch.model.Action;
+import scratch.model.ParameterizedAction;
 import scratch.viewmodel.ActionDetail;
 import scratch.viewmodel.MainViewModel;
 
@@ -223,13 +224,7 @@ public class DetailPanelView extends TitledPane {
         lblPixels.setManaged(true);
         lblPixels.setText(detail.getUnitText());
 
-        if (action instanceof scratch.model.ParameterizedAction p && p.isVar()) {
-            txtValue.setText(p.getVarName());
-        } else if (action instanceof scratch.model.RepeatAction r && r.isCountIsVar()) {
-            txtValue.setText(r.getCountVarName());
-        } else {
-            txtValue.setText(String.valueOf(detail.getValue()));
-        }
+        txtValue.setText(action.getExpression());
 
         configTextField();
     }

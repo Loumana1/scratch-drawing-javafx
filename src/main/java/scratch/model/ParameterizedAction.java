@@ -66,4 +66,9 @@ public abstract class ParameterizedAction extends Action {
         setVarName(varName);
         return true;
     }
+
+    @Override
+    public String getExpression() {
+        return isVar() ? getVarName() : String.valueOf(getValue());
+    }
 }
