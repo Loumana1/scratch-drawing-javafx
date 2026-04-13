@@ -38,6 +38,10 @@ public class TurnLeftAction extends ParameterizedAction {
     @Override
     public void execute(ExecutionContext e) {
         int realValue = resolveValue(e);
+        if (realValue < MIN_VALUE || realValue > MAX_VALUE) {
+            throw new ExecutionException(
+                    "Tourner à gauche de " + realValue + " hors born " + MIN_VALUE + "–" + MAX_VALUE);
+        }
         e.turnLeft(realValue);
     }
 

@@ -156,8 +156,9 @@ public class ProgramView extends VBox {
                 // Encadrer en rouge erreur
                 boolean hasError = viewModel.errorMessageProperty().get() != null
                         && !viewModel.errorMessageProperty().get().isEmpty();
-                boolean isSelected = getIndex() == viewModel.getSelectedIndex();
-                if (hasError && isSelected) {
+                int faultIdx = viewModel.getExecutionFaultLineIndex();
+                boolean isFaultLine = faultIdx >= 0 && getIndex() == faultIdx;
+                if (hasError && isFaultLine) {
                     setStyle("-fx-border-color: red; -fx-border-width: 2;");
                 } else {
                     setStyle("");
@@ -168,7 +169,8 @@ public class ProgramView extends VBox {
             }
         });
         // Forcer le rrefresh qd nouvelle erreur
-        viewModel.errorMessageProperty().addListener((obs, old, nw) -> programList.refresh());
+
+        viewModel.executionFaultLineIndexProperty().addListener((obs, o, n) -> programList.refresh());
         HBox buttons = new HBox(10);
 
 

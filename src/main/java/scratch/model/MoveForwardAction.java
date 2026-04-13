@@ -27,6 +27,10 @@ public class MoveForwardAction extends ParameterizedAction{
     @Override
     public void execute(ExecutionContext e) {
         int realValue = resolveValue(e);
+        if (realValue < MIN_VALUE || realValue > MAX_VALUE) {
+            throw new ExecutionException(
+                    "Avancer de " + realValue + " hors plage " + MIN_VALUE + "–" + MAX_VALUE);
+        }
         e.move(realValue);
     }
     @Override

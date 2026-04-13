@@ -41,13 +41,21 @@ public class MainViewModel {
     private final DoubleProperty speed = new SimpleDoubleProperty(1.0);
     private Timeline autoTimeline ;
     private final IntegerProperty programChangeCounter = new SimpleIntegerProperty(0);
-
+    private final IntegerProperty executionFaultLineIndex = new SimpleIntegerProperty(-1);
 
     public MainViewModel(Program program) {
         this.program = program;
         this.observableActions = FXCollections.observableArrayList(program.getActions());
         turtleState.set(buildTurtleStateString());
         refreshVariablesFromContext();
+
+        selectedIndex.addListener((obs, oldVal, newVal) -> {
+            int fault = executionFaultLineIndex.get();
+            if (fault >= 0 && newVal != null && newVal.intValue() != fault) {
+                executionFaultLineIndex.set(-1);
+                errorMessage.set("");
+            }
+        });
     }
 
 
@@ -188,6 +196,8 @@ public class MainViewModel {
     public void executeNext(){
         if (!program.hasNext()) {
             return;
+
+
         }
             try {
 
@@ -199,13 +209,16 @@ public class MainViewModel {
 
                 //Declenche le redessin du Canvas
                 executionStep.set(executionStep.get() + 1);
+                executionFaultLineIndex.set(-1);
+                errorMessage.set("");
                 if (program.hasNext()) {
+
                     selectedIndex.set(program.getCurrenIndex());
                 }
                 errorMessage.set("");
             } catch (ExecutionException e) {
                 stopAutoExecution();
-
+                executionFaultLineIndex.set(program.getCurrenIndex());
                 if (observableActions.isEmpty()) {
                     selectedIndex.set(-1);
                 } else {
@@ -229,6 +242,7 @@ public class MainViewModel {
 
             // Valider le programme avant de le charger
             if (!program.isValid(executionContext)) {
+                errorMessage.set("Programme invalide");
                 programLoaded.set(false);
                 return;
             }
@@ -442,6 +456,12 @@ public class MainViewModel {
         if (action == null) return false;
 
         return action.updateValue(newValue);
+    }
+    public int getExecutionFaultLineIndex() {
+        return executionFaultLineIndex.get();
+    }
+    public ReadOnlyIntegerProperty executionFaultLineIndexProperty() {
+        return executionFaultLineIndex;
     }
 
 
