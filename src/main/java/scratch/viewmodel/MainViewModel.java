@@ -290,6 +290,8 @@ public class MainViewModel {
         try {
             List<Action> loaded = ProgramFileService.load(file);
             program.clear();
+            clearProgram();
+            newProgram();
             observableActions.clear();
             for (Action a : loaded){
                 program.addAction(a);
