@@ -64,7 +64,7 @@ public class DetailPanelView extends TitledPane {
         detailPane.getChildren().addAll(row, lblError);
         setContent(detailPane);
 
-        lblRuntimeError.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+        lblRuntimeError.setStyle("-fx-text-fill: red; -fx-font-size: 15px;");
         lblRuntimeError.setWrapText(true);
         lblRuntimeError.textProperty().bind(viewModel.errorMessageProperty());
         detailPane.getChildren().add(lblRuntimeError);

@@ -30,11 +30,15 @@ public class IncrementVariableAction extends Action {
         // On additionne les deux et on sauvegarde !
 
         int newVal = currentVal + step;
+        e.setVariable(targetVar, newVal);
+        /*
         if (newVal > 100) {
             throw new ExecutionException(
                     "La variable " + targetVar + " dépasse 100 (" + newVal + ")");
         }
-        e.setVariable(targetVar, newVal);
+
+         */
+
     }
 
     @Override
