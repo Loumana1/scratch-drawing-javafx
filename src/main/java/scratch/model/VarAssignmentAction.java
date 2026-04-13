@@ -3,7 +3,7 @@ package scratch.model;
 public class VarAssignmentAction extends Action{
 
     private String targetVar;
-    private String value; // String car ça peut être "45" (littéral) ou "nb" (variable)
+    private String value;
 
     public VarAssignmentAction() {
         this.targetVar = "var";
@@ -44,12 +44,12 @@ public class VarAssignmentAction extends Action{
         }
     }
 
-    // Petite méthode magique pour lire soit un chiffre, soit une autre variable
+
     private int resolveValue(String valStr, ExecutionContext e) {
         try {
-            return Integer.parseInt(valStr); // Si c'est un nombre normal comme "45"
+            return Integer.parseInt(valStr);
         } catch (NumberFormatException ex) {
-            return e.getVariable(valStr); // Si c'est un nom de variable comme "nb"
+            return e.getVariable(valStr);
         }
     }
 

@@ -95,7 +95,7 @@ public class DetailPanelView extends TitledPane {
 
         Action action = viewModel.getSelectedAction();
 
-        // -------- BLOC 1 : LA DECLARATION --------
+        // --------DECLARATION --------
         if (action != null && action.getType() == scratch.model.ActionType.VAR_DECLARATION) {
             scratch.model.VarDeclarationAction varAction = (scratch.model.VarDeclarationAction) action;
             lblDetailTitle.setText("Déclaration de la variable ");
@@ -116,7 +116,7 @@ public class DetailPanelView extends TitledPane {
             return;
         }
 
-        // -------- BLOC 2 : L'ASSIGNATION --------
+        // -------- ASSIGNATION --------
         if (action != null && action.getType() == scratch.model.ActionType.VAR_ASSIGNMENT) {
             scratch.model.VarAssignmentAction assignAction = (scratch.model.VarAssignmentAction) action;
 
@@ -148,7 +148,7 @@ public class DetailPanelView extends TitledPane {
             return;
         }
 
-        // -------- BLOC 3 : L'INCREMENTATION --------
+        // -------- INCREMENTATION --------
         if (action != null && action.getType() == scratch.model.ActionType.INCREMENT_VARIABLE) {
             scratch.model.IncrementVariableAction incAction = (scratch.model.IncrementVariableAction) action;
 
@@ -267,7 +267,7 @@ public class DetailPanelView extends TitledPane {
                 return;
             }
 
-            // On utilise la magie de notre nouvelle méthode !
+
             boolean ok = viewModel.tryUpdateSelectedActionWithText(text);
 
             if (!ok) {

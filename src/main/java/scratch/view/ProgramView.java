@@ -169,7 +169,6 @@ public class ProgramView extends VBox {
             }
         });
         // Forcer le rrefresh qd nouvelle erreur
-
         viewModel.executionFaultLineIndexProperty().addListener((obs, o, n) -> programList.refresh());
         HBox buttons = new HBox(10);
 

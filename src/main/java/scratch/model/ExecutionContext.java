@@ -25,7 +25,7 @@ public class ExecutionContext {
         reset();
     }
 
-    // FONCTION
+
 
     public void declareVariable(String name) {
         if (name == null || name.isBlank()) {

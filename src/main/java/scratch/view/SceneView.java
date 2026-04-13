@@ -146,7 +146,7 @@ public class SceneView extends VBox {
                 speedBox);
 
 
-        //config
+
         configActions();
         configButtonsDisabling();
         viewModel.executionStepProperty().addListener((obs, oldVal, newVal) -> drawGrid());

@@ -13,9 +13,6 @@ public class ProgramFileService {
     public static void save(File file, List<Action> actions) throws IOException {
         try (PrintWriter writer = new PrintWriter(file)) {
             for (Action action : actions) {
-                // 🌟 MAGIE DU POLYMORPHISME :
-                // On appelle simplement format(). Chaque action (Move, Var, etc.)
-                // sait exactement comment s'écrire elle-même.
                 writer.println(action.format());
             }
         }

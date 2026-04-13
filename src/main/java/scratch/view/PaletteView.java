@@ -39,7 +39,7 @@ public class PaletteView extends VBox {
                         "-fx-border-width: 2;" +
                         "-fx-background-color: white;"
         );
-        // Remplir avec l'enum au lieu de Strings
+
         listView.getItems().addAll(ActionType.values());
 
         // Cellule personnalisée

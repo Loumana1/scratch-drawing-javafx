@@ -23,21 +23,15 @@ public class IncrementVariableAction extends Action {
 
     @Override
     public void execute(ExecutionContext e) {
-        // On récupère la valeur à ajouter (ex: 15 ou la valeur de "nb")
+
         int step = resolveValue(value, e);
-        // On récupère la valeur actuelle de la variable
+
         int currentVal = e.getVariable(targetVar);
-        // On additionne les deux et on sauvegarde !
+
 
         int newVal = currentVal + step;
         e.setVariable(targetVar, newVal);
-        /*
-        if (newVal > 100) {
-            throw new ExecutionException(
-                    "La variable " + targetVar + " dépasse 100 (" + newVal + ")");
-        }
 
-         */
 
     }
 

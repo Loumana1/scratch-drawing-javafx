@@ -62,7 +62,6 @@ public class MainViewModel {
 
     //--------------------------ACTIONS---------------------------
 
-    // Methode générique---> la Palette passe le type,  ViewModel crée l'action
     public void addAction(ActionType type) {
         Action action = createAction(type);
 
@@ -148,7 +147,7 @@ public class MainViewModel {
         notifyProgramChanged();
     }
 
-    // Boutton vider
+
     public void clearProgram(){
         program.clear();
         observableActions.clear();
@@ -164,15 +163,15 @@ public class MainViewModel {
         notifyProgramChanged();
     }
 
-    //Boutton Suprrimer une action
+
     public void removeSelectedAction() {
         int index = selectedIndex.get();
 
-        // Validate
+
         if (index >= 0 && index < observableActions.size()) {
-            //  supp Modèle
+            //  supp action Modèle
             this.program.removeAction(index);
-            //supp de la liste Observable m-a-j la Vue graphic)
+            //supp de la liste Observable
             this.observableActions.remove(index);
 
             // Si la liste est maintenant vide, on désélectionne
@@ -230,7 +229,7 @@ public class MainViewModel {
             }
 
     }
-  //Charger sur scène
+
     public void loadOnScene() {
     
         executionContext.reset();
@@ -238,9 +237,6 @@ public class MainViewModel {
         executionStep.set(0);
 
 
-
-
-            // Valider le programme avant de le charger
             if (!program.isValid(executionContext)) {
                 errorMessage.set("Programme invalide");
                 programLoaded.set(false);
@@ -289,7 +285,7 @@ public class MainViewModel {
         }
     }
 
-    //Sauvegarde des Actions
+
     public  void loadFromFile(File file){
         try {
             List<Action> loaded = ProgramFileService.load(file);
@@ -300,10 +296,9 @@ public class MainViewModel {
                 observableActions.add(a);
             }
             selectedIndex.set(observableActions.isEmpty() ? -1 : 0);
-            // Si la gestion d'erreur est ajoutée (errorMessageProperty)
-            // errorMessage.set("");
+
         }catch (Exception e){
-            // errorMessage.set("Erreur chargement : " + e.getMessage());
+
             System.err.println("Erreur chargement : " + e.getMessage());
         }
         program.resetExecution();
@@ -328,7 +323,7 @@ public class MainViewModel {
 
 
     //--------------------------BINDINGS----------------------
-//Button supprimer dessactivé
+
     public BooleanBinding canRemove() {
         // On peut supprimer si la liste n'est pas vide ET qu'un élément est sélectionné
         return Bindings.isEmpty(observableActions).not()
@@ -426,7 +421,7 @@ public class MainViewModel {
 
 //----------------------- GETTERS POUR VUE ------------------------
 
-//Vue récupére  liste et s'y abonner
+
     public ObservableList<Action> getObservableActions() {
         return observableActions;
     }
@@ -451,12 +446,7 @@ public class MainViewModel {
         );
     }
 
-    public boolean tryUpdateSelectedActionValue(int newValue) {
-        Action action = getSelectedAction();
-        if (action == null) return false;
 
-        return action.updateValue(newValue);
-    }
     public int getExecutionFaultLineIndex() {
         return executionFaultLineIndex.get();
     }
