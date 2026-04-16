@@ -15,6 +15,7 @@ public class VarAssignmentAction extends Action{
         this.value = value;
     }
 
+    @Override
     public String getTargetVar() { return targetVar; }
     public void setTargetVar(String targetVar) { this.targetVar = targetVar; }
 
@@ -23,7 +24,7 @@ public class VarAssignmentAction extends Action{
 
     @Override
     public void execute(ExecutionContext e) {
-        int resolvedValue = resolveValue(value, e);
+        int resolvedValue = e.resolveExpression(value);
         if (resolvedValue > 100) {
             throw new ExecutionException(
                     "La variable " + targetVar + " dépasse 100 (" + resolvedValue + ")");
@@ -34,24 +35,10 @@ public class VarAssignmentAction extends Action{
     @Override
     public boolean isValid(ExecutionContext e) {
         if (targetVar == null || targetVar.isBlank()) return false;
-        if (value == null || value.isBlank()) return false;
         if (!e.hasVariable(targetVar)) return false;
-        try {
-            Integer.parseInt(value.trim());
-            return true;
-        } catch (NumberFormatException ex) {
-            return e.hasVariable(value.trim());
-        }
+        return e.isValidExpression(value);
     }
 
-
-    private int resolveValue(String valStr, ExecutionContext e) {
-        try {
-            return Integer.parseInt(valStr);
-        } catch (NumberFormatException ex) {
-            return e.getVariable(valStr);
-        }
-    }
 
     @Override
     public ActionType getType() {
@@ -59,9 +46,7 @@ public class VarAssignmentAction extends Action{
     }
 
     @Override
-    public String toString() {
-        return "Assignation : " + targetVar + " = " + value;
-    }
+    public String toString() { return getTitle(); }
 
     @Override
     public Action duplicate() {
@@ -70,17 +55,11 @@ public class VarAssignmentAction extends Action{
 
     @Override
     public String format() {
-        return "VAR_ASSIGNMENT;" + targetVar + ";" + value;
+        return getType().name() + ";" + targetVar + ";" + value;
     }
 
     @Override
     public String getTitle() { return "Assignation : " + targetVar + " = " + value; }
 
-    @Override
-    public boolean isValueEditable() { return false; }
-    @Override
-    public String getUnit() { return ""; }
-    @Override
-    public int getNumericValue() { return 0; }
 }
 

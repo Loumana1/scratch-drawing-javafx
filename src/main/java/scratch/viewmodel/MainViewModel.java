@@ -12,11 +12,7 @@ import scratch.model.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.sql.Time;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 public class MainViewModel {
@@ -105,7 +101,7 @@ public class MainViewModel {
     public void moveUp() {
         int index = selectedIndex.get();
         if (index > 0 && index < observableActions.size()){
-            program.moveUp(selectedIndex.get());
+            program.moveUp(index);
             Action action = observableActions.remove(index);
             observableActions.add(index - 1 ,  action);
             this.selectedIndex.set(index - 1);
@@ -152,7 +148,6 @@ public class MainViewModel {
         program.clear();
         observableActions.clear();
         selectedIndex.set(-1);
-        program.resetExecution();
         executionStep.set(0);
         programLoaded.set(false);
         errorMessage.set("");
@@ -211,17 +206,15 @@ public class MainViewModel {
                 executionFaultLineIndex.set(-1);
                 errorMessage.set("");
                 if (program.hasNext()) {
-
-                    selectedIndex.set(program.getCurrenIndex());
+                    selectedIndex.set(program.getCurrentIndex());
                 }
-                errorMessage.set("");
             } catch (ExecutionException e) {
                 stopAutoExecution();
-                executionFaultLineIndex.set(program.getCurrenIndex());
+                executionFaultLineIndex.set(program.getCurrentIndex());
                 if (observableActions.isEmpty()) {
                     selectedIndex.set(-1);
                 } else {
-                    selectedIndex.set(program.getCurrenIndex());
+                    selectedIndex.set(program.getCurrentIndex());
                 }
 
                 String msg = e.getMessage();
@@ -231,30 +224,23 @@ public class MainViewModel {
     }
 
     public void loadOnScene() {
-    
+        if (!program.isValid(new ExecutionContext())) {
+            errorMessage.set("Programme invalide");
+            programLoaded.set(false);
+            return;
+        }
+        errorMessage.set("");
         executionContext.reset();
         program.resetExecution();
         executionStep.set(0);
-
-
-            if (!program.isValid(executionContext)) {
-                errorMessage.set("Programme invalide");
-                programLoaded.set(false);
-                return;
-            }
-            errorMessage.set("");
-
-            executionContext.reset();
-            program.resetExecution();
-            programLoaded.set(true);
-            refreshVariablesFromContext();
-            turtleState.set(buildTurtleStateString());
-            //desectionner si list vide 
-            if (observableActions.isEmpty()) {
-                selectedIndex.set(-1);
-            } else {
-                selectedIndex.set(program.getCurrenIndex());
-            }
+        programLoaded.set(true);
+        refreshVariablesFromContext();
+        turtleState.set(buildTurtleStateString());
+        if (observableActions.isEmpty()) {
+            selectedIndex.set(-1);
+        } else {
+            selectedIndex.set(program.getCurrentIndex());
+        }
 
 
     }
@@ -286,25 +272,18 @@ public class MainViewModel {
     }
 
 
-    public  void loadFromFile(File file){
+    public void loadFromFile(File file) {
         try {
             List<Action> loaded = ProgramFileService.load(file);
-            program.clear();
             clearProgram();
-            newProgram();
-            observableActions.clear();
-            for (Action a : loaded){
+            for (Action a : loaded) {
                 program.addAction(a);
                 observableActions.add(a);
             }
             selectedIndex.set(observableActions.isEmpty() ? -1 : 0);
-
-        }catch (Exception e){
-
+        } catch (Exception e) {
             System.err.println("Erreur chargement : " + e.getMessage());
         }
-        program.resetExecution();
-        executionStep.set(0);
     }
 
     // ---------- Zone info --------------
@@ -335,11 +314,10 @@ public class MainViewModel {
         return Bindings.createBooleanBinding(
                 () -> {
                     String err = errorMessage.get();
-                    boolean Error = err != null && !err.isBlank();
-                    return program.hasNext() &&  !Error;
+                    boolean hasError = err != null && !err.isBlank();
+                    return program.hasNext() && !hasError;
                 },
                 executionStep,
-                programLoaded,
                 errorMessage
         );
     }
@@ -385,13 +363,7 @@ public class MainViewModel {
     }
 
     public void newProgram() {
-        program.clear();
-        observableActions.clear();
-        selectedIndex.set(-1);
-        executionContext.reset();
-        program.resetExecution();
-        programLoadedProperty().set(false);
-        executionStep.set(executionStep.get() + 1);
+        clearProgram();
     }
 
     public void startAutoExecution(){
@@ -475,10 +447,8 @@ public class MainViewModel {
 
     private void refreshVariablesFromContext() {
         observableVariables.clear();
-        Map<String, Integer> vars = executionContext.getVariablesSnapshot();
-        for (Map.Entry<String, Integer> entry : vars.entrySet()) {
-            observableVariables.add(new VariableRow(entry.getKey(), entry.getValue()));
-        }
+        executionContext.getVariablesSnapshot()
+                .forEach((name, val) -> observableVariables.add(new VariableRow(name, val)));
     }
 
     public ObservableList<VariableRow> getObservableVariables() {

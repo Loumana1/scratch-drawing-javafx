@@ -6,11 +6,11 @@ import java.util.List;
 
 public class Program {
     private final List<Action> actions;
-    private int currenIndex;
+    private int currentIndex;
 
     public Program() {
         this.actions = new ArrayList<>();
-        this.currenIndex = 0;
+        this.currentIndex = 0;
     }
 
 
@@ -74,7 +74,7 @@ public class Program {
 
     //Methodes d'execution
 
-    public Boolean isValid(ExecutionContext context) {
+    public boolean isValid(ExecutionContext context) {
 
         // une copie du contexte pour la simulation
         //Sert essentiellemnt a definir  si le boutton chargé va etre actif
@@ -82,7 +82,6 @@ public class Program {
         // et on reinsert tout les action,
         // est-ce que ce programme est cohérent ?
         ExecutionContext tempContext = new ExecutionContext();
-        tempContext.reset();
 
         boolean instructionSeen = false;
         int repeatDepth = 0;
@@ -97,13 +96,7 @@ public class Program {
                 } else {
                     instructionSeen = true;
                 }
-                if (action.getType() == ActionType.MOVE_FORWARD ||
-                        action.getType() == ActionType.TURN_LEFT ||
-                        action.getType() == ActionType.TURN_RIGHT ||
-                        action.getType() == ActionType.PEN_UP ||
-                        action.getType() == ActionType.PEN_DOWN) {
-                    hasVisualAction = true;
-                }
+                if (action.isVisual()) hasVisualAction = true;
                 if (action.getType() == ActionType.REPEAT){
                     repeatDepth++;
                 } else if (action.getType() == ActionType.END_REPEAT) {
@@ -134,24 +127,15 @@ public class Program {
     private boolean checkRepeatVarNotModified() {
         for (int i = 0; i < actions.size(); i++) {
             Action action = actions.get(i);
-            if (action.getType() ==  ActionType.REPEAT) {
-                RepeatAction ra = (RepeatAction) action;
-                if (ra.isCountIsVar()) {
-                    String varName = ra.getCountVarName();
-                    int endIndex = findEndRepeat(i);
-                    // Parcourir le corps de la boucle (entre Repeat et EndRepeat)
-                    for (int j = i + 1; j < endIndex; j++) {
-                        Action inner = actions.get(j);
-                        if (inner.getType() == ActionType.INCREMENT_VARIABLE) {
-                            IncrementVariableAction inc = (IncrementVariableAction) inner;
-                            if (varName.equals(inc.getTargetVar())) {
-                                return false;
-                            }
-                        } else if (inner.getType() ==  ActionType.VAR_ASSIGNMENT) {
-                            VarAssignmentAction assign = (VarAssignmentAction) inner;
-                            if (varName.equals(assign.getTargetVar())) {
-                                return false;
-                            }
+            if (action.getType() == ActionType.REPEAT && action.isCountIsVar()) {
+                String varName = action.getExpression();
+                int endIndex = findEndRepeat(i);
+                for (int j = i + 1; j < endIndex; j++) {
+                    Action inner = actions.get(j);
+                    if (inner.getType() == ActionType.INCREMENT_VARIABLE
+                            || inner.getType() == ActionType.VAR_ASSIGNMENT) {
+                        if (varName.equals(inner.getTargetVar())) {
+                            return false;
                         }
                     }
                 }
@@ -164,33 +148,33 @@ public class Program {
         if (!hasNext()) throw new IllegalStateException("Pas d'action suivante");
 
 
-        Action a = actions.get(currenIndex);
+        Action a = actions.get(currentIndex);
 
         if ( a.getType() == ActionType.REPEAT) {
 
             int n = a.resolveCount(context);
             if (n <= 0) {
-                currenIndex = findEndRepeat(currenIndex) + 1;
+                currentIndex = findEndRepeat(currentIndex) + 1;
             }else {
-                context.pushRepeat(currenIndex , n - 1);
-                currenIndex++ ;
+                context.pushRepeat(currentIndex , n - 1);
+                currentIndex++ ;
             }
         } else if (a.getType() == ActionType.END_REPEAT) {
             if (context.hasRepeat()) {
                 int[] top = context.peekRepeat();
                 if (top[1] > 0) {
                     top[1]--;
-                    currenIndex = top[0] + 1;
+                    currentIndex = top[0] + 1;
                 } else {
                     context.popRepeat();
-                    currenIndex++;
+                    currentIndex++;
                 }
             } else {
-                currenIndex++;
+                currentIndex++;
             }
         } else {
             a.execute(context);
-            currenIndex++;
+            currentIndex++;
         }
     }
     private int findEndRepeat(int from) {
@@ -207,11 +191,11 @@ public class Program {
     }
 
     public boolean hasNext(){
-        return currenIndex < actions.size();
+        return currentIndex < actions.size();
     }
 
     public void  resetExecution(){
-        currenIndex = 0 ;
+        currentIndex = 0 ;
     }
 
     public int size() {
@@ -222,7 +206,7 @@ public class Program {
         return actions.isEmpty();
     }
 
-    public int getCurrenIndex() {
-        return currenIndex;
+    public int getCurrentIndex() {
+        return currentIndex;
     }
 }

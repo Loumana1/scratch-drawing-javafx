@@ -36,6 +36,24 @@ public abstract class ParameterizedAction extends Action {
     protected abstract boolean isValueValid(int value);
     public abstract int getDefaultValue();
 
+    protected void copyStateTo(ParameterizedAction target) {
+        if (isVar()) {
+            target.setVarName(getVarName());
+        } else {
+            target.setValue(getValue());
+        }
+    }
+
+    @Override
+    public boolean isValid(ExecutionContext e) {
+        if (isVar()) {
+            String name = getVarName();
+            if (name == null || name.isBlank()) return false;
+            return e.hasVariable(name);
+        }
+        return isValueValid(getValue());
+    }
+
     @Override
     public String format() {
         if (isVar()) {

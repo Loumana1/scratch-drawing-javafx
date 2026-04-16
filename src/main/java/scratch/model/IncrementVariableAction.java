@@ -15,6 +15,7 @@ public class IncrementVariableAction extends Action {
         this.value = value;
     }
 
+    @Override
     public String getTargetVar() { return targetVar; }
     public void setTargetVar(String targetVar) { this.targetVar = targetVar; }
 
@@ -23,37 +24,16 @@ public class IncrementVariableAction extends Action {
 
     @Override
     public void execute(ExecutionContext e) {
-
-        int step = resolveValue(value, e);
-
-        int currentVal = e.getVariable(targetVar);
-
-
-        int newVal = currentVal + step;
+        int step = e.resolveExpression(value);
+        int newVal = e.getVariable(targetVar) + step;
         e.setVariable(targetVar, newVal);
-
-
     }
 
     @Override
     public boolean isValid(ExecutionContext e) {
         if (targetVar == null || targetVar.isBlank()) return false;
-        if (value == null || value.isBlank()) return false;
         if (!e.hasVariable(targetVar)) return false;
-        try {
-            Integer.parseInt(value.trim());
-            return true;
-        } catch (NumberFormatException ex) {
-            return e.hasVariable(value.trim());
-        }
-    }
-
-    private int resolveValue(String valStr, ExecutionContext e) {
-        try {
-            return Integer.parseInt(valStr);
-        } catch (NumberFormatException ex) {
-            return e.getVariable(valStr);
-        }
+        return e.isValidExpression(value);
     }
 
     @Override
@@ -62,9 +42,7 @@ public class IncrementVariableAction extends Action {
     }
 
     @Override
-    public String toString() {
-        return "Inc/Dec variable : " + targetVar + " de " + value;
-    }
+    public String toString() { return getTitle(); }
 
     @Override
     public Action duplicate() {
@@ -79,10 +57,4 @@ public class IncrementVariableAction extends Action {
     @Override
     public String getTitle() { return "Inc/Dec variable : " + targetVar + " de " + value; }
 
-    @Override
-    public boolean isValueEditable() { return false; }
-    @Override
-    public String getUnit() { return ""; }
-    @Override
-    public int getNumericValue() { return 0; }
 }

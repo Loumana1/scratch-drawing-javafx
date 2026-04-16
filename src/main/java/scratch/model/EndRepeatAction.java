@@ -17,9 +17,7 @@ public class EndRepeatAction extends Action {
     }
 
     @Override
-    public String toString() {
-        return "Fin repeter";
-    }
+    public String toString() { return getTitle(); }
 
     @Override
     public Action duplicate() {
@@ -28,7 +26,7 @@ public class EndRepeatAction extends Action {
 
     @Override
     public String format() {
-        return "END_REPEAT;";
+        return getType().name() + ";";
     }
 
     @Override

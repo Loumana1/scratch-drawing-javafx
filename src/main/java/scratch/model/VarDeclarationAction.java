@@ -27,15 +27,8 @@ public class VarDeclarationAction extends Action {
 
     @Override
     public boolean isValid(ExecutionContext e) {
-        if (varName == null || varName.isBlank()) {
-            return false;
-        }
-
-       if (!varName.matches("^[a-zA-Z_][a-zA-Z0-9_]*$")) {
-            return false;
-        }
-
-        return true;
+        if (varName == null || varName.isBlank()) return false;
+        return varName.matches("^[a-zA-Z_][a-zA-Z0-9_]*$");
     }
 
     @Override
@@ -44,9 +37,7 @@ public class VarDeclarationAction extends Action {
     }
 
     @Override
-    public String toString() {
-        return "Déclaration variable " + varName;
-    }
+    public String toString() { return getTitle(); }
 
     @Override
     public Action duplicate() {
@@ -55,16 +46,10 @@ public class VarDeclarationAction extends Action {
 
     @Override
     public String format() {
-        return "VAR_DECLARATION;" + varName;
+        return getType().name() + ";" + varName;
     }
 
     @Override
     public String getTitle() { return "Déclaration variable " + varName; }
 
-    @Override
-    public boolean isValueEditable() { return false; }
-    @Override
-    public String getUnit() { return ""; }
-    @Override
-    public int getNumericValue() { return 0; }
 }

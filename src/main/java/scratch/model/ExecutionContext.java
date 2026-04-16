@@ -130,10 +130,6 @@ public class ExecutionContext {
         return segments;
     }
 
-    public int getSegmentsCount(List<Segment> segments) {
-        return segments.size();
-    }
-
     public boolean isPenDown() {
         return penDown;
     }
@@ -156,6 +152,24 @@ public class ExecutionContext {
     // Y a t il une boucle active
     public boolean hasRepeat() {
         return !repeatStack.isEmpty();
+    }
+
+    public int resolveExpression(String expr) {
+        try {
+            return Integer.parseInt(expr);
+        } catch (NumberFormatException e) {
+            return getVariable(expr);
+        }
+    }
+
+    public boolean isValidExpression(String expr) {
+        if (expr == null || expr.isBlank()) return false;
+        try {
+            Integer.parseInt(expr.trim());
+            return true;
+        } catch (NumberFormatException e) {
+            return hasVariable(expr.trim());
+        }
     }
 
 }

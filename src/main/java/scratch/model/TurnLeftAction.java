@@ -24,18 +24,6 @@ public class TurnLeftAction extends ParameterizedAction {
     }
 
     @Override
-    public boolean isValid(ExecutionContext e) {
-        if (isVar()) {
-            String name = getVarName();
-            if (name == null || name.isBlank()) {
-                return false;
-            }
-            return e.hasVariable(name);
-        }
-        return isValueValid(getValue());
-    }
-
-    @Override
     public void execute(ExecutionContext e) {
         int realValue = resolveValue(e);
         if (realValue < MIN_VALUE || realValue > MAX_VALUE) {
@@ -51,14 +39,13 @@ public class TurnLeftAction extends ParameterizedAction {
     }
     @Override
     public Action duplicate() {
-        if (isVar()) {
-            TurnLeftAction clone = new TurnLeftAction();
-            clone.setVarName(this.getVarName());
-            return clone;
-        } else {
-            return new TurnLeftAction(getValue());
-        }
+        TurnLeftAction clone = new TurnLeftAction();
+        copyStateTo(clone);
+        return clone;
     }
+
+    @Override
+    public boolean isVisual() { return true; }
 
     @Override
     public String getTitle() {
@@ -70,13 +57,4 @@ public class TurnLeftAction extends ParameterizedAction {
         return " Degrés";
     }
 
-    @Override
-    public int getNumericValue() {
-        return this.getValue();
-    }
-
-    @Override
-    public boolean isValueEditable() {
-        return true;
-    }
 }

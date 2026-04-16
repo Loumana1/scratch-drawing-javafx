@@ -1,5 +1,5 @@
 package scratch.model;
-import scratch.model.*;
+
 public class PenUpAction extends Action {
 
     @Override
@@ -24,6 +24,9 @@ public class PenUpAction extends Action {
     public String format() {
         return "PEN_UP;";
     }
+
+    @Override
+    public boolean isVisual() { return true; }
 
     @Override
     public String getTitle() { return "Lever le stylo"; }

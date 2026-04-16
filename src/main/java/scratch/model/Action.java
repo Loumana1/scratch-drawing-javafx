@@ -15,5 +15,8 @@ public abstract class  Action {
     public boolean updateVariable(String varName) { return false; }
     public String getExpression() { return String.valueOf(getNumericValue()); }
     public int resolveCount(ExecutionContext ctx) { return 0; }
+    public String getTargetVar() { return ""; }
+    public boolean isCountIsVar() { return false; }
+    public boolean isVisual() { return false; }
 
 }

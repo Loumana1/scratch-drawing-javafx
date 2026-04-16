@@ -59,6 +59,7 @@ public class RepeatAction extends Action {
         this.countVarName = countVarName;
     }
 
+    @Override
     public boolean isCountIsVar() {
         return countIsVar;
     }
@@ -68,7 +69,7 @@ public class RepeatAction extends Action {
 
     @Override
     public String toString() {
-        return "Repeter " + (countIsVar ? countVarName : count) + " fois";
+        return getTitle() + getExpression() + getUnit();
     }
 
 
@@ -83,11 +84,7 @@ public class RepeatAction extends Action {
 
     @Override
     public String format() {
-        if (countIsVar) {
-            return getType().name() + ";" + countVarName;
-        } else {
-            return getType().name() + ";" + count;
-        }
+        return getType().name() + ";" + getExpression();
     }
 
     @Override
