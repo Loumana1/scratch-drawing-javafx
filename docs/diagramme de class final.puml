@@ -1,0 +1,277 @@
+@startuml Diagramme de Classes Detaillé
+
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam classAttributeIconSize 0
+
+' === Colors ===
+skinparam class {
+  BackgroundColor #E8F5E9
+  BorderColor #2E7D32
+  FontColor #1B5E20
+}
+skinparam abstractClass {
+  BackgroundColor #E3F2FD
+  BorderColor #1565C0
+}
+skinparam enum {
+  BackgroundColor #F3E5F5
+  BorderColor #7B1FA2
+}
+
+title Diagramme de Classe Complet (Modèle, View, ViewModel)
+
+package "scratch" {
+    class App extends javafx.application.Application {
+        + start(stage: Stage): void
+        + main(args: String[]): void
+    }
+}
+
+package "scratch.model" {
+    enum ActionType {
+        MOVE_FORWARD
+        TURN_LEFT
+        TURN_RIGHT
+        PEN_UP
+        PEN_DOWN
+        VAR_DECLARATION
+        VAR_ASSIGNMENT
+        INCREMENT_VARIABLE
+        REPEAT
+        END_REPEAT
+    }
+
+    abstract class Action {
+        + {abstract} execute(e : ExecutionContext) : void
+        + {abstract} isValid(e : ExecutionContext) : boolean
+        + {abstract} getType() : ActionType
+        + {abstract} duplicate() : Action
+        + {abstract} format() : String
+        + isVisual() : boolean
+        + getTitle() : String
+    }
+
+    class ExecutionContext {
+        - x : int
+        - y : int
+        - direction : int
+        - penDown : boolean
+        - segments : List<Segment>
+        - variables : Map<String, Integer>
+        + getX() : int
+        + getY() : int
+        + getDirection() : int
+        + isPenDown() : boolean
+        + getSegments() : List<Segment>
+        + move(distance : int) : void
+        + turn(angle : int) : void
+        + setPenDown(down : boolean) : void
+        + getVariables() : Map<String, Integer>
+        + declareVariable(name : String) : void
+        + setVariable(name : String, value : int) : void
+        + getVariable(name : String) : int
+        + reset() : void
+    }
+
+    class ExecutionException extends RuntimeException
+
+    class IncrementVariableAction extends Action {
+        - targetVar : String
+        - value : String
+        + getTargetVar() : String
+        + setTargetVar(targetVar : String) : void
+        + getValue() : String
+        + setValue(value : String) : void
+    }
+
+    abstract class ParameterizedAction extends Action {
+        - value : int
+        - isVar : boolean
+        - varName : String
+        + getValue() : int
+        + setValue(value : int) : void
+        + isVar() : boolean
+        + getVarName() : String
+        + setVarName(varName : String) : void
+        + resolveValue(e : ExecutionContext) : int
+        # {abstract} isValueValid(value : int) : boolean
+        + {abstract} getDefaultValue() : int
+        + getNumericValue() : int
+        + updateValue(newValue : int) : boolean
+        + updateVariable(varName : String) : boolean
+    }
+
+    class MoveForwardAction extends ParameterizedAction {
+        + {static} MIN_VALUE : int
+        + {static} MAX_VALUE : int
+        + {static} DEFAULT_VALUE : int
+    }
+
+    class TurnLeftAction extends ParameterizedAction {
+        + {static} MIN_VALUE : int
+        + {static} MAX_VALUE : int
+        + {static} DEFAULT_VALUE : int
+    }
+
+    class TurnRightAction extends ParameterizedAction {
+        + {static} MIN_VALUE : int
+        + {static} MAX_VALUE : int
+        + {static} DEFAULT_VALUE : int
+    }
+
+    class PenDownAction extends Action
+    class PenUpAction extends Action
+    class EndRepeatAction extends Action
+
+    class VarAssignmentAction extends Action {
+        - targetVar : String
+        - value : String
+        + getTargetVar() : String
+        + setTargetVar(targetVar : String) : void
+        + getValue() : String
+        + setValue(value : String) : void
+    }
+
+    class VarDeclarationAction extends Action {
+        - varName : String
+        + getVarName() : String
+        + setVarName(varName : String) : void
+    }
+
+    class RepeatAction extends Action {
+        - count : int
+        - countVarName : String
+        - countIsVar : boolean
+        + getCount() : int
+        + setCount(count : int) : void
+        + getCountVarName() : String
+        + setCountVarName(countVarName : String) : void
+        + isCountIsVar() : boolean
+        + setCountIsVar(countIsVar : boolean) : void
+    }
+
+    class Program {
+        - actions : List<Action>
+        - currentIndex : int
+        + addAction(action : Action) : void
+        + insertAction(index : int, action : Action) : void
+        + removeAction(index : int) : void
+        + getAction(index : int) : Action
+        + getActions() : List<Action>
+        + moveUp(index : int) : void
+        + moveDown(index : int) : void
+        + duplicateAt(index : int) : void
+        + clear() : void
+        + isValid(context : ExecutionContext) : boolean
+        + executeNext(context : ExecutionContext) : void
+        + hasNext() : boolean
+        + resetExecution() : void
+    }
+
+    class Segment {
+        - x1 : int
+        - y1 : int
+        - x2 : int
+        - y2 : int
+        + getX1() : int
+        + getY1() : int
+        + getX2() : int
+        + getY2() : int
+    }
+
+    Program "1" *-- "*" Action : actions
+    ExecutionContext "1" *-- "*" Segment : segments
+}
+
+package "scratch.viewmodel" {
+    class MainViewModel {
+        - program : Program
+        - observableActions : ObservableList<Action>
+        - observableVariables : ObservableList<VariableRow>
+        - selectedIndex : IntegerProperty
+        - executionContext : ExecutionContext
+        - executionStep : IntegerProperty
+        - programLoaded : BooleanProperty
+        - autoMode : BooleanProperty
+        - speed : DoubleProperty
+        + addAction(type : ActionType) : void
+        + moveUp() : void
+        + moveDown() : void
+        + duplicateSelected() : void
+        + clearProgram() : void
+        + removeSelectedAction() : void
+        + executeNext() : void
+        + resetExecution() : void
+        + startAutoExecution() : void
+        + stopAutoExecution() : void
+        + loadFromFile(file : File) : void
+        + saveToFile(file : File) : void
+    }
+
+    class ActionDetail {
+        - title : String
+        - valueEditable : boolean
+        - unitText : String
+        - value : int
+        + getTitle() : String
+        + isValueEditable() : boolean
+        + getUnitText() : String
+        + getValue() : int
+    }
+
+    class VariableRow {
+        - name : StringProperty
+        - value : IntegerProperty
+        + nameProperty() : StringProperty
+        + valueProperty() : IntegerProperty
+    }
+
+    MainViewModel "1" *-- "1" Program
+    MainViewModel "1" *-- "1" ExecutionContext
+    MainViewModel "1" o-- "*" VariableRow
+}
+
+package "scratch.view" {
+    class MainView {
+        - viewModel : MainViewModel
+        - programListView : ListView<Action>
+    }
+    class DetailPanelView {
+        - viewModel : MainViewModel
+        - programListView : ListView<Action>
+        - detailPane : VBox
+        - lblDetailTitle : Label
+        - txtValue : TextField
+    }
+    class PaletteView {
+        - viewModel : MainViewModel
+        - listView : ListView<ActionType>
+    }
+    class ProgramView {
+        - viewModel : MainViewModel
+        - btnUp : Button
+        - btnDown : Button
+        - btnDuplicate : Button
+        - btnRemove : Button
+    }
+    class SceneView {
+        - viewModel : MainViewModel
+        - canvas : Canvas
+        - btnNext : Button
+        - btnReset : Button
+        - tableVariables : TableView<VariableRow>
+    }
+
+    MainView "1" o--> "1" MainViewModel
+    DetailPanelView "1" o--> "1" MainViewModel
+    PaletteView "1" o--> "1" MainViewModel
+    ProgramView "1" o--> "1" MainViewModel
+    SceneView "1" o--> "1" MainViewModel
+
+    MainView *-- DetailPanelView
+    MainView *-- PaletteView
+    MainView *-- ProgramView
+    MainView *-- SceneView
+}
+@enduml
