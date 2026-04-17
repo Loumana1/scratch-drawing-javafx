@@ -48,8 +48,16 @@ package "scratch.model" {
         + {abstract} getType() : ActionType
         + {abstract} duplicate() : Action
         + {abstract} format() : String
+        + {abstract} getTitle() : String
+        + getUnit() : String
+        + isValueEditable() : boolean
+        + getNumericValue() : int
+        + updateValue(newValue : int) : boolean
+        + updateVariable(varName : String) : boolean
+        + getExpression() : String
+        + getTargetVar() : String
+        + isCountIsVar() : boolean
         + isVisual() : boolean
-        + getTitle() : String
     }
 
     class ExecutionContext {
@@ -59,18 +67,30 @@ package "scratch.model" {
         - penDown : boolean
         - segments : List<Segment>
         - variables : Map<String, Integer>
+        - repeatStack : Deque<int[]>
         + getX() : int
         + getY() : int
+        + getPositionTortueX() : int
+        + getPositionTortueY() : int
         + getDirection() : int
         + isPenDown() : boolean
         + getSegments() : List<Segment>
         + move(distance : int) : void
-        + turn(angle : int) : void
-        + setPenDown(down : boolean) : void
-        + getVariables() : Map<String, Integer>
+        + turnLeft(angle : int) : void
+        + turnRight(angle : int) : void
+        + penUp() : void
+        + penDown() : void
         + declareVariable(name : String) : void
+        + hasVariable(name : String) : boolean
         + setVariable(name : String, value : int) : void
         + getVariable(name : String) : int
+        + getVariablesSnapshot() : Map<String, Integer>
+        + resolveExpression(expr : String) : int
+        + isValidExpression(expr : String) : boolean
+        + pushRepeat(repeatIndex : int, iterations : int) : void
+        + peekRepeat() : int[]
+        + popRepeat() : void
+        + hasRepeat() : boolean
         + reset() : void
     }
 
@@ -97,9 +117,7 @@ package "scratch.model" {
         + resolveValue(e : ExecutionContext) : int
         # {abstract} isValueValid(value : int) : boolean
         + {abstract} getDefaultValue() : int
-        + getNumericValue() : int
-        + updateValue(newValue : int) : boolean
-        + updateVariable(varName : String) : boolean
+        # copyStateTo(target : ParameterizedAction) : void
     }
 
     class MoveForwardAction extends ParameterizedAction {
@@ -167,6 +185,9 @@ package "scratch.model" {
         + executeNext(context : ExecutionContext) : void
         + hasNext() : boolean
         + resetExecution() : void
+        + getCurrentIndex() : int
+        + size() : int
+        + isEmpty() : boolean
     }
 
     class Segment {
@@ -192,7 +213,9 @@ package "scratch.viewmodel" {
         - selectedIndex : IntegerProperty
         - executionContext : ExecutionContext
         - executionStep : IntegerProperty
+        - errorMessage : StringProperty
         - programLoaded : BooleanProperty
+        - executionFaultLineIndex : IntegerProperty
         - autoMode : BooleanProperty
         - speed : DoubleProperty
         + addAction(type : ActionType) : void
@@ -201,12 +224,21 @@ package "scratch.viewmodel" {
         + duplicateSelected() : void
         + clearProgram() : void
         + removeSelectedAction() : void
+        + loadOnScene() : void
         + executeNext() : void
         + resetExecution() : void
         + startAutoExecution() : void
         + stopAutoExecution() : void
         + loadFromFile(file : File) : void
         + saveToFile(file : File) : void
+        + tryUpdateSelectedActionWithText(text : String) : boolean
+        + getSelectedActionDetail() : ActionDetail
+        + canLoad() : BooleanBinding
+        + canExecuteNext() : BooleanBinding
+        + canMoveUp() : BooleanBinding
+        + canMoveDown() : BooleanBinding
+        + canRemove() : BooleanBinding
+        + canDuplicate() : BooleanBinding
     }
 
     class ActionDetail {
