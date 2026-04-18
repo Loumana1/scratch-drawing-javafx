@@ -116,6 +116,11 @@ public class Program {
                 return false;
             }
 
+            // Vérifier pas de stylo dans une boucle
+            if (!checkNoPenActionInLoop()) {
+                return false;
+            }
+
             return repeatDepth == 0 && hasVisualAction;
 
         } catch (ExecutionException e) {
@@ -139,6 +144,23 @@ public class Program {
                         }
                     }
                 }
+            }
+        }
+        return true;
+    }
+
+    // verifier le action pen up
+    private boolean checkNoPenActionInLoop() {
+        int depth = 0;
+        for (Action a : actions) {
+            if (a.getType() == ActionType.REPEAT) {
+                depth++;
+            } else if (a.getType() == ActionType.END_REPEAT) {
+                depth--;
+            }
+
+            if (depth > 0 && (a.getType() == ActionType.PEN_UP)) {
+                return false;
             }
         }
         return true;
