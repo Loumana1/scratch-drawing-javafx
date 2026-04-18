@@ -65,7 +65,7 @@ public abstract class ParameterizedAction extends Action {
 
 
     @Override
-    public boolean isValueEditable() { return !isVar(); }
+    public boolean isValueEditable() { return true; }
 
     @Override
     public int getNumericValue() { return getValue(); }
