@@ -318,6 +318,7 @@ public class MainViewModel {
                     return program.hasNext() && !hasError;
                 },
                 executionStep,
+                programLoaded,
                 errorMessage
         );
     }
