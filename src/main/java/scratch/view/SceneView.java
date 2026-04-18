@@ -150,6 +150,7 @@ public class SceneView extends VBox {
         configActions();
         configButtonsDisabling();
         viewModel.executionStepProperty().addListener((obs, oldVal, newVal) -> drawGrid());
+        viewModel.programChangeCounterProperty().addListener((obs, old, nw) -> drawGrid());
 
     }
 
@@ -179,8 +180,10 @@ public class SceneView extends VBox {
         btnNext.disableProperty().bind(
                 viewModel.programLoadedProperty().not()
                         .or(viewModel.canExecuteNext().not()));
-        viewModel.programLoadedProperty().addListener((obs, old, nw) ->
-                btnReset.setText(nw ? "Ré-initialiser" : "Charger"));
+        viewModel.programLoadedProperty().addListener((obs, old, nw) -> {
+            btnReset.setText(nw ? "Ré-initialiser" : "Charger");
+            drawGrid();
+        });
         btnExecute.disableProperty().bind(viewModel.canExecuteNext().not());
         btnStop.disableProperty().bind(viewModel.canExecuteNext().not());
     }

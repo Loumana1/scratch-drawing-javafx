@@ -149,12 +149,12 @@ public class MainViewModel {
         observableActions.clear();
         selectedIndex.set(-1);
         executionStep.set(0);
-        programLoaded.set(false);
         errorMessage.set("");
         executionContext.reset();
         refreshVariablesFromContext();
         turtleState.set(buildTurtleStateString());
         stopAutoExecution();
+        programLoaded.set(false);
         notifyProgramChanged();
     }
 
@@ -346,6 +346,8 @@ public class MainViewModel {
     private void notifyProgramChanged() {
         programChangeCounter.set(programChangeCounter.get() + 1);
     }
+
+    public IntegerProperty programChangeCounterProperty() { return programChangeCounter; }
 
 
     private Action createAction(ActionType type) {
