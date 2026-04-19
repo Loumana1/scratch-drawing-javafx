@@ -1,7 +1,9 @@
 package scratch.model;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.List;
 
 public class Program {
@@ -152,15 +154,19 @@ public class Program {
     // verifier le action pen up
     private boolean checkNoPenActionInLoop() {
         int depth = 0;
+        int penBalance = 0;
+
         for (Action a : actions) {
             if (a.getType() == ActionType.REPEAT) {
                 depth++;
             } else if (a.getType() == ActionType.END_REPEAT) {
                 depth--;
+                if (depth == 0 && penBalance != 0) return false;
+                if (depth == 0) penBalance = 0;
             }
-
-            if (depth > 0 && (a.getType() == ActionType.PEN_UP)) {
-                return false;
+            if (depth > 0) {
+                if (a.getType() == ActionType.PEN_UP)   penBalance++;
+                if (a.getType() == ActionType.PEN_DOWN)  penBalance--;
             }
         }
         return true;
