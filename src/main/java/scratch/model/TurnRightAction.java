@@ -1,5 +1,7 @@
 package scratch.model;
 
+import javafx.scene.paint.Color;
+
 public class TurnRightAction  extends ParameterizedAction{
 
     public static  final int MIN_VALUE = 1 ;
@@ -26,16 +28,48 @@ public class TurnRightAction  extends ParameterizedAction{
 
     @Override
     public void execute(ExecutionContext e) {
-        e.turnRight(getValue());
-    }
-
-    @Override
-    public boolean isValid(ExecutionContext e) {
-        return isValueValid(getValue());
+        int realValue = resolveValue(e);
+        if (realValue < MIN_VALUE || realValue > MAX_VALUE) {
+            throw new ExecutionException(
+                    "Tourner à droite de " + realValue + " hors plage " + MIN_VALUE + "–" + MAX_VALUE);
+        }
+        e.turnRight(realValue);
     }
 
     @Override
     public ActionType getType() {
         return ActionType.TURN_RIGHT;
     }
+
+    @Override
+    public Action duplicate() {
+        TurnRightAction clone = new TurnRightAction();
+        copyStateTo(clone);
+        return clone;
+    }
+
+
+    @Override
+    public boolean isVisual() { return true; }
+
+    @Override
+    public String getTitle() {
+        return "Tourner à droite de ";
+    }
+
+    @Override
+    public String getUnit() {
+        return " Degrés";
+    }
+
+    @Override
+    public Color getColor() {
+        return Color.RED;
+    }
+
+    @Override
+    public String toString() {
+        return getTitle() + " "+ getExpression();
+    }
 }
+

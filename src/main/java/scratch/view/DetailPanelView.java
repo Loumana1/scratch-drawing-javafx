@@ -5,148 +5,384 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import javafx.geometry.Insets;
-import scratch.model.Action;
-import scratch.model.ParameterizedAction;
-import scratch.model.TurnLeftAction;
-import scratch.model.TurnRightAction;
+import scratch.model.*;
+import scratch.viewmodel.ActionDetail;
 import scratch.viewmodel.MainViewModel;
 
 public class DetailPanelView extends TitledPane {
 
     private final MainViewModel viewModel;
-    private final ListView<Action> programListView;  // Référence pour refresh()
-    // juste mis-a-j
+    private final ListView<Action> programListView;
+
     private final Label lblDetailTitle = new Label("(aucune action sélectionnée)");
     private final TextField txtValue = new TextField();
     private final Label lblError = new Label("Error valeur");
     private final Label lblPixels = new Label("");
+    private final Label lblRuntimeError = new Label();
+
+    private final TextField txtTargetVar;
+    private final Label lblAssignValue;
+    private final Button btnPlus;
+    private final Button btnMinus;
 
     private VBox detailPane = new VBox(5);
-    private javafx.beans.value.ChangeListener<String> currentListener ;
-
-
-
+    private javafx.beans.value.ChangeListener<String> currentListener;
+    private javafx.beans.value.ChangeListener<String> targetVarListener;
 
     public DetailPanelView(MainViewModel viewModel, ListView<Action> programListView) {
         this.viewModel = viewModel;
         this.programListView = programListView;
 
-        // ----------------- Style  ----------
+        txtTargetVar = new TextField();
+        txtTargetVar.setMaxWidth(40);
+        lblAssignValue = new Label(" valeur : ");
+        btnPlus = new Button("+");
+        btnMinus = new Button("-");
+
+        txtTargetVar.setVisible(false);
+        txtTargetVar.setManaged(false);
+        lblAssignValue.setVisible(false);
+        lblAssignValue.setManaged(false);
+        btnPlus.setVisible(false);
+        btnPlus.setManaged(false);
+        btnMinus.setVisible(false);
+        btnMinus.setManaged(false);
+
         setText("Détails de l'action");
         lblError.setStyle("-fx-text-fill: red;");
         lblError.setVisible(false);
+        lblError.setManaged(false);
         txtValue.setVisible(false);
+        txtValue.setManaged(false);
         txtValue.setMaxWidth(40);
-        // ---------Layout--------
+
         HBox row = new HBox(5);
         row.setAlignment(Pos.CENTER_LEFT);
-        row.getChildren().addAll(lblDetailTitle, txtValue, lblPixels);
+        row.getChildren().addAll(lblDetailTitle, txtTargetVar, lblAssignValue, txtValue, lblPixels, btnPlus, btnMinus);
+
         detailPane.getChildren().addAll(row, lblError);
         setContent(detailPane);
 
+        lblRuntimeError.setStyle("-fx-text-fill: red; -fx-font-size: 15px;");
+        lblRuntimeError.setWrapText(true);
+        lblRuntimeError.textProperty().bind(viewModel.errorMessageProperty());
+        detailPane.getChildren().add(lblRuntimeError);
 
-        //-----------Listener -------------------
         viewModel.selectedIndexProperty().addListener((obs, old, nw) -> updateDetailPane());
     }
 
-
-
     private void updateDetailPane() {
-        Action action = viewModel.getSelectedAction();
-        lblError.setVisible(false);  // reset pour chaque changement
+        detachTargetVarListener();
 
-        //Default : pas d'action
-        if (action == null) {
+        if (currentListener != null) {
+            txtValue.textProperty().removeListener(currentListener);
+            currentListener = null;
+        }
+
+        lblError.setVisible(false);
+        lblError.setManaged(false);
+
+        // On cache tout par défaut
+        txtTargetVar.setVisible(false);
+        txtTargetVar.setManaged(false);
+        lblAssignValue.setVisible(false);
+        lblAssignValue.setManaged(false);
+        btnPlus.setVisible(false);
+        btnPlus.setManaged(false);
+        btnMinus.setVisible(false);
+        btnMinus.setManaged(false);
+
+        Action action = viewModel.getSelectedAction();
+
+        // --------DECLARATION --------
+        if (action != null && action.getType() == ActionType.VAR_DECLARATION) {
+            VarDeclarationAction varAction = (VarDeclarationAction) action;
+            lblDetailTitle.setText("Déclaration de la variable ");
+
+            txtValue.setDisable(false);
+            txtValue.setVisible(true);
+            txtValue.setManaged(true);
+            lblPixels.setVisible(false);
+            lblPixels.setManaged(false);
+
+            if (currentListener != null) {
+                txtValue.textProperty().removeListener(currentListener);
+                currentListener = null;
+            }
+
+            txtValue.setText(varAction.getVarName());
+            configVarTextField(varAction);
+            return;
+        }
+
+        // -------- ASSIGNATION --------
+        if (action != null && action.getType() == ActionType.VAR_ASSIGNMENT) {
+            VarAssignmentAction assignAction = (VarAssignmentAction) action;
+
+            lblDetailTitle.setText("Assignation de la variable ");
+            lblAssignValue.setText(" valeur : "); // Texte de l'assignation
+
+            txtTargetVar.setVisible(true);
+            txtTargetVar.setManaged(true);
+            lblAssignValue.setVisible(true);
+            lblAssignValue.setManaged(true);
+            txtValue.setVisible(true);
+            txtValue.setManaged(true);
+            txtValue.setDisable(false);
+            btnPlus.setVisible(true);
+            btnPlus.setManaged(true);
+            btnMinus.setVisible(true);
+            btnMinus.setManaged(true);
+            lblPixels.setVisible(false);
+            lblPixels.setManaged(false);
+
+            if (currentListener != null) {
+                txtValue.textProperty().removeListener(currentListener);
+                currentListener = null;
+            }
+
+            txtTargetVar.setText(assignAction.getTargetVar());
+            txtValue.setText(assignAction.getValue());
+            configAssignFields(assignAction);
+            return;
+        }
+
+        // -------- INCREMENTATION --------
+        if (action != null && action.getType() == ActionType.INCREMENT_VARIABLE) {
+            IncrementVariableAction incAction = (IncrementVariableAction) action;
+
+            lblDetailTitle.setText("Incrémentation de la variable "); // Texte de ta photo
+            lblAssignValue.setText(" de "); // Texte de ta photo
+
+            txtTargetVar.setVisible(true);
+            txtTargetVar.setManaged(true);
+            lblAssignValue.setVisible(true);
+            lblAssignValue.setManaged(true);
+            txtValue.setVisible(true);
+            txtValue.setManaged(true);
+            txtValue.setDisable(false);
+            btnPlus.setVisible(true);
+            btnPlus.setManaged(true);
+            btnMinus.setVisible(true);
+            btnMinus.setManaged(true);
+            lblPixels.setVisible(false);
+            lblPixels.setManaged(false);
+
+            if (currentListener != null) {
+                txtValue.textProperty().removeListener(currentListener);
+                currentListener = null;
+            }
+
+            txtTargetVar.setText(incAction.getTargetVar());
+            txtValue.setText(incAction.getValue());
+            configIncFields(incAction);
+            return;
+        }
+
+        // -------- LE RESTE DES ACTIONS --------
+        ActionDetail detail = viewModel.getSelectedActionDetail();
+
+        if (detail == null) {
             lblDetailTitle.setText("(aucune action sélectionnée)");
             txtValue.setText("");
             txtValue.setDisable(true);
+            txtValue.setVisible(false);
+            txtValue.setManaged(false);
+            lblPixels.setVisible(false);
+            lblPixels.setManaged(false);
+            if (currentListener != null) {
+                txtValue.textProperty().removeListener(currentListener);
+                currentListener = null;
+            }
+            return;
+        }
+
+        lblDetailTitle.setText(detail.getTitle());
+
+        if (!detail.isValueEditable()) {
+            txtValue.setText("0");
+            txtValue.setDisable(true);
+            txtValue.setVisible(false);
+            txtValue.setManaged(false);
+            lblPixels.setVisible(false);
+            lblPixels.setManaged(false);
+
+            if (currentListener != null) {
+                txtValue.textProperty().removeListener(currentListener);
+                currentListener = null;
+            }
+            lblError.setVisible(false);
             lblError.setManaged(false);
             return;
         }
 
-        // cas
-        switch (action.getType()) {
+        txtValue.setDisable(false);
+        txtValue.setVisible(true);
+        txtValue.setManaged(true);
+        lblPixels.setVisible(true);
+        lblPixels.setManaged(true);
+        lblPixels.setText(detail.getUnitText());
 
-            case TURN_LEFT ->{
-                configTextField("Tourner à gauche de ",
-                        (ParameterizedAction) action, 1, 180);
-            txtValue.setDisable(false);
-            txtValue.setVisible(true);
-            lblPixels.setVisible(true);
-            lblPixels.setText(" Degres");
-            lblError.setManaged(false);
-            }
+        txtValue.setText(action.getExpression());
 
-            case TURN_RIGHT -> {
-                configTextField("Tourner à droite de ",
-                    (ParameterizedAction) action, 1, 180);
-            txtValue.setDisable(false);
-            txtValue.setVisible(true);
-            lblPixels.setVisible(true);
-            lblPixels.setText(" Degres");
-            lblError.setManaged(false);
-            }
-
-            case PEN_UP -> {
-                lblDetailTitle.setText("Lever le stylo ");
-                txtValue.setText("0");
-                txtValue.setDisable(true);
-                lblPixels.setVisible(false);
-                lblError.setVisible(false);
-                lblError.setManaged(false);
-            }
-
-            case PEN_DOWN -> {
-                lblDetailTitle.setText("Abaisser le stylo ");
-                txtValue.setText("0");
-                txtValue.setDisable(true);
-                lblPixels.setVisible(false);
-                lblError.setVisible(false);
-                lblError.setManaged(false);
-            }
-
-            case MOVE_FORWARD -> {
-                configTextField("Avance de ",
-                        (ParameterizedAction) action, 1, 100);
-                txtValue.setDisable(false);
-                txtValue.setVisible(true);
-                lblPixels.setVisible(true);
-                lblPixels.setText(" Pixels");
-                lblError.setManaged(false);
-            }
-
-        }
+        configTextField();
     }
-    private void configTextField(String title, ParameterizedAction action, int min, int max) {
-        lblDetailTitle.setText(title);
+
+    private void configVarTextField(VarDeclarationAction action) {
+        lblError.setVisible(false);
+        lblError.setManaged(false);
+
+        currentListener = ((obs, old, text) -> {
+            if (text == null || text.isBlank() || !text.matches("^[a-zA-Z_][a-zA-Z0-9_]*$")) {
+                lblError.setText("Erreur valeur");
+                lblError.setVisible(true);
+                lblError.setManaged(true);
+            } else {
+                lblError.setVisible(false);
+                lblError.setManaged(false);
+                action.setVarName(text);
+                programListView.refresh();
+                viewModel.notifyProgramContentChanged();
+            }
+        });
+        txtValue.textProperty().addListener(currentListener);
+    }
+
+    private void configTextField() {
+        lblError.setVisible(false);
+        lblError.setManaged(false);
 
         if (currentListener != null){
             txtValue.textProperty().removeListener(currentListener);
         }
 
-        txtValue.setText(String.valueOf(action.getValue()));
-        txtValue.setDisable(false);
-
-        // validation txt
         currentListener = ((obs, old, text) -> {
-            try {
-                int val = Integer.parseInt(text);
+            lblError.setVisible(false);
+            lblError.setManaged(false);
 
-                if (val < min || val > max) { // pas dans les born
-                    lblError.setVisible(true);
-                    lblError.setManaged(true);
-                } else {
-                    lblError.setVisible(false);
-                    lblError.setManaged(false);
-                    action.setValue(val);
-                    programListView.refresh();
-                }
-            } catch (NumberFormatException e) { // pans un chiffre
+            if (text == null || text.isBlank()) {
                 lblError.setVisible(true);
                 lblError.setManaged(true);
+                return;
+            }
+
+
+            boolean ok = viewModel.tryUpdateSelectedActionWithText(text);
+
+            if (!ok) {
+                lblError.setText("Erreur : Valeur invalide");
+                lblError.setVisible(true);
+                lblError.setManaged(true);
+            } else {
+                programListView.refresh();
+                viewModel.notifyProgramContentChanged();
             }
         });
         txtValue.textProperty().addListener(currentListener);
+    }
+
+    // --- CONFIGURATION ASSIGNATION ---
+    private void configAssignFields(VarAssignmentAction action) {
+        lblError.setVisible(false);
+        lblError.setManaged(false);
+
+            targetVarListener = (obs, old, text) ->{
+            if (text == null || text.isBlank() || !text.matches("^[a-zA-Z_][a-zA-Z0-9_]*$")) {
+                lblError.setText("Erreur : Nom cible invalide");
+                lblError.setVisible(true);
+                lblError.setManaged(true);
+            } else {
+                lblError.setVisible(false);
+                lblError.setManaged(false);
+                action.setTargetVar(text);
+                programListView.refresh();
+                viewModel.notifyProgramContentChanged();
+            }
+        };
+        txtTargetVar.textProperty().addListener(targetVarListener);
+
+        currentListener = ((obs, old, text) -> {
+            if (text == null || text.isBlank() || (!text.matches("^-?\\d+$") && !text.matches("^[a-zA-Z_][a-zA-Z0-9_]*$"))) {
+                lblError.setText("Erreur : Valeur invalide");
+                lblError.setVisible(true);
+                lblError.setManaged(true);
+            } else {
+                lblError.setVisible(false);
+                lblError.setManaged(false);
+                action.setValue(text);
+                programListView.refresh();
+                viewModel.notifyProgramContentChanged();
+            }
+        });
+        txtValue.textProperty().addListener(currentListener);
+
+        btnPlus.setOnAction(null);
+        btnMinus.setOnAction(null);
+        btnPlus.setOnAction(e -> updateNumericValueAssign(action, 1));
+        btnMinus.setOnAction(e -> updateNumericValueAssign(action, -1));
+    }
+
+    private void updateNumericValueAssign(VarAssignmentAction action, int delta) {
+        try {
+            int currentVal = Integer.parseInt(txtValue.getText());
+            int newVal = currentVal + delta;
+            txtValue.setText(String.valueOf(newVal));
+        } catch (NumberFormatException ex) {}
+    }
+
+    // --- CONFIGURATION INCREMENTATION ---
+    private void configIncFields(IncrementVariableAction action) {
+        lblError.setVisible(false);
+        lblError.setManaged(false);
+
+        targetVarListener = (obs, old, text) -> {
+            if (text == null || text.isBlank() || !text.matches("^[a-zA-Z_][a-zA-Z0-9_]*$")) {
+                lblError.setText("Erreur : Nom cible invalide");
+                lblError.setVisible(true);
+                lblError.setManaged(true);
+            } else {
+                lblError.setVisible(false);
+                lblError.setManaged(false);
+                action.setTargetVar(text);
+                programListView.refresh();
+                viewModel.notifyProgramContentChanged();
+            }
+        };
+        txtTargetVar.textProperty().addListener(targetVarListener);
+
+        currentListener = ((obs, old, text) -> {
+            if (text == null || text.isBlank() || (!text.matches("^-?\\d+$") && !text.matches("^[a-zA-Z_][a-zA-Z0-9_]*$"))) {
+                lblError.setText("Erreur : Valeur invalide");
+                lblError.setVisible(true);
+                lblError.setManaged(true);
+            } else {
+                lblError.setVisible(false);
+                lblError.setManaged(false);
+                action.setValue(text);
+                programListView.refresh();
+                viewModel.notifyProgramContentChanged();
+            }
+        });
+        txtValue.textProperty().addListener(currentListener);
+
+        btnPlus.setOnAction(null);
+        btnMinus.setOnAction(null);
+        btnPlus.setOnAction(e -> updateNumericValueInc(action, 1));
+        btnMinus.setOnAction(e -> updateNumericValueInc(action, -1));
+    }
+
+    private void updateNumericValueInc(IncrementVariableAction action, int delta) {
+        try {
+            int currentVal = Integer.parseInt(txtValue.getText());
+            int newVal = currentVal + delta;
+            txtValue.setText(String.valueOf(newVal));
+        } catch (NumberFormatException ex) {}
+    }
+
+    private void detachTargetVarListener() {
+        if (targetVarListener != null) {
+            txtTargetVar.textProperty().removeListener(targetVarListener);
+            targetVarListener = null;
+        }
     }
 }

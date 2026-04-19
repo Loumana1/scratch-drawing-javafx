@@ -1,25 +1,42 @@
 package scratch.model;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.List;
 
 public class Program {
     private final List<Action> actions;
-    private int currenIndex;
+    private int currentIndex;
 
     public Program() {
         this.actions = new ArrayList<>();
-        this.currenIndex = 0;
+        this.currentIndex = 0;
     }
 
 
     //Gestion du programme
     public void addAction(Action action){
-        if (action == null) throw new IllegalArgumentException("Action null");
+        if (action == null)
+            return;
         actions.add(action);
 
     }
+
+    //insertion au "milieu" du program
+    public void insertAction(int index, Action action) {
+        if (action == null)
+            return;
+
+        if (index < 0 || index >= actions.size()) {
+            actions.add(action);
+        } else {
+            actions.add(index + 1, action);
+        }
+    }
+
+
     public void removeAction(int index) {
        //index valide ?
         if (index >= 0 && index < actions.size()) {
@@ -48,7 +65,8 @@ public class Program {
     public void duplicateAt(int index){
         if (index >= 0 && index < actions.size()) {
             Action original = actions.get(index);
-            Action duplicate = createDuplicate(original);
+            Action duplicate = original.duplicate();
+
             actions.add(index + 1 , duplicate);
         }
     }
@@ -62,55 +80,148 @@ public class Program {
 
     public boolean isValid(ExecutionContext context) {
 
-        //  une copie du contexte pour la simulation
+        // une copie du contexte pour la simulation
+        //Sert essentiellemnt a definir  si le boutton chargé va etre actif
+        // si on repart d'un contexte initial (reset),
+        // et on reinsert tout les action,
+        // est-ce que ce programme est cohérent ?
         ExecutionContext tempContext = new ExecutionContext();
-        tempContext.reset();
 
-        for (Action action : actions) {
-            if (!action.isValid(tempContext)) {
+        boolean instructionSeen = false;
+        int repeatDepth = 0;
+        boolean hasVisualAction = false;
+
+        try {
+            for (Action action : actions) {
+                if (action.getType() == ActionType.VAR_DECLARATION) {
+                    if (instructionSeen) {
+                        return false;
+                    }
+                } else {
+                    instructionSeen = true;
+                }
+                if (action.isVisual()) hasVisualAction = true;
+                if (action.getType() == ActionType.REPEAT){
+                    repeatDepth++;
+                } else if (action.getType() == ActionType.END_REPEAT) {
+                    repeatDepth--;
+                    if (repeatDepth < 0) return false;
+                }
+
+                if (!action.isValid(tempContext)) {
+                    return false;
+                }
+                action.execute(tempContext);
+            }
+            // Vérifier variable repeat n'est pas modifiée dans la boucle
+            if (!checkRepeatVarNotModified()) {
                 return false;
             }
-            action.execute(tempContext);
+            // Vérifier pas de stylo dans une boucle
+            if (!checkNoPenActionInLoop()) {
+                return false;
+            }
+            return repeatDepth == 0 && hasVisualAction;
+        } catch (ExecutionException e) {
+            return false;
         }
+    }
 
+    private boolean checkRepeatVarNotModified() {
+        for (int i = 0; i < actions.size(); i++) {
+            Action action = actions.get(i);
+            if (action.getType() == ActionType.REPEAT && action.isCountIsVar()) {
+                String varName = action.getExpression();
+                int endIndex = findEndRepeat(i);
+                for (int j = i + 1; j < endIndex; j++) {
+                    Action inner = actions.get(j);
+                    if (inner.getType() == ActionType.INCREMENT_VARIABLE
+                            || inner.getType() == ActionType.VAR_ASSIGNMENT) {
+                        if (varName.equals(inner.getTargetVar())) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    // verifier le action pen up et pen down dans une lop
+    private boolean checkNoPenActionInLoop() {
+        int depth = 0;
+        int penBalance = 0;
+
+        for (Action a : actions) {
+            if (a.getType() == ActionType.REPEAT) {
+                depth++;
+            } else if (a.getType() == ActionType.END_REPEAT) {
+                depth--;
+                if (depth == 0 && penBalance != 0) return false;
+                if (depth == 0) penBalance = 0;
+            }
+            if (depth > 0) {
+                if (a.getType() == ActionType.PEN_UP)   penBalance++;
+                if (a.getType() == ActionType.PEN_DOWN)  penBalance--;
+            }
+        }
         return true;
     }
 
     public void executeNext(ExecutionContext context){
-        if (!hasNext()) throw new IllegalStateException("Pas d'action suivante");
-        actions.get(currenIndex++).execute(context);
+        if (!hasNext()) return;
+
+        Action a = actions.get(currentIndex);
+
+        if ( a.getType() == ActionType.REPEAT) {
+
+            int n = a.resolveCount(context);
+            if (n <= 0) {
+                currentIndex = findEndRepeat(currentIndex) + 1;
+            }else {
+                context.pushRepeat(currentIndex , n - 1);
+                currentIndex++ ;
+            }
+        } else if (a.getType() == ActionType.END_REPEAT) {
+            if (context.hasRepeat()) {
+                int[] top = context.peekRepeat();
+                if (top[1] > 0) {
+                    top[1]--;
+                    currentIndex = top[0] + 1;
+                } else {
+                    context.popRepeat();
+                    currentIndex++;
+                }
+            } else {
+                currentIndex++;
+            }
+        } else {
+            a.execute(context);
+            currentIndex++;
+        }
+    }
+    private int findEndRepeat(int from) {
+        int count = 0 ;
+        for (int i = from; i < actions.size(); i++) {
+            if (actions.get(i).getType() == ActionType.REPEAT)
+                count++ ;
+            else if (actions.get(i).getType() == ActionType.END_REPEAT) {
+                if (--count == 0)
+                    return  i;
+            }
+        }
+        return actions.size() -1;
     }
 
     public boolean hasNext(){
-        return currenIndex < actions.size();
+        return currentIndex < actions.size();
     }
 
     public void  resetExecution(){
-        currenIndex = 0 ;
+        currentIndex = 0 ;
     }
 
-    public int size() {
-        return actions.size();
-    }
-
-    public boolean isEmpty() {
-        return actions.isEmpty();
-    }
-
-    public int getCurrenIndex() {
-        return currenIndex;
-    }
-
-    // Private Fonctions
-
-    private Action createDuplicate(Action original){
-
-        return switch (original.getType()) {
-            case MOVE_FORWARD -> new MoveForwardAction(((ParameterizedAction)original).getValue());
-            case TURN_LEFT -> new TurnLeftAction(((ParameterizedAction)original).getValue());
-            case TURN_RIGHT -> new TurnRightAction(((ParameterizedAction)original).getValue()) ;
-            case PEN_UP -> new PenUpAction();
-            case PEN_DOWN -> new PenDownAction();
-        };
+    public int getCurrentIndex() {
+        return currentIndex;
     }
 }

@@ -1,5 +1,7 @@
 package scratch.model;
 
+import javafx.scene.paint.Color;
+
 public class MoveForwardAction extends ParameterizedAction{
     public static final int MIN_VALUE = 1;
     public static final int MAX_VALUE = 100;
@@ -13,15 +15,14 @@ public class MoveForwardAction extends ParameterizedAction{
     }
 
     @Override
-    public boolean isValid(ExecutionContext e) {
-        return isValueValid(getValue());
-    }
-
-    @Override
     public void execute(ExecutionContext e) {
-        e.move(getValue());
+        int realValue = resolveValue(e);
+        if (realValue < MIN_VALUE || realValue > MAX_VALUE) {
+            throw new ExecutionException(
+                    "Avancer de " + realValue + " hors plage " + MIN_VALUE + "–" + MAX_VALUE);
+        }
+        e.move(realValue);
     }
-
     @Override
     protected boolean isValueValid(int value) {
         return value >= MIN_VALUE && value <= MAX_VALUE;
@@ -36,4 +37,35 @@ public class MoveForwardAction extends ParameterizedAction{
     public ActionType getType() {
         return ActionType.MOVE_FORWARD;
     }
+
+    @Override
+    public Action duplicate() {
+        MoveForwardAction clone = new MoveForwardAction();
+        copyStateTo(clone);
+        return clone;
+    }
+
+    @Override
+    public boolean isVisual() { return true; }
+
+    @Override
+    public String getTitle() {
+        return  "Avance de ";
+    }
+
+    @Override
+    public String getUnit() {
+        return " Pixels";
+    }
+
+    @Override
+    public Color getColor() {
+        return Color.BLUE;
+    }
+
+    @Override
+    public String toString() {
+        return getTitle() + " "+ getExpression();
+    }
+
 }

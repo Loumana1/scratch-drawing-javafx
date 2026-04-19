@@ -36,7 +36,7 @@ Aucune pour cette itération.
 
 ## Notes de version itération 2
 
-...
+- Dans notre diagrame de classe initial on avait choisi une class variable et finalement on as choisit une liste plus adapter a notre projecte
 
 ## Notes de version itération 3
 

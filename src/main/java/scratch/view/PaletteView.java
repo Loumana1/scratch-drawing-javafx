@@ -9,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import scratch.model.ActionType;
 import scratch.viewmodel.MainViewModel;
-
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
@@ -39,7 +39,7 @@ public class PaletteView extends VBox {
                         "-fx-border-width: 2;" +
                         "-fx-background-color: white;"
         );
-        // Remplir avec l'enum au lieu de Strings
+
         listView.getItems().addAll(ActionType.values());
 
         // Cellule personnalisée
@@ -60,11 +60,13 @@ public class PaletteView extends VBox {
                             case MOVE_FORWARD -> Color.BLUE;
                             case TURN_LEFT, TURN_RIGHT -> Color.RED;
                             case PEN_UP, PEN_DOWN -> Color.GREEN;
+                            case REPEAT , END_REPEAT , VAR_DECLARATION , VAR_ASSIGNMENT, INCREMENT_VARIABLE -> Color.LIGHTSEAGREEN;
                         };
                         circle.setFill(color);
                         label.setTextFill(color);
 
                         HBox box = new HBox(10, circle, label);
+                        box.setAlignment(Pos.CENTER_LEFT);
                         box.setPadding(new Insets(5, 0, 5, 5));
 
                         setGraphic(box);
@@ -80,14 +82,10 @@ public class PaletteView extends VBox {
         );
 
         addButton.setOnAction(e -> {
-
-            int index = listView.getSelectionModel().getSelectedIndex();
-
-            if (index == 0) viewModel.addAction(ActionType.MOVE_FORWARD);
-            if (index == 1) viewModel.addAction(ActionType.TURN_LEFT);
-            if (index == 2) viewModel.addAction(ActionType.TURN_RIGHT);
-            if (index == 3) viewModel.addAction(ActionType.PEN_UP);
-            if (index == 4) viewModel.addAction(ActionType.PEN_DOWN);
+            ActionType selected = listView.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                viewModel.addAction(selected);
+            }
         });
 
         // Double_clic
@@ -112,6 +110,11 @@ public class PaletteView extends VBox {
             case TURN_RIGHT -> "Tourner à droite de";
             case PEN_UP -> "Lever le stylo";
             case PEN_DOWN -> "Abaisser le stylo";
+            case REPEAT -> "Repeter";
+            case END_REPEAT -> "Fin Repeter";
+            case VAR_ASSIGNMENT -> "Assignation";
+            case VAR_DECLARATION -> "Déclaration variable";
+            case INCREMENT_VARIABLE -> "Inc/Dec variable";
         };
     }
 }

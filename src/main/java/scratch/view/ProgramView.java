@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import scratch.model.*;
 import scratch.viewmodel.MainViewModel;
+import javafx.geometry.Pos;
 
 public class ProgramView extends VBox {
 
@@ -55,56 +56,60 @@ public class ProgramView extends VBox {
                 if (empty || action == null) {
                     setGraphic(null);
                     setText(null);
+                    setStyle("");
                     return;
                 }
 
                 Circle circle = new Circle(5);
                 Label label = new Label();
 
-                switch (action.getType()) {
 
-                    case MOVE_FORWARD -> {
-                        MoveForwardAction a = (MoveForwardAction) action;
-                        circle.setFill(Color.BLUE);
-                        label.setTextFill(Color.BLUE);
-                        label.setText("Avancer de " + a.getValue());
-                    }
+                circle.setFill(action.getColor());
+                label.setTextFill(action.getColor());
+                label.setText(action.toString());
 
-                    case TURN_LEFT -> {
-                        TurnLeftAction a = (TurnLeftAction) action;
-                        circle.setFill(Color.RED);
-                        label.setTextFill(Color.RED);
-                        label.setText("Tourner à gauche de " + a.getValue());
-                    }
-
-                    case TURN_RIGHT -> {
-                        TurnRightAction a = (TurnRightAction) action;
-                        circle.setFill(Color.RED);
-                        label.setTextFill(Color.RED);
-                        label.setText("Tourner à droite de " + a.getValue());
-                    }
-
-                    case PEN_UP -> {
-                        circle.setFill(Color.GREEN);
-                        label.setTextFill(Color.GREEN);
-                        label.setText("Lever stylo");
-                    }
-
-                    case PEN_DOWN -> {
-                        circle.setFill(Color.GREEN);
-                        label.setTextFill(Color.GREEN);
-                        label.setText("Abaisser stylo");
-                    }
+                // Profondeur d indentation
+                int depth = 0 ;
+                int currentIdx = getIndex();
+                for (int i = 0; i < currentIdx; i++) {
+                    Action a = getListView().getItems().get(i);
+                    if (a.getType() == ActionType.REPEAT)
+                        depth++;
+                    else if (a.getType() == ActionType.END_REPEAT)
+                        depth--;
                 }
+                // EndRepeat au meme niveau que repeat
+                if (action.getType() == ActionType.END_REPEAT)
+                    depth--;
+                if (depth < 0)
+                    depth = 0 ;
+
+                int leftPadding = 5 + (depth * 20);
 
                 HBox box = new HBox(10, circle, label);
-                box.setPadding(new Insets(5, 0, 5, 5));
+                box.setAlignment(Pos.CENTER_LEFT);
+                box.setPadding(new Insets(5, 0, 5, leftPadding));
 
                 setGraphic(box);
                 setText(null);
+
+                // Encadrer en rouge erreur
+                boolean hasError = viewModel.errorMessageProperty().get() != null
+                        && !viewModel.errorMessageProperty().get().isEmpty();
+                int faultIdx = viewModel.getExecutionFaultLineIndex();
+                boolean isFaultLine = faultIdx >= 0 && getIndex() == faultIdx;
+                if (hasError && isFaultLine) {
+                    setStyle("-fx-border-color: red; -fx-border-width: 2;");
+                } else {
+                    setStyle("");
+                }
+                setGraphic(box);
+                setText(null);
+
             }
         });
-
+        // Forcer le rrefresh qd nouvelle erreur
+        viewModel.executionFaultLineIndexProperty().addListener((obs, o, n) -> programList.refresh());
         HBox buttons = new HBox(10);
 
 

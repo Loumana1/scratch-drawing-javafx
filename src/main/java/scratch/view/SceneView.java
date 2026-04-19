@@ -5,15 +5,14 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import scratch.model.ExecutionContext;
 import scratch.model.Segment;
-import scratch.viewmodel.MainViewModel;
+import scratch.viewmodel.*;
 
 public class SceneView extends VBox {
 
@@ -23,6 +22,17 @@ public class SceneView extends VBox {
     private final Button btnReset = new Button("Charger");
     private final Canvas canvas;
     private final MainViewModel viewModel;
+    private final Label lblTurtle = new Label();
+    private final Label lblVariablesTitle = new Label("Variables");
+    private final TableView<VariableRow> tableVariables = new TableView<>();
+    private final Label lblError = new Label();
+    private final RadioButton rbManual = new RadioButton("Execution manuelle");
+    private final RadioButton rbAuto = new RadioButton("Execution automatique");
+    private final ToggleGroup modelGroup = new ToggleGroup();
+    private final Slider speedSlider = new Slider(0.01 , 5.0 , 1.0);
+    private final Label speedLabel = new Label("1.0 s");
+    private final Button btnExecute = new Button("Executer");
+    private final Button btnStop = new Button("Arreter");
 
     public SceneView(MainViewModel viewModel) {
         this.viewModel = viewModel;
@@ -48,14 +58,99 @@ public class SceneView extends VBox {
         HBox buttons = new HBox(10);
         buttons.setAlignment(Pos.CENTER);
         buttons.getChildren().addAll(btnReset, btnNext);
+        rbManual.setToggleGroup(modelGroup);
+        rbAuto.setToggleGroup(modelGroup);
+        rbManual.setSelected(true);
+        btnExecute.setVisible(false);
+        btnExecute.setManaged(false);
+        btnStop.setVisible(false);
+        btnStop.setManaged(false);
+        speedSlider.setVisible(false);
+        speedSlider.setManaged(false);
+        speedLabel.setVisible(false);
+        speedSlider.setShowTickLabels(true);
+        speedSlider.setShowTickMarks(true);
+        speedSlider.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(speedSlider, javafx.scene.layout.Priority.ALWAYS);
 
-        getChildren().addAll(title, canvasBox, buttons);
+
+        modelGroup.selectedToggleProperty().addListener((obs, old , nw) ->{
+            boolean isAuto = (nw == rbAuto);
+            viewModel.autoModeProperty().set(isAuto);
+
+            // Slider vitesse
+            speedSlider.setVisible(isAuto);
+            speedSlider.setManaged(isAuto);
+            speedLabel.setVisible(isAuto);
+            speedLabel.setManaged(isAuto);
+
+            // Boutons auto (Exécuter / Arrêter)
+            btnExecute.setVisible(isAuto);
+            btnExecute.setManaged(isAuto);
+            btnStop.setVisible(isAuto);
+            btnStop.setManaged(isAuto);
+
+            // Bouton manuel (Suivant)
+            btnNext.setVisible(!isAuto);
+            btnNext.setManaged(!isAuto);
+
+            if (!isAuto) viewModel.stopAutoExecution();
+        });
 
 
-        //config
+        speedSlider.valueProperty().addListener((obs , old , nw) ->{
+            viewModel.speedProperty().set(nw.doubleValue());
+            speedLabel.setText(String.format("%.2f s", nw.doubleValue()));
+            if (viewModel.isAutoMode() && viewModel.programLoadedProperty().get()){
+                viewModel.startAutoExecution();
+            }
+        });
+        btnExecute.setOnAction(e -> viewModel.startAutoExecution());
+        btnStop.setOnAction(e-> viewModel.stopAutoExecution());
+
+
+
+        //Zone info
+        TableColumn<VariableRow, String> colName = new TableColumn<>("Nom");
+        colName.setCellValueFactory(data -> data.getValue().nameProperty());
+        TableColumn<VariableRow, Number> colValue = new TableColumn<>("Valeur");
+        colValue.setCellValueFactory(data -> data.getValue().valueProperty());
+        tableVariables.getColumns().addAll(colName, colValue);
+        tableVariables.setItems(viewModel.getObservableVariables());
+        tableVariables.setPlaceholder(new Label("Aucun contenu dans la table"));
+
+        lblTurtle.textProperty().bind(viewModel.turtleStateProperty());
+        lblTurtle.setStyle("-fx-font-size: 12px;");
+        lblVariablesTitle.setStyle("-fx-font-weight: bold;");
+
+        HBox modeBox = new HBox(10, rbAuto, rbManual);
+        modeBox.setAlignment(Pos.CENTER);
+
+        HBox speedBox = new HBox(speedSlider);
+        speedBox.setMaxWidth(Double.MAX_VALUE);
+
+
+        HBox buttonsBox = new HBox(10, btnReset, btnExecute, btnStop, btnNext);
+        buttonsBox.setAlignment(Pos.CENTER);
+
+
+
+        getChildren().addAll(
+                title,
+                canvasBox,
+                lblTurtle,
+                lblVariablesTitle,
+                tableVariables,
+                modeBox,
+                buttonsBox,
+                speedBox);
+
+
+
         configActions();
         configButtonsDisabling();
         viewModel.executionStepProperty().addListener((obs, oldVal, newVal) -> drawGrid());
+        viewModel.programChangeCounterProperty().addListener((obs, old, nw) -> drawGrid());
 
     }
 
@@ -85,9 +180,12 @@ public class SceneView extends VBox {
         btnNext.disableProperty().bind(
                 viewModel.programLoadedProperty().not()
                         .or(viewModel.canExecuteNext().not()));
-        viewModel.programLoadedProperty().addListener((obs, old, nw) ->
-                btnReset.setText(nw ? "Ré-initialiser" : "Charger"));
-
+        viewModel.programLoadedProperty().addListener((obs, old, nw) -> {
+            btnReset.setText(nw ? "Ré-initialiser" : "Charger");
+            drawGrid();
+        });
+        btnExecute.disableProperty().bind(viewModel.canExecuteNext().not());
+        btnStop.disableProperty().bind(viewModel.canExecuteNext().not());
     }
 
 
