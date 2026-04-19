@@ -1,4 +1,5 @@
 package scratch.model;
+import javafx.scene.paint.Color;
 
 public class TurnLeftAction extends ParameterizedAction {
 
@@ -56,5 +57,11 @@ public class TurnLeftAction extends ParameterizedAction {
     public String getUnit() {
         return " Degrés";
     }
+
+    @Override
+    public Color getColor() {
+        return Color.RED;
+    }
+
 
 }

@@ -1,5 +1,7 @@
 package scratch.model;
 
+import javafx.scene.paint.Color;
+
 public class EndRepeatAction extends Action {
     @Override
     public void execute(ExecutionContext e) {
@@ -31,4 +33,9 @@ public class EndRepeatAction extends Action {
 
     @Override
     public String getTitle() { return "Fin repeter"; }
+
+    public Color getColor() {
+        return Color.LIGHTSEAGREEN;
+    }
+
 }

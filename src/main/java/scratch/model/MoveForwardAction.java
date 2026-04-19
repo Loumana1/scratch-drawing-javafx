@@ -1,5 +1,7 @@
 package scratch.model;
 
+import javafx.scene.paint.Color;
+
 public class MoveForwardAction extends ParameterizedAction{
     public static final int MIN_VALUE = 1;
     public static final int MAX_VALUE = 100;
@@ -55,5 +57,11 @@ public class MoveForwardAction extends ParameterizedAction{
     public String getUnit() {
         return " Pixels";
     }
+
+    @Override
+    public Color getColor() {
+        return Color.BLUE;
+    }
+
 
 }

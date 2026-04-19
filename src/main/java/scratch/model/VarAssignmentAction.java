@@ -1,5 +1,7 @@
 package scratch.model;
 
+import javafx.scene.paint.Color;
+
 public class VarAssignmentAction extends Action{
 
     private String targetVar;
@@ -61,5 +63,9 @@ public class VarAssignmentAction extends Action{
     @Override
     public String getTitle() { return "Assignation : " + targetVar + " = " + value; }
 
+    @Override
+    public Color getColor() {
+        return Color.LIGHTSEAGREEN;
+    }
 }
 

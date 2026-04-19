@@ -1,5 +1,7 @@
 package scratch.model;
 
+import javafx.scene.paint.Color;
+
 public class PenUpAction extends Action {
 
     @Override
@@ -30,4 +32,9 @@ public class PenUpAction extends Action {
 
     @Override
     public String getTitle() { return "Lever le stylo"; }
+
+    @Override
+    public Color getColor() {
+        return Color.GREEN;
+    }
 }

@@ -1,5 +1,7 @@
 package scratch.model;
 
+import javafx.scene.paint.Color;
+
 public class VarDeclarationAction extends Action {
 
     private String varName;
@@ -51,5 +53,10 @@ public class VarDeclarationAction extends Action {
 
     @Override
     public String getTitle() { return "Déclaration variable " + varName; }
+
+    @Override
+    public Color getColor() {
+        return Color.LIGHTSEAGREEN;
+    }
 
 }

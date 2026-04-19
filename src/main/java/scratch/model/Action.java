@@ -1,5 +1,7 @@
 package scratch.model;
 
+import javafx.scene.paint.Color;
+
 public abstract class  Action {
 
     public abstract void execute(ExecutionContext e );
@@ -19,4 +21,6 @@ public abstract class  Action {
     public boolean isCountIsVar() { return false; }
     public boolean isVisual() { return false; }
 
-}
+    public abstract Color getColor();
+    }
+

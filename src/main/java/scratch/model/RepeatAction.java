@@ -1,5 +1,7 @@
 package scratch.model;
 
+import javafx.scene.paint.Color;
+
 public class RepeatAction extends Action {
 
     private int count;
@@ -85,6 +87,10 @@ public class RepeatAction extends Action {
     @Override
     public String format() {
         return getType().name() + ";" + getExpression();
+    }
+    @Override
+    public Color getColor() {
+        return Color.LIGHTSEAGREEN;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package scratch.model;
 
+import javafx.scene.paint.Color;
+
 public class IncrementVariableAction extends Action {
 
     private String targetVar;
@@ -56,5 +58,8 @@ public class IncrementVariableAction extends Action {
 
     @Override
     public String getTitle() { return "Inc/Dec variable : " + targetVar + " de " + value; }
-
+    @Override
+    public Color getColor() {
+        return Color.LIGHTSEAGREEN;
+    }
 }

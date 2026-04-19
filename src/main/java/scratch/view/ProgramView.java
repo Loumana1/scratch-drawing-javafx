@@ -63,71 +63,11 @@ public class ProgramView extends VBox {
                 Circle circle = new Circle(5);
                 Label label = new Label();
 
-                switch (action.getType()) {
 
-                    case MOVE_FORWARD -> {
-                        MoveForwardAction a = (MoveForwardAction) action;
-                        circle.setFill(Color.BLUE);
-                        label.setTextFill(Color.BLUE);
-                        String displayVal = a.isVar() ? a.getVarName() : String.valueOf(a.getValue());
-                        label.setText("Avancer de " + displayVal);
-                    }
+                circle.setFill(action.getColor());
+                label.setTextFill(action.getColor());
+                label.setText(action.toString());
 
-                    case TURN_LEFT -> {
-                        TurnLeftAction a = (TurnLeftAction) action;
-                        circle.setFill(Color.RED);
-                        label.setTextFill(Color.RED);
-                        String displayVal = a.isVar() ? a.getVarName() : String.valueOf(a.getValue());
-                        label.setText("Tourner à gauche de " + displayVal);
-                    }
-
-                    case TURN_RIGHT -> {
-                        TurnRightAction a = (TurnRightAction) action;
-                        circle.setFill(Color.RED);
-                        label.setTextFill(Color.RED);
-                        String displayVal = a.isVar() ? a.getVarName() : String.valueOf(a.getValue());
-                        label.setText("Tourner à droite de " + displayVal);
-                    }
-
-                    case PEN_UP -> {
-                        circle.setFill(Color.GREEN);
-                        label.setTextFill(Color.GREEN);
-                        label.setText("Lever stylo");
-                    }
-
-                    case PEN_DOWN -> {
-                        circle.setFill(Color.GREEN);
-                        label.setTextFill(Color.GREEN);
-                        label.setText("Abaisser stylo");
-                    }
-                    case REPEAT -> {
-                        RepeatAction a = (RepeatAction) action;
-                        circle.setFill(Color.LIGHTSEAGREEN);
-                        label.setTextFill(Color.LIGHTSEAGREEN);
-                        label.setText(a.toString());
-                    }
-                    case END_REPEAT -> {
-                        circle.setFill(Color.LIGHTSEAGREEN);
-                        label.setTextFill(Color.LIGHTSEAGREEN);
-                        label.setText("Fin Repeter");
-                    }
-                    case VAR_DECLARATION -> {
-                        VarDeclarationAction a = (VarDeclarationAction) action;
-                        circle.setFill(Color.LIGHTSEAGREEN);
-                        label.setTextFill(Color.LIGHTSEAGREEN);
-                        label.setText(a.toString());
-                    }
-                    case INCREMENT_VARIABLE -> {
-                        circle.setFill(Color.LIGHTSEAGREEN);
-                        label.setTextFill(Color.LIGHTSEAGREEN);
-                        label.setText(action.toString());
-                    }
-                    case VAR_ASSIGNMENT -> {
-                        circle.setFill(Color.LIGHTSEAGREEN);
-                        label.setTextFill(Color.LIGHTSEAGREEN);
-                        label.setText(action.toString());
-                    }
-                }
                 // Profondeur d indentation
                 int depth = 0 ;
                 int currentIdx = getIndex();

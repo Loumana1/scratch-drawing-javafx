@@ -1,5 +1,7 @@
 package scratch.model;
 
+import javafx.scene.paint.Color;
+
 public class TurnRightAction  extends ParameterizedAction{
 
     public static  final int MIN_VALUE = 1 ;
@@ -58,6 +60,11 @@ public class TurnRightAction  extends ParameterizedAction{
     @Override
     public String getUnit() {
         return " Degrés";
+    }
+
+    @Override
+    public Color getColor() {
+        return Color.RED;
     }
 
 }
