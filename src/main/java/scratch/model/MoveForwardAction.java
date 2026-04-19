@@ -63,5 +63,10 @@ public class MoveForwardAction extends ParameterizedAction{
         return Color.BLUE;
     }
 
+    @Override
+    public String toString() {
+        return getTitle() + " "+ getExpression();
+    }
+
 
 }

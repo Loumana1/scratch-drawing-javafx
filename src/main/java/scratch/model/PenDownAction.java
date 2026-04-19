@@ -35,7 +35,12 @@ public class PenDownAction extends Action {
     public String getTitle() { return "Abaisser le stylo"; }
     @Override
     public Color getColor() {
-        return Color.LIGHTSEAGREEN;
+        return Color.GREEN;
+    }
+
+    @Override
+    public String toString() {
+        return getTitle();
     }
 }
 

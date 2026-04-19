@@ -27,9 +27,9 @@ public class VarAssignmentAction extends Action{
     @Override
     public void execute(ExecutionContext e) {
         int resolvedValue = e.resolveExpression(value);
-        if (resolvedValue > 100) {
+        if (resolvedValue > 180) {
             throw new ExecutionException(
-                    "La variable " + targetVar + " dépasse 100 (" + resolvedValue + ")");
+                    "La variable " + targetVar + " dépasse 180 (" + resolvedValue + ")");
         }
         e.setVariable(targetVar, resolvedValue);
     }

@@ -28,15 +28,9 @@ public class ExecutionContext {
 
 
     public void declareVariable(String name) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Nom de variable vide");
-        }
 
-        if (!name.matches("[A-Za-z_][A-Za-z0-9_]*")) {
-            throw new IllegalArgumentException("Nom de variable invalide : " + name);
-        }
         if (variables.containsKey(name)) {
-            throw new IllegalArgumentException("Variable déjà déclarée : " + name);
+            return;
         }
         variables.put(name, 0);
     }

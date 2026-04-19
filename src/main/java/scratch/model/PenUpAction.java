@@ -37,4 +37,9 @@ public class PenUpAction extends Action {
     public Color getColor() {
         return Color.GREEN;
     }
+
+    @Override
+    public String toString() {
+        return getTitle() ;
+    }
 }

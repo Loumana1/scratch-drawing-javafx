@@ -5,8 +5,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import scratch.model.Action;
-import scratch.model.ParameterizedAction;
+import scratch.model.*;
 import scratch.viewmodel.ActionDetail;
 import scratch.viewmodel.MainViewModel;
 
@@ -96,8 +95,8 @@ public class DetailPanelView extends TitledPane {
         Action action = viewModel.getSelectedAction();
 
         // --------DECLARATION --------
-        if (action != null && action.getType() == scratch.model.ActionType.VAR_DECLARATION) {
-            scratch.model.VarDeclarationAction varAction = (scratch.model.VarDeclarationAction) action;
+        if (action != null && action.getType() == ActionType.VAR_DECLARATION) {
+            VarDeclarationAction varAction = (VarDeclarationAction) action;
             lblDetailTitle.setText("Déclaration de la variable ");
 
             txtValue.setDisable(false);
@@ -117,8 +116,8 @@ public class DetailPanelView extends TitledPane {
         }
 
         // -------- ASSIGNATION --------
-        if (action != null && action.getType() == scratch.model.ActionType.VAR_ASSIGNMENT) {
-            scratch.model.VarAssignmentAction assignAction = (scratch.model.VarAssignmentAction) action;
+        if (action != null && action.getType() == ActionType.VAR_ASSIGNMENT) {
+            VarAssignmentAction assignAction = (VarAssignmentAction) action;
 
             lblDetailTitle.setText("Assignation de la variable ");
             lblAssignValue.setText(" valeur : "); // Texte de l'assignation
@@ -149,8 +148,8 @@ public class DetailPanelView extends TitledPane {
         }
 
         // -------- INCREMENTATION --------
-        if (action != null && action.getType() == scratch.model.ActionType.INCREMENT_VARIABLE) {
-            scratch.model.IncrementVariableAction incAction = (scratch.model.IncrementVariableAction) action;
+        if (action != null && action.getType() == ActionType.INCREMENT_VARIABLE) {
+            IncrementVariableAction incAction = (IncrementVariableAction) action;
 
             lblDetailTitle.setText("Incrémentation de la variable "); // Texte de ta photo
             lblAssignValue.setText(" de "); // Texte de ta photo
@@ -229,7 +228,7 @@ public class DetailPanelView extends TitledPane {
         configTextField();
     }
 
-    private void configVarTextField(scratch.model.VarDeclarationAction action) {
+    private void configVarTextField(VarDeclarationAction action) {
         lblError.setVisible(false);
         lblError.setManaged(false);
 
@@ -283,7 +282,7 @@ public class DetailPanelView extends TitledPane {
     }
 
     // --- CONFIGURATION ASSIGNATION ---
-    private void configAssignFields(scratch.model.VarAssignmentAction action) {
+    private void configAssignFields(VarAssignmentAction action) {
         lblError.setVisible(false);
         lblError.setManaged(false);
 
@@ -323,7 +322,7 @@ public class DetailPanelView extends TitledPane {
         btnMinus.setOnAction(e -> updateNumericValueAssign(action, -1));
     }
 
-    private void updateNumericValueAssign(scratch.model.VarAssignmentAction action, int delta) {
+    private void updateNumericValueAssign(VarAssignmentAction action, int delta) {
         try {
             int currentVal = Integer.parseInt(txtValue.getText());
             int newVal = currentVal + delta;
@@ -332,7 +331,7 @@ public class DetailPanelView extends TitledPane {
     }
 
     // --- CONFIGURATION INCREMENTATION ---
-    private void configIncFields(scratch.model.IncrementVariableAction action) {
+    private void configIncFields(IncrementVariableAction action) {
         lblError.setVisible(false);
         lblError.setManaged(false);
 
@@ -372,7 +371,7 @@ public class DetailPanelView extends TitledPane {
         btnMinus.setOnAction(e -> updateNumericValueInc(action, -1));
     }
 
-    private void updateNumericValueInc(scratch.model.IncrementVariableAction action, int delta) {
+    private void updateNumericValueInc(IncrementVariableAction action, int delta) {
         try {
             int currentVal = Integer.parseInt(txtValue.getText());
             int newVal = currentVal + delta;

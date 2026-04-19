@@ -63,5 +63,8 @@ public class TurnLeftAction extends ParameterizedAction {
         return Color.RED;
     }
 
-
+    @Override
+    public String toString() {
+        return getTitle() + " "+ getExpression();
+    }
 }
