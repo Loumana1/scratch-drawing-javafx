@@ -83,7 +83,7 @@ public class ProgramFileService {
                 return new PenDownAction();
 
             default:
-                throw new IllegalArgumentException("Type inconnu : " + type);
+                return null;
         }
     }
 

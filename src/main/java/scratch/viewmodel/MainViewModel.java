@@ -190,11 +190,8 @@ public class MainViewModel {
     public void executeNext(){
         if (!program.hasNext()) {
             return;
-
-
         }
             try {
-
 
                 program.executeNext(executionContext);
                 refreshVariablesFromContext();

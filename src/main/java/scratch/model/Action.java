@@ -20,7 +20,6 @@ public abstract class  Action {
     public String getTargetVar() { return ""; }
     public boolean isCountIsVar() { return false; }
     public boolean isVisual() { return false; }
-
     public abstract Color getColor();
     }
 

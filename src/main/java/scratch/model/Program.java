@@ -18,15 +18,17 @@ public class Program {
 
     //Gestion du programme
     public void addAction(Action action){
-        if (action == null) throw new IllegalArgumentException("Action null");
+        if (action == null)
+            return;
         actions.add(action);
 
     }
+
     //insertion au "milieu" du program
     public void insertAction(int index, Action action) {
-        if (action == null) {
-            throw new IllegalArgumentException("Action null");
-        }
+        if (action == null)
+            return;
+
         if (index < 0 || index >= actions.size()) {
             actions.add(action);
         } else {
@@ -111,22 +113,16 @@ public class Program {
                 }
                 action.execute(tempContext);
             }
-
-
             // Vérifier variable repeat n'est pas modifiée dans la boucle
             if (!checkRepeatVarNotModified()) {
                 return false;
             }
-
             // Vérifier pas de stylo dans une boucle
             if (!checkNoPenActionInLoop()) {
                 return false;
             }
-
             return repeatDepth == 0 && hasVisualAction;
-
         } catch (ExecutionException e) {
-
             return false;
         }
     }
@@ -173,8 +169,7 @@ public class Program {
     }
 
     public void executeNext(ExecutionContext context){
-        if (!hasNext()) throw new IllegalStateException("Pas d'action suivante");
-
+        if (!hasNext()) return;
 
         Action a = actions.get(currentIndex);
 
@@ -224,14 +219,6 @@ public class Program {
 
     public void  resetExecution(){
         currentIndex = 0 ;
-    }
-
-    public int size() {
-        return actions.size();
-    }
-
-    public boolean isEmpty() {
-        return actions.isEmpty();
     }
 
     public int getCurrentIndex() {

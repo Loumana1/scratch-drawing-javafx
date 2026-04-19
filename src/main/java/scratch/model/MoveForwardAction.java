@@ -68,5 +68,4 @@ public class MoveForwardAction extends ParameterizedAction{
         return getTitle() + " "+ getExpression();
     }
 
-
 }

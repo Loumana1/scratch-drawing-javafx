@@ -31,9 +31,9 @@ public abstract class ParameterizedAction extends Action {
         }
         return value;
     }
-    // ----------------------------------
 
     protected abstract boolean isValueValid(int value);
+
     public abstract int getDefaultValue();
 
     protected void copyStateTo(ParameterizedAction target) {

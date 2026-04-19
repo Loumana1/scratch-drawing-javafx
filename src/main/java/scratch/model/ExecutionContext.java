@@ -25,8 +25,6 @@ public class ExecutionContext {
         reset();
     }
 
-
-
     public void declareVariable(String name) {
 
         if (variables.containsKey(name)) {
