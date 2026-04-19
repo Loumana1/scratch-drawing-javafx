@@ -151,7 +151,7 @@ public class Program {
         return true;
     }
 
-    // verifier le action pen up
+    // verifier le action pen up et pen down dans une lop
     private boolean checkNoPenActionInLoop() {
         int depth = 0;
         int penBalance = 0;
