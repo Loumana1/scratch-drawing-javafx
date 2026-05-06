@@ -131,12 +131,15 @@ public class Program {
         for (int i = 0; i < actions.size(); i++) {
             Action action = actions.get(i);
             if (action.getType() == ActionType.REPEAT && action.isCountIsVar()) {
-                String varName = action.getExpression();
+                String varName = action.getValue();
                 int endIndex = findEndRepeat(i);
                 for (int j = i + 1; j < endIndex; j++) {
                     Action inner = actions.get(j);
-                    if (inner.getType() == ActionType.INCREMENT_VARIABLE
-                            || inner.getType() == ActionType.VAR_ASSIGNMENT) {
+                    if (inner.getType() == ActionType.INCREMENT_VARIABLE) {
+                        if (varName.equals(inner.getTargetVar())) {
+                            return false;
+                        }
+                    } else if (inner.getType() == ActionType.VAR_ASSIGNMENT) {
                         if (varName.equals(inner.getTargetVar())) {
                             return false;
                         }

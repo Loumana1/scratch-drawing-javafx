@@ -2,6 +2,8 @@ package scratch.model;
 
 import javafx.scene.paint.Color;
 
+import java.util.List;
+
 public class IncrementVariableAction extends Action {
 
     private String targetVar;
@@ -17,7 +19,6 @@ public class IncrementVariableAction extends Action {
         this.value = value;
     }
 
-    @Override
     public String getTargetVar() { return targetVar; }
     public void setTargetVar(String targetVar) { this.targetVar = targetVar; }
 
@@ -26,7 +27,7 @@ public class IncrementVariableAction extends Action {
 
     @Override
     public void execute(ExecutionContext e) {
-        int step = e.resolveExpression(value);
+        int step = e.resolveValue(value);
         int newVal = e.getVariable(targetVar) + step;
         e.setVariable(targetVar, newVal);
     }
@@ -35,7 +36,7 @@ public class IncrementVariableAction extends Action {
     public boolean isValid(ExecutionContext e) {
         if (targetVar == null || targetVar.isBlank()) return false;
         if (!e.hasVariable(targetVar)) return false;
-        return e.isValidExpression(value);
+        return e.isValidValue(value);
     }
 
     @Override
@@ -58,8 +59,21 @@ public class IncrementVariableAction extends Action {
 
     @Override
     public String getTitle() { return "Inc/Dec variable : " + targetVar + " de " + value; }
+
     @Override
     public Color getColor() {
         return Color.LIGHTSEAGREEN;
+    }
+
+    @Override
+    public List<ActionParameter> getParameters() {
+        return List.of(
+                new ActionParameter("Variable cible", targetVar, false, (newVal) -> {
+                    this.targetVar = newVal;
+                }),
+                new ActionParameter("de", value, true, "", true, (newVal) -> {
+                    this.value = newVal;
+                })
+        );
     }
 }

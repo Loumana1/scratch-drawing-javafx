@@ -146,21 +146,21 @@ public class ExecutionContext {
         return !repeatStack.isEmpty();
     }
 
-    public int resolveExpression(String expr) {
+    public int resolveValue(String value) {
         try {
-            return Integer.parseInt(expr);
+            return Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            return getVariable(expr);
+            return getVariable(value);
         }
     }
 
-    public boolean isValidExpression(String expr) {
-        if (expr == null || expr.isBlank()) return false;
+    public boolean isValidValue(String value) {
+        if (value == null || value.isBlank()) return false;
         try {
-            Integer.parseInt(expr.trim());
+            Integer.parseInt(value.trim());
             return true;
         } catch (NumberFormatException e) {
-            return hasVariable(expr.trim());
+            return hasVariable(value.trim());
         }
     }
 

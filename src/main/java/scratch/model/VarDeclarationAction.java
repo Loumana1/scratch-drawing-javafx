@@ -2,6 +2,8 @@ package scratch.model;
 
 import javafx.scene.paint.Color;
 
+import java.util.List;
+
 public class VarDeclarationAction extends Action {
 
     private String varName;
@@ -59,4 +61,12 @@ public class VarDeclarationAction extends Action {
         return Color.LIGHTSEAGREEN;
     }
 
+    @Override
+    public List<ActionParameter> getParameters() {
+        return List.of(
+                new ActionParameter("Nom de la variable", varName, false, (newVal) -> {
+                    this.varName = newVal;
+                })
+        );
+    }
 }

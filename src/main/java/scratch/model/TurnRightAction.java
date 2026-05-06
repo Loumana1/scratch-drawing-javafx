@@ -2,38 +2,33 @@ package scratch.model;
 
 import javafx.scene.paint.Color;
 
-public class TurnRightAction  extends ParameterizedAction{
+import java.util.List;
 
-    public static  final int MIN_VALUE = 1 ;
-    public static  final int MAX_VALUE = 180 ;
-    public static  final int DEFAULT_VALUE = 90 ;
-
-    public TurnRightAction(){
-        super(DEFAULT_VALUE);
-    }
-
-    public TurnRightAction(int value) {
-        super(value);
-    }
-
-    @Override
-    protected boolean isValueValid(int value) {
-        return value >= MIN_VALUE && value <= MAX_VALUE;
-    }
-
-    @Override
-    public int getDefaultValue() {
-        return DEFAULT_VALUE;
-    }
+public class TurnRightAction extends Action {
+    public static final int MIN_VALUE = 1;
+    public static final int MAX_VALUE = 180;
+    private String value = "90";
 
     @Override
     public void execute(ExecutionContext e) {
-        int realValue = resolveValue(e);
+        int realValue = e.resolveValue(value);
         if (realValue < MIN_VALUE || realValue > MAX_VALUE) {
             throw new ExecutionException(
                     "Tourner à droite de " + realValue + " hors plage " + MIN_VALUE + "–" + MAX_VALUE);
         }
         e.turnRight(realValue);
+    }
+
+    @Override
+    public boolean isValid(ExecutionContext e) {
+        if (!e.isValidValue(value)) return false;
+
+        try {
+            int val = Integer.parseInt(value.trim());
+            return val >= MIN_VALUE && val <= MAX_VALUE;
+        } catch (NumberFormatException exception) {
+            return true;
+        }
     }
 
     @Override
@@ -44,10 +39,14 @@ public class TurnRightAction  extends ParameterizedAction{
     @Override
     public Action duplicate() {
         TurnRightAction clone = new TurnRightAction();
-        copyStateTo(clone);
+        clone.value = this.value;
         return clone;
     }
 
+    @Override
+    public String format() {
+        return getType().name() + ";" + value;
+    }
 
     @Override
     public boolean isVisual() { return true; }
@@ -58,8 +57,12 @@ public class TurnRightAction  extends ParameterizedAction{
     }
 
     @Override
-    public String getUnit() {
-        return " Degrés";
+    public List<ActionParameter> getParameters() {
+        return List.of(
+                new ActionParameter("Tourner de", value, true, "Degrés", false, (newVal) -> {
+                    this.value = newVal;
+                })
+        );
     }
 
     @Override
@@ -68,8 +71,12 @@ public class TurnRightAction  extends ParameterizedAction{
     }
 
     @Override
+    public String getValue() {
+        return value;
+    }
+
+    @Override
     public String toString() {
-        return getTitle() + " "+ getExpression();
+        return getTitle() +" "+ getValue();
     }
 }
-

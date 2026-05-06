@@ -38,10 +38,12 @@ public class MainViewModel {
     private Timeline autoTimeline ;
     private final IntegerProperty programChangeCounter = new SimpleIntegerProperty(0);
     private final IntegerProperty executionFaultLineIndex = new SimpleIntegerProperty(-1);
+    private final ActionConfigViewModel configViewModel;
 
     public MainViewModel(Program program) {
         this.program = program;
         this.observableActions = FXCollections.observableArrayList(program.getActions());
+        this.configViewModel = new ActionConfigViewModel(this);
         turtleState.set(buildTurtleStateString());
         refreshVariablesFromContext();
 
@@ -51,6 +53,7 @@ public class MainViewModel {
                 executionFaultLineIndex.set(-1);
                 errorMessage.set("");
             }
+            configViewModel.updateForAction(getSelectedAction());
         });
     }
 
@@ -408,40 +411,15 @@ public class MainViewModel {
         return selectedIndex.get();
     }
 
-    public ActionDetail getSelectedActionDetail() {
-        Action action = getSelectedAction();
-        if (action == null) return null;
-
-        return new ActionDetail(
-                action.getTitle(),
-                action.isValueEditable(),
-                action.getUnit(),
-                action.getNumericValue()
-        );
+    public ActionConfigViewModel getConfigViewModel() {
+        return configViewModel;
     }
-
 
     public int getExecutionFaultLineIndex() {
         return executionFaultLineIndex.get();
     }
     public ReadOnlyIntegerProperty executionFaultLineIndexProperty() {
         return executionFaultLineIndex;
-    }
-
-
-    public boolean tryUpdateSelectedActionWithText(String text) {
-        Action action = getSelectedAction();
-        if (action == null) return false;
-
-        if (text.matches("^-?\\d+$")) {
-            return action.updateValue(Integer.parseInt(text));
-        }
-
-        if (text.matches("^[a-zA-Z_][a-zA-Z0-9_]*$")) {
-            return action.updateVariable(text);
-        }
-
-        return false;
     }
 
 
