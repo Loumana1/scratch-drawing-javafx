@@ -2,6 +2,8 @@ package scratch.model;
 
 import javafx.scene.paint.Color;
 
+import java.util.List;
+
 public class RepeatAction extends Action {
 
     private int count;
@@ -61,7 +63,6 @@ public class RepeatAction extends Action {
         this.countVarName = countVarName;
     }
 
-    @Override
     public boolean isCountIsVar() {
         return countIsVar;
     }
@@ -71,7 +72,7 @@ public class RepeatAction extends Action {
 
     @Override
     public String toString() {
-        return getTitle() + getExpression() + getUnit();
+        return getTitle() + getValue() + " fois";
     }
 
 
@@ -86,8 +87,9 @@ public class RepeatAction extends Action {
 
     @Override
     public String format() {
-        return getType().name() + ";" + getExpression();
+        return getType().name() + ";" + getValue();
     }
+
     @Override
     public Color getColor() {
         return Color.LIGHTSEAGREEN;
@@ -99,39 +101,21 @@ public class RepeatAction extends Action {
     }
 
     @Override
-    public String getUnit() {
-        return " fois";
+    public List<ActionParameter> getParameters() {
+        return List.of(
+                new ActionParameter("Nombre de fois", getValue(), true, "fois", true, (newVal) -> {
+                    if (newVal.matches("^-?\\d+$")) {
+                        this.count = Integer.parseInt(newVal);
+                        this.countIsVar = false;
+                    } else {
+                        this.countVarName = newVal;
+                        this.countIsVar = true;
+                    }
+                })
+        );
     }
 
-    @Override
-    public boolean isValueEditable() {
-        return true;
-    }
-
-    @Override
-    public int getNumericValue() {
-        return count;
-    }
-
-    @Override
-    public boolean updateValue(int newValue) {
-        if (newValue > 0) {
-            this.count = newValue;
-            this.countIsVar = false;
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean updateVariable(String varName) {
-        this.countVarName = varName;
-        this.countIsVar = true;
-        return true;
-    }
-
-    @Override
-    public String getExpression() {
+    public String getValue() {
         return isCountIsVar() ? getCountVarName() : String.valueOf(getCount());
     }
 }

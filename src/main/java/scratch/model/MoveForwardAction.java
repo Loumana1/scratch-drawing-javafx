@@ -2,35 +2,33 @@ package scratch.model;
 
 import javafx.scene.paint.Color;
 
-public class MoveForwardAction extends ParameterizedAction{
+import java.util.List;
+
+public class MoveForwardAction extends Action {
     public static final int MIN_VALUE = 1;
     public static final int MAX_VALUE = 100;
-    public static final int DEFAULT_VALUE = 30;
-
-    public MoveForwardAction() {
-        super(DEFAULT_VALUE);
-    }
-    public MoveForwardAction(int value){
-        super(value);
-    }
+    private String value = "30";
 
     @Override
     public void execute(ExecutionContext e) {
-        int realValue = resolveValue(e);
+        int realValue = e.resolveValue(value);
         if (realValue < MIN_VALUE || realValue > MAX_VALUE) {
             throw new ExecutionException(
                     "Avancer de " + realValue + " hors plage " + MIN_VALUE + "–" + MAX_VALUE);
         }
         e.move(realValue);
     }
-    @Override
-    protected boolean isValueValid(int value) {
-        return value >= MIN_VALUE && value <= MAX_VALUE;
-    }
 
     @Override
-    public int getDefaultValue() {
-        return DEFAULT_VALUE ;
+    public boolean isValid(ExecutionContext e) {
+        if (!e.isValidValue(value)) return false;
+
+        try {
+            int val = Integer.parseInt(value.trim());
+            return val >= MIN_VALUE && val <= MAX_VALUE;
+        } catch (NumberFormatException exception) {
+            return true;
+        }
     }
 
     @Override
@@ -41,8 +39,13 @@ public class MoveForwardAction extends ParameterizedAction{
     @Override
     public Action duplicate() {
         MoveForwardAction clone = new MoveForwardAction();
-        copyStateTo(clone);
+        clone.value = this.value;
         return clone;
+    }
+
+    @Override
+    public String format() {
+        return getType().name() + ";" + value;
     }
 
     @Override
@@ -54,8 +57,12 @@ public class MoveForwardAction extends ParameterizedAction{
     }
 
     @Override
-    public String getUnit() {
-        return " Pixels";
+    public List<ActionParameter> getParameters() {
+        return List.of(
+                new ActionParameter("Avancer de", value, true, "Pixels", false, (newVal) -> {
+                    this.value = newVal;
+                })
+        );
     }
 
     @Override
@@ -64,8 +71,12 @@ public class MoveForwardAction extends ParameterizedAction{
     }
 
     @Override
-    public String toString() {
-        return getTitle() + " "+ getExpression();
+    public String getValue() {
+        return value;
     }
 
+    @Override
+    public String toString() {
+        return getTitle() +" "+ getValue();
+    }
 }

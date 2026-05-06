@@ -87,13 +87,12 @@ public class ProgramFileService {
         }
     }
 
-    private static Action fillParameterizedAction(ParameterizedAction action, String[] parts) {
+    private static Action fillParameterizedAction(Action action, String[] parts) {
         if (parts.length > 1) {
             String valStr = parts[1].trim();
-            if (valStr.matches("^-?\\d+$")) {
-                action.setValue(Integer.parseInt(valStr));
-            } else {
-                action.setVarName(valStr);
+            List<ActionParameter> params = action.getParameters();
+            if (!params.isEmpty()) {
+                params.get(0).setValue(valStr);
             }
         }
         return action;

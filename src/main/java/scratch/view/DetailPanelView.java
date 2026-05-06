@@ -1,388 +1,112 @@
 package scratch.view;
 
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
-import scratch.model.*;
-import scratch.viewmodel.ActionDetail;
+import scratch.model.ActionParameter;
+import scratch.viewmodel.ActionConfigViewModel;
 import scratch.viewmodel.MainViewModel;
 
 public class DetailPanelView extends TitledPane {
 
-    private final MainViewModel viewModel;
-    private final ListView<Action> programListView;
-
-    private final Label lblDetailTitle = new Label("(aucune action sélectionnée)");
-    private final TextField txtValue = new TextField();
-    private final Label lblError = new Label("Error valeur");
-    private final Label lblPixels = new Label("");
+    private final VBox container = new VBox(10);
+    private final MainViewModel mainViewModel;
+    private final ActionConfigViewModel configViewModel;
+    private final ListView<?> programListView;
     private final Label lblRuntimeError = new Label();
 
-    private final TextField txtTargetVar;
-    private final Label lblAssignValue;
-    private final Button btnPlus;
-    private final Button btnMinus;
-
-    private VBox detailPane = new VBox(5);
-    private javafx.beans.value.ChangeListener<String> currentListener;
-    private javafx.beans.value.ChangeListener<String> targetVarListener;
-
-    public DetailPanelView(MainViewModel viewModel, ListView<Action> programListView) {
-        this.viewModel = viewModel;
+    public DetailPanelView(MainViewModel mainViewModel, ListView<?> programListView) {
+        this.mainViewModel = mainViewModel;
         this.programListView = programListView;
+        this.configViewModel = mainViewModel.getConfigViewModel();
 
-        txtTargetVar = new TextField();
-        txtTargetVar.setMaxWidth(40);
-        lblAssignValue = new Label(" valeur : ");
-        btnPlus = new Button("+");
-        btnMinus = new Button("-");
-
-        txtTargetVar.setVisible(false);
-        txtTargetVar.setManaged(false);
-        lblAssignValue.setVisible(false);
-        lblAssignValue.setManaged(false);
-        btnPlus.setVisible(false);
-        btnPlus.setManaged(false);
-        btnMinus.setVisible(false);
-        btnMinus.setManaged(false);
-
-        setText("Détails de l'action");
-        lblError.setStyle("-fx-text-fill: red;");
-        lblError.setVisible(false);
-        lblError.setManaged(false);
-        txtValue.setVisible(false);
-        txtValue.setManaged(false);
-        txtValue.setMaxWidth(40);
-
-        HBox row = new HBox(5);
-        row.setAlignment(Pos.CENTER_LEFT);
-        row.getChildren().addAll(lblDetailTitle, txtTargetVar, lblAssignValue, txtValue, lblPixels, btnPlus, btnMinus);
-
-        detailPane.getChildren().addAll(row, lblError);
-        setContent(detailPane);
+        this.setText("Détail de l'action");
+        this.setContent(container);
 
         lblRuntimeError.setStyle("-fx-text-fill: red; -fx-font-size: 15px;");
         lblRuntimeError.setWrapText(true);
-        lblRuntimeError.textProperty().bind(viewModel.errorMessageProperty());
-        detailPane.getChildren().add(lblRuntimeError);
+        lblRuntimeError.textProperty().bind(mainViewModel.errorMessageProperty());
 
-        viewModel.selectedIndexProperty().addListener((obs, old, nw) -> updateDetailPane());
+        // Écouter les changements de sélection
+        configViewModel.getParameters().addListener((ListChangeListener<ActionParameter>) c -> refreshUI());
+
+        refreshUI();
     }
 
-    private void updateDetailPane() {
-        detachTargetVarListener();
+    private void refreshUI() {
+        container.getChildren().clear();
 
-        if (currentListener != null) {
-            txtValue.textProperty().removeListener(currentListener);
-            currentListener = null;
-        }
-
-        lblError.setVisible(false);
-        lblError.setManaged(false);
-
-        // On cache tout par défaut
-        txtTargetVar.setVisible(false);
-        txtTargetVar.setManaged(false);
-        lblAssignValue.setVisible(false);
-        lblAssignValue.setManaged(false);
-        btnPlus.setVisible(false);
-        btnPlus.setManaged(false);
-        btnMinus.setVisible(false);
-        btnMinus.setManaged(false);
-
-        Action action = viewModel.getSelectedAction();
-
-        // --------DECLARATION --------
-        if (action != null && action.getType() == ActionType.VAR_DECLARATION) {
-            VarDeclarationAction varAction = (VarDeclarationAction) action;
-            lblDetailTitle.setText("Déclaration de la variable ");
-
-            txtValue.setDisable(false);
-            txtValue.setVisible(true);
-            txtValue.setManaged(true);
-            lblPixels.setVisible(false);
-            lblPixels.setManaged(false);
-
-            if (currentListener != null) {
-                txtValue.textProperty().removeListener(currentListener);
-                currentListener = null;
-            }
-
-            txtValue.setText(varAction.getVarName());
-            configVarTextField(varAction);
+        // 1. Si la liste est vide (pas d'action sélectionnée ou action sans paramètre comme PenUp)
+        if (configViewModel.getParameters().isEmpty()) {
+            Label noActionLabel = new Label("Aucun paramètre à configurer.");
+            noActionLabel.setStyle("-fx-font-style: italic; -fx-text-fill: gray;");
+            container.getChildren().add(noActionLabel);
+            container.getChildren().add(lblRuntimeError);
             return;
         }
 
-        // -------- ASSIGNATION --------
-        if (action != null && action.getType() == ActionType.VAR_ASSIGNMENT) {
-            VarAssignmentAction assignAction = (VarAssignmentAction) action;
+        // 2. Création dynamique des champs pour l'action sélectionnée (tous sur la même ligne)
+        HBox allParamsRow = new HBox(15);
+        allParamsRow.setAlignment(Pos.CENTER_LEFT);
 
-            lblDetailTitle.setText("Assignation de la variable ");
-            lblAssignValue.setText(" valeur : "); // Texte de l'assignation
+        for (ActionParameter param : configViewModel.getParameters()) {
+            // Le nom du paramètre
+            Label label = new Label(param.getLabel() + " :");
 
-            txtTargetVar.setVisible(true);
-            txtTargetVar.setManaged(true);
-            lblAssignValue.setVisible(true);
-            lblAssignValue.setManaged(true);
-            txtValue.setVisible(true);
-            txtValue.setManaged(true);
-            txtValue.setDisable(false);
-            btnPlus.setVisible(true);
-            btnPlus.setManaged(true);
-            btnMinus.setVisible(true);
-            btnMinus.setManaged(true);
-            lblPixels.setVisible(false);
-            lblPixels.setManaged(false);
+            // Le champ de texte
+            TextField textField = new TextField(param.getValue());
+            textField.setMaxWidth(60);
 
-            if (currentListener != null) {
-                txtValue.textProperty().removeListener(currentListener);
-                currentListener = null;
-            }
+            // L'unité
+            Label unitLabel = new Label(param.getUnit());
+            unitLabel.setVisible(!param.getUnit().isEmpty());
+            unitLabel.setManaged(!param.getUnit().isEmpty());
 
-            txtTargetVar.setText(assignAction.getTargetVar());
-            txtValue.setText(assignAction.getValue());
-            configAssignFields(assignAction);
-            return;
-        }
+            // Les boutons + et -
+            Button btnMinus = new Button("-");
+            Button btnPlus = new Button("+");
 
-        // -------- INCREMENTATION --------
-        if (action != null && action.getType() == ActionType.INCREMENT_VARIABLE) {
-            IncrementVariableAction incAction = (IncrementVariableAction) action;
+            btnMinus.setOnAction(e -> updateNumericValue(textField, -1));
+            btnPlus.setOnAction(e -> updateNumericValue(textField, 1));
 
-            lblDetailTitle.setText("Incrémentation de la variable "); // Texte de ta photo
-            lblAssignValue.setText(" de "); // Texte de ta photo
+            // Binding : quand on tape, on met à jour le modèle et on vérifie la validité
+            textField.textProperty().addListener((obs, oldVal, newVal) -> {
+                param.setValue(newVal);
+                mainViewModel.notifyProgramContentChanged();
 
-            txtTargetVar.setVisible(true);
-            txtTargetVar.setManaged(true);
-            lblAssignValue.setVisible(true);
-            lblAssignValue.setManaged(true);
-            txtValue.setVisible(true);
-            txtValue.setManaged(true);
-            txtValue.setDisable(false);
-            btnPlus.setVisible(true);
-            btnPlus.setManaged(true);
-            btnMinus.setVisible(true);
-            btnMinus.setManaged(true);
-            lblPixels.setVisible(false);
-            lblPixels.setManaged(false);
-
-            if (currentListener != null) {
-                txtValue.textProperty().removeListener(currentListener);
-                currentListener = null;
-            }
-
-            txtTargetVar.setText(incAction.getTargetVar());
-            txtValue.setText(incAction.getValue());
-            configIncFields(incAction);
-            return;
-        }
-
-        // -------- LE RESTE DES ACTIONS --------
-        ActionDetail detail = viewModel.getSelectedActionDetail();
-
-        if (detail == null) {
-            lblDetailTitle.setText("(aucune action sélectionnée)");
-            txtValue.setText("");
-            txtValue.setDisable(true);
-            txtValue.setVisible(false);
-            txtValue.setManaged(false);
-            lblPixels.setVisible(false);
-            lblPixels.setManaged(false);
-            if (currentListener != null) {
-                txtValue.textProperty().removeListener(currentListener);
-                currentListener = null;
-            }
-            return;
-        }
-
-        lblDetailTitle.setText(detail.getTitle());
-
-        if (!detail.isValueEditable()) {
-            txtValue.setText("0");
-            txtValue.setDisable(true);
-            txtValue.setVisible(false);
-            txtValue.setManaged(false);
-            lblPixels.setVisible(false);
-            lblPixels.setManaged(false);
-
-            if (currentListener != null) {
-                txtValue.textProperty().removeListener(currentListener);
-                currentListener = null;
-            }
-            lblError.setVisible(false);
-            lblError.setManaged(false);
-            return;
-        }
-
-        txtValue.setDisable(false);
-        txtValue.setVisible(true);
-        txtValue.setManaged(true);
-        lblPixels.setVisible(true);
-        lblPixels.setManaged(true);
-        lblPixels.setText(detail.getUnitText());
-
-        txtValue.setText(action.getExpression());
-
-        configTextField();
-    }
-
-    private void configVarTextField(VarDeclarationAction action) {
-        lblError.setVisible(false);
-        lblError.setManaged(false);
-
-        currentListener = ((obs, old, text) -> {
-            if (text == null || text.isBlank() || !text.matches("^[a-zA-Z_][a-zA-Z0-9_]*$")) {
-                lblError.setText("Erreur valeur");
-                lblError.setVisible(true);
-                lblError.setManaged(true);
-            } else {
-                lblError.setVisible(false);
-                lblError.setManaged(false);
-                action.setVarName(text);
+                // Validation réactive
+                int idx = mainViewModel.getSelectedIndex();
+                if (idx >= 0) {
+                    scratch.model.Action action = mainViewModel.getObservableActions().get(idx);
+                    if (!action.isValid(mainViewModel.getExecutionContext())) {
+                        mainViewModel.errorMessageProperty().set("Erreur : Valeur ou variable '" + newVal + "' invalide.");
+                    } else {
+                        mainViewModel.errorMessageProperty().set("");
+                    }
+                }
                 programListView.refresh();
-                viewModel.notifyProgramContentChanged();
-            }
-        });
-        txtValue.textProperty().addListener(currentListener);
-    }
-
-    private void configTextField() {
-        lblError.setVisible(false);
-        lblError.setManaged(false);
-
-        if (currentListener != null){
-            txtValue.textProperty().removeListener(currentListener);
+            });
+            if (param.hasButtons())
+                allParamsRow.getChildren().addAll(label, textField, unitLabel, btnMinus, btnPlus);
+            else
+                allParamsRow.getChildren().addAll(label, textField, unitLabel);
         }
+        container.getChildren().add(allParamsRow);
 
-        currentListener = ((obs, old, text) -> {
-            lblError.setVisible(false);
-            lblError.setManaged(false);
-
-            if (text == null || text.isBlank()) {
-                lblError.setVisible(true);
-                lblError.setManaged(true);
-                return;
-            }
-
-
-            boolean ok = viewModel.tryUpdateSelectedActionWithText(text);
-
-            if (!ok) {
-                lblError.setText("Erreur : Valeur invalide");
-                lblError.setVisible(true);
-                lblError.setManaged(true);
-            } else {
-                programListView.refresh();
-                viewModel.notifyProgramContentChanged();
-            }
-        });
-        txtValue.textProperty().addListener(currentListener);
+        container.getChildren().add(lblRuntimeError);
     }
 
-    // --- CONFIGURATION ASSIGNATION ---
-    private void configAssignFields(VarAssignmentAction action) {
-        lblError.setVisible(false);
-        lblError.setManaged(false);
-
-            targetVarListener = (obs, old, text) ->{
-            if (text == null || text.isBlank() || !text.matches("^[a-zA-Z_][a-zA-Z0-9_]*$")) {
-                lblError.setText("Erreur : Nom cible invalide");
-                lblError.setVisible(true);
-                lblError.setManaged(true);
-            } else {
-                lblError.setVisible(false);
-                lblError.setManaged(false);
-                action.setTargetVar(text);
-                programListView.refresh();
-                viewModel.notifyProgramContentChanged();
-            }
-        };
-        txtTargetVar.textProperty().addListener(targetVarListener);
-
-        currentListener = ((obs, old, text) -> {
-            if (text == null || text.isBlank() || (!text.matches("^-?\\d+$") && !text.matches("^[a-zA-Z_][a-zA-Z0-9_]*$"))) {
-                lblError.setText("Erreur : Valeur invalide");
-                lblError.setVisible(true);
-                lblError.setManaged(true);
-            } else {
-                lblError.setVisible(false);
-                lblError.setManaged(false);
-                action.setValue(text);
-                programListView.refresh();
-                viewModel.notifyProgramContentChanged();
-            }
-        });
-        txtValue.textProperty().addListener(currentListener);
-
-        btnPlus.setOnAction(null);
-        btnMinus.setOnAction(null);
-        btnPlus.setOnAction(e -> updateNumericValueAssign(action, 1));
-        btnMinus.setOnAction(e -> updateNumericValueAssign(action, -1));
-    }
-
-    private void updateNumericValueAssign(VarAssignmentAction action, int delta) {
+    /**
+     * Petite méthode utilitaire pour les boutons + et -
+     */
+    private void updateNumericValue(TextField textField, int delta) {
         try {
-            int currentVal = Integer.parseInt(txtValue.getText());
-            int newVal = currentVal + delta;
-            txtValue.setText(String.valueOf(newVal));
-        } catch (NumberFormatException ex) {}
-    }
-
-    // --- CONFIGURATION INCREMENTATION ---
-    private void configIncFields(IncrementVariableAction action) {
-        lblError.setVisible(false);
-        lblError.setManaged(false);
-
-        targetVarListener = (obs, old, text) -> {
-            if (text == null || text.isBlank() || !text.matches("^[a-zA-Z_][a-zA-Z0-9_]*$")) {
-                lblError.setText("Erreur : Nom cible invalide");
-                lblError.setVisible(true);
-                lblError.setManaged(true);
-            } else {
-                lblError.setVisible(false);
-                lblError.setManaged(false);
-                action.setTargetVar(text);
-                programListView.refresh();
-                viewModel.notifyProgramContentChanged();
-            }
-        };
-        txtTargetVar.textProperty().addListener(targetVarListener);
-
-        currentListener = ((obs, old, text) -> {
-            if (text == null || text.isBlank() || (!text.matches("^-?\\d+$") && !text.matches("^[a-zA-Z_][a-zA-Z0-9_]*$"))) {
-                lblError.setText("Erreur : Valeur invalide");
-                lblError.setVisible(true);
-                lblError.setManaged(true);
-            } else {
-                lblError.setVisible(false);
-                lblError.setManaged(false);
-                action.setValue(text);
-                programListView.refresh();
-                viewModel.notifyProgramContentChanged();
-            }
-        });
-        txtValue.textProperty().addListener(currentListener);
-
-        btnPlus.setOnAction(null);
-        btnMinus.setOnAction(null);
-        btnPlus.setOnAction(e -> updateNumericValueInc(action, 1));
-        btnMinus.setOnAction(e -> updateNumericValueInc(action, -1));
-    }
-
-    private void updateNumericValueInc(IncrementVariableAction action, int delta) {
-        try {
-            int currentVal = Integer.parseInt(txtValue.getText());
-            int newVal = currentVal + delta;
-            txtValue.setText(String.valueOf(newVal));
-        } catch (NumberFormatException ex) {}
-    }
-
-    private void detachTargetVarListener() {
-        if (targetVarListener != null) {
-            txtTargetVar.textProperty().removeListener(targetVarListener);
-            targetVarListener = null;
+            int currentVal = Integer.parseInt(textField.getText());
+            textField.setText(String.valueOf(currentVal + delta));
+        } catch (NumberFormatException ex) {
+            // Si c'est du texte (une variable), on ne fait rien avec les boutons + et -
         }
     }
 }
