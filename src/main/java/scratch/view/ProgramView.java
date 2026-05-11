@@ -7,22 +7,27 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import scratch.model.*;
-import scratch.viewmodel.MainViewModel;
+import scratch.viewmodel.ActionConfigViewModel;
+import scratch.viewmodel.ProgramViewModel;
+import scratch.viewmodel.SceneViewModel;
 import javafx.geometry.Pos;
 
 public class ProgramView extends VBox {
-
 
     private final Button btnUp = new Button("Monter");
     private final Button btnDown = new Button("Descendre");
     private final Button btnDuplicate = new Button("Dupliquer");
     private final Button btnRemove = new Button("Supprimer");
     private final Button btnClear = new Button("Vider tout");
-    private MainViewModel viewModel ;
+    private final ProgramViewModel programViewModel;
+    private final SceneViewModel sceneViewModel;
+    private final ActionConfigViewModel configViewModel;
 
-    public ProgramView(MainViewModel viewModel) {
+    public ProgramView(ProgramViewModel programViewModel, SceneViewModel sceneViewModel, ActionConfigViewModel configViewModel) {
 
-        this.viewModel = viewModel;
+        this.programViewModel = programViewModel;
+        this.sceneViewModel = sceneViewModel;
+        this.configViewModel = configViewModel;
 
         setSpacing(10);
         setPadding(new Insets(10));
@@ -32,20 +37,18 @@ public class ProgramView extends VBox {
         Label title = new Label("Programme");
 
         ListView<Action> programList = new ListView<>();
-        programList.setItems(viewModel.getObservableActions());
+        programList.setItems(programViewModel.getObservableActions());
         addListeners();
         configurationBindings();
 
-        // Quand on clique sur la liste, on met à jour l'index sélectionné dans le ViewModel
         programList.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal.intValue() >= 0) {
-                viewModel.selectedIndexProperty().set(newVal.intValue());
+                programViewModel.selectedIndexProperty().set(newVal.intValue());
             }
         });
-        viewModel.selectedIndexProperty().addListener((obs, old, nw) -> {
+        programViewModel.selectedIndexProperty().addListener((obs, old, nw) -> {
             programList.getSelectionModel().select(nw.intValue());
         });
-
 
         programList.setCellFactory(lv -> new ListCell<>() {
 
@@ -63,13 +66,11 @@ public class ProgramView extends VBox {
                 Circle circle = new Circle(5);
                 Label label = new Label();
 
-
                 circle.setFill(action.getColor());
                 label.setTextFill(action.getColor());
                 label.setText(action.toString());
 
-                // Profondeur d indentation
-                int depth = 0 ;
+                int depth = 0;
                 int currentIdx = getIndex();
                 for (int i = 0; i < currentIdx; i++) {
                     Action a = getListView().getItems().get(i);
@@ -78,11 +79,10 @@ public class ProgramView extends VBox {
                     else if (a.getType() == ActionType.END_REPEAT)
                         depth--;
                 }
-                // EndRepeat au meme niveau que repeat
                 if (action.getType() == ActionType.END_REPEAT)
                     depth--;
                 if (depth < 0)
-                    depth = 0 ;
+                    depth = 0;
 
                 int leftPadding = 5 + (depth * 20);
 
@@ -93,10 +93,9 @@ public class ProgramView extends VBox {
                 setGraphic(box);
                 setText(null);
 
-                // Encadrer en rouge erreur
-                boolean hasError = viewModel.errorMessageProperty().get() != null
-                        && !viewModel.errorMessageProperty().get().isEmpty();
-                int faultIdx = viewModel.getExecutionFaultLineIndex();
+                boolean hasError = sceneViewModel.errorMessageProperty().get() != null
+                        && !sceneViewModel.errorMessageProperty().get().isEmpty();
+                int faultIdx = sceneViewModel.getExecutionFaultLineIndex();
                 boolean isFaultLine = faultIdx >= 0 && getIndex() == faultIdx;
                 if (hasError && isFaultLine) {
                     setStyle("-fx-border-color: red; -fx-border-width: 2;");
@@ -105,14 +104,13 @@ public class ProgramView extends VBox {
                 }
                 setGraphic(box);
                 setText(null);
-
             }
         });
-        // Forcer le rrefresh qd nouvelle erreur ou modification de parametre
-        viewModel.executionFaultLineIndexProperty().addListener((obs, o, n) -> programList.refresh());
-        viewModel.programChangeCounterProperty().addListener((obs, o, n) -> programList.refresh());
-        HBox buttons = new HBox(10);
 
+        sceneViewModel.executionFaultLineIndexProperty().addListener((obs, o, n) -> programList.refresh());
+        programViewModel.programChangeCounterProperty().addListener((obs, o, n) -> programList.refresh());
+        sceneViewModel.contentChangeCounterProperty().addListener((obs, o, n) -> programList.refresh());
+        HBox buttons = new HBox(10);
 
         buttons.getChildren().addAll(
                 btnUp,
@@ -123,7 +121,7 @@ public class ProgramView extends VBox {
         );
 
         DetailPanelView detailPanel =
-                new DetailPanelView(viewModel);
+                new DetailPanelView(configViewModel, sceneViewModel);
 
         getChildren().addAll(
                 title,
@@ -131,23 +129,21 @@ public class ProgramView extends VBox {
                 buttons,
                 detailPanel
         );
-
-    }
-    // Listiners
-    private void addListeners(){
-        btnRemove.setOnAction(e -> viewModel.removeSelectedAction());
-        btnClear.setOnAction(e -> viewModel.clearProgram());
-        btnDown.setOnAction(e -> viewModel.moveDown());
-        btnUp.setOnAction(e -> viewModel.moveUp());
-        btnDuplicate.setOnAction(e -> viewModel.duplicateSelected());
     }
 
-    // Bindins Button
-    private void configurationBindings(){
-        btnRemove.disableProperty().bind(viewModel.canRemove().not());
-        btnClear.disableProperty().bind(Bindings.isEmpty(viewModel.getObservableActions()));
-        btnUp.disableProperty().bind(viewModel.canMoveUp().not());
-        btnDown.disableProperty().bind(viewModel.canMoveDown().not());
-        btnDuplicate.disableProperty().bind(viewModel.canDuplicate().not());
+    private void addListeners() {
+        btnRemove.setOnAction(e -> programViewModel.removeSelectedAction());
+        btnClear.setOnAction(e -> programViewModel.clearProgram());
+        btnDown.setOnAction(e -> programViewModel.moveDown());
+        btnUp.setOnAction(e -> programViewModel.moveUp());
+        btnDuplicate.setOnAction(e -> programViewModel.duplicateSelected());
+    }
+
+    private void configurationBindings() {
+        btnRemove.disableProperty().bind(programViewModel.canRemove().not());
+        btnClear.disableProperty().bind(Bindings.isEmpty(programViewModel.getObservableActions()));
+        btnUp.disableProperty().bind(programViewModel.canMoveUp().not());
+        btnDown.disableProperty().bind(programViewModel.canMoveDown().not());
+        btnDuplicate.disableProperty().bind(programViewModel.canDuplicate().not());
     }
 }

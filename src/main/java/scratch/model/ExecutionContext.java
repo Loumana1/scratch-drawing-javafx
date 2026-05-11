@@ -26,7 +26,6 @@ public class ExecutionContext {
     }
 
     public void declareVariable(String name) {
-
         if (variables.containsKey(name)) {
             return;
         }
@@ -45,9 +44,6 @@ public class ExecutionContext {
     }
 
     public int getVariable(String name) {
-        //getOrDefault faisait croire qu’une var inexistante vaut default
-        //on veux verifier le key (var) et envoyer une erreur
-        // si elle existe pas  avant de la consulter son value
         if (!variables.containsKey(name)) {
             throw new ExecutionException("Variable indéfinie : " + name);
         }
@@ -96,8 +92,6 @@ public class ExecutionContext {
         variables.clear();
     }
 
-    // GETTERS
-
     public int getX() {
         return x;
     }
@@ -126,22 +120,18 @@ public class ExecutionContext {
         return penDown;
     }
 
-    // Empiler nouvelle Boucle
     public void pushRepeat(int repeatIndex, int iterations) {
-        repeatStack.push(new int[] { repeatIndex, iterations });
+        repeatStack.push(new int[]{repeatIndex, iterations});
     }
 
-    // Regarder la boucle en cours sans retirer
     public int[] peekRepeat() {
         return repeatStack.peek();
     }
 
-    // Retirer la boucle
     public void popRepeat() {
         repeatStack.pop();
     }
 
-    // Y a t il une boucle active
     public boolean hasRepeat() {
         return !repeatStack.isEmpty();
     }
@@ -164,16 +154,17 @@ public class ExecutionContext {
         }
     }
 
-    public void polygone(int size , int num) {
-        List<double[]> lines = getPolygonLines(getX() , getY() , getDirection() ,size , num);
-        for (double [] line : lines ){
+    public void polygone(int size, int num) {
+        List<double[]> lines = getPolygonLines(getX(), getY(), getDirection(), size, num);
+        for (double[] line : lines) {
             double x1 = line[0];
             double y1 = line[1];
             double x2 = line[2];
             double y2 = line[3];
-            segments.add(new Segment((int)x1 , (int)y1 , (int)x2 ,(int)y2 ));
+            segments.add(new Segment((int) x1, (int) y1, (int) x2, (int) y2));
         }
     }
+
     private List<double[]> getPolygonLines(double x, double y, double angle, int size, int num) {
         List<double[]> lines = new ArrayList<>();
 
@@ -187,7 +178,7 @@ public class ExecutionContext {
             double nextX = currentX + size * Math.cos(currentAngle);
             double nextY = currentY + size * Math.sin(currentAngle);
 
-            lines.add(new double[]{ currentX, currentY, nextX, nextY });
+            lines.add(new double[]{currentX, currentY, nextX, nextY});
 
             currentX = nextX;
             currentY = nextY;
