@@ -60,6 +60,7 @@ public class PaletteView extends VBox {
                             case MOVE_FORWARD -> Color.BLUE;
                             case TURN_LEFT, TURN_RIGHT -> Color.RED;
                             case PEN_UP, PEN_DOWN -> Color.GREEN;
+                            case DRAW_POLYGON -> Color.CHOCOLATE;
                             case REPEAT , END_REPEAT , VAR_DECLARATION , VAR_ASSIGNMENT, INCREMENT_VARIABLE -> Color.LIGHTSEAGREEN;
                         };
                         circle.setFill(color);
@@ -105,6 +106,7 @@ public class PaletteView extends VBox {
 
     public static String getDisplayName(ActionType type) {
         return switch (type) {
+            case DRAW_POLYGON -> "Pologone ";
             case MOVE_FORWARD -> "Avancer de";
             case TURN_LEFT -> "Tourner à gauche de";
             case TURN_RIGHT -> "Tourner à droite de";

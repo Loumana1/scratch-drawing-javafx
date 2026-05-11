@@ -164,4 +164,37 @@ public class ExecutionContext {
         }
     }
 
+    public void polygone(int size , int num) {
+        List<double[]> lines = getPolygonLines(getX() , getY() , getDirection() ,size , num);
+        for (double [] line : lines ){
+            double x1 = line[0];
+            double y1 = line[1];
+            double x2 = line[2];
+            double y2 = line[3];
+            segments.add(new Segment((int)x1 , (int)y1 , (int)x2 ,(int)y2 ));
+        }
+    }
+    private List<double[]> getPolygonLines(double x, double y, double angle, int size, int num) {
+        List<double[]> lines = new ArrayList<>();
+
+        double currentAngle = Math.toRadians(angle);
+        double stepAngle = 2 * Math.PI / num;
+
+        double currentX = x;
+        double currentY = y;
+
+        for (int i = 0; i < num; i++) {
+            double nextX = currentX + size * Math.cos(currentAngle);
+            double nextY = currentY + size * Math.sin(currentAngle);
+
+            lines.add(new double[]{ currentX, currentY, nextX, nextY });
+
+            currentX = nextX;
+            currentY = nextY;
+
+            currentAngle += stepAngle;
+        }
+
+        return lines;
+    }
 }
