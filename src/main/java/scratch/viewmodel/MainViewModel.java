@@ -352,6 +352,7 @@ public class MainViewModel {
 
     private Action createAction(ActionType type) {
         return switch (type) {
+            case DRAW_POLYGON -> new PolygonAction();
             case MOVE_FORWARD -> new MoveForwardAction();
             case TURN_LEFT -> new TurnLeftAction();
             case TURN_RIGHT -> new TurnRightAction();
