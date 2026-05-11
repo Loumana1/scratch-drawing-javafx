@@ -11,10 +11,12 @@ public class ActionConfigViewModel {
 
     private final StringProperty title = new SimpleStringProperty("(aucune action sélectionnée)");
     private final ObservableList<ParameterViewModel> parameters = FXCollections.observableArrayList();
-    private final MainViewModel mainViewModel;
+    private final ProgramViewModel programViewModel;
+    private final SceneViewModel sceneViewModel;
 
-    public ActionConfigViewModel(MainViewModel mainViewModel) {
-        this.mainViewModel = mainViewModel;
+    public ActionConfigViewModel(ProgramViewModel programViewModel, SceneViewModel sceneViewModel) {
+        this.programViewModel = programViewModel;
+        this.sceneViewModel = sceneViewModel;
     }
 
     public void updateForAction(Action action) {
@@ -25,18 +27,18 @@ public class ActionConfigViewModel {
         }
         title.set(action.getTitle());
         for (ActionParameter param : action.getParameters()) {
-            parameters.add(new ParameterViewModel(param, mainViewModel, this));
+            parameters.add(new ParameterViewModel(param, sceneViewModel, this));
         }
     }
 
     public void validateCurrentAction() {
-        int idx = mainViewModel.getSelectedIndex();
-        if (idx >= 0) {
-            Action action = mainViewModel.getObservableActions().get(idx);
-            if (!action.isValid(mainViewModel.getExecutionContext())) {
-                mainViewModel.errorMessageProperty().set("Erreur : Valeur ou variable invalide.");
+        int idx = programViewModel.getSelectedIndex();
+        if (idx >= 0 && idx < programViewModel.getObservableActions().size()) {
+            Action action = programViewModel.getObservableActions().get(idx);
+            if (!action.isValid(sceneViewModel.getExecutionContext())) {
+                sceneViewModel.errorMessageProperty().set("Erreur : Valeur ou variable invalide.");
             } else {
-                mainViewModel.errorMessageProperty().set("");
+                sceneViewModel.errorMessageProperty().set("");
             }
         }
     }

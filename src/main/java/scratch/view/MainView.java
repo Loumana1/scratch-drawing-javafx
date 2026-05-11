@@ -1,11 +1,11 @@
 package scratch.view;
 
 import javafx.application.Platform;
-import javafx.scene.control.ListView;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
-import scratch.model.Action;
 import scratch.viewmodel.MainViewModel;
+import scratch.viewmodel.ProgramViewModel;
+import scratch.viewmodel.SceneViewModel;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -15,30 +15,19 @@ import javafx.scene.layout.BorderPane;
 
 public class MainView extends BorderPane {
 
-    private final MainViewModel viewModel;
-
-    private final ListView<Action> programListView = new ListView<>();
-
+    private final ProgramViewModel programViewModel;
+    private final SceneViewModel sceneViewModel;
 
     public MainView(MainViewModel viewModel) {
-        this.viewModel = viewModel;
+        this.programViewModel = viewModel.getProgramViewModel();
+        this.sceneViewModel = viewModel.getSceneViewModel();
 
-        PaletteView palette = new PaletteView(viewModel);
-        ProgramView program = new ProgramView(viewModel);
-        SceneView scene = new SceneView(viewModel);
+        PaletteView palette = new PaletteView(programViewModel);
+        ProgramView program = new ProgramView(programViewModel, sceneViewModel, viewModel.getConfigViewModel());
+        SceneView scene = new SceneView(sceneViewModel);
 
         HBox center = new HBox(20);
         center.getChildren().addAll(program, scene);
-
-        programListView.setItems(viewModel.getObservableActions());
-
-        programListView.getSelectionModel().selectedIndexProperty()
-                .addListener((obs, old, nw) ->
-                        viewModel.selectedIndexProperty().setValue(nw.intValue()));
-
-        viewModel.selectedIndexProperty()
-                .addListener((obs, old, nw) ->
-                        programListView.getSelectionModel().select(nw.intValue()));
 
         setTop(createMenuBar());
         setLeft(palette);
@@ -51,7 +40,7 @@ public class MainView extends BorderPane {
         Menu fileMenu = new Menu("File");
 
         MenuItem newItem = new MenuItem("New...");
-        newItem.setOnAction(e -> viewModel.newProgram());
+        newItem.setOnAction(e -> programViewModel.newProgram());
 
         MenuItem openItem = new MenuItem("Open...");
         openItem.setOnAction(e -> {
@@ -59,7 +48,7 @@ public class MainView extends BorderPane {
             File file = fileChooser.showOpenDialog(getScene().getWindow());
 
             if (file != null) {
-                viewModel.loadFromFile(file);
+                programViewModel.loadFromFile(file);
             }
         });
 
@@ -74,7 +63,7 @@ public class MainView extends BorderPane {
                 if (!file.getName().toLowerCase().endsWith(".scr")) {
                     file = new File(file.getAbsolutePath() + ".scr");
                 }
-                viewModel.saveToFile(file);
+                programViewModel.saveToFile(file);
             }
         });
 

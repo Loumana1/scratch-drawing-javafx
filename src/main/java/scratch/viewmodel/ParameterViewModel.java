@@ -7,19 +7,18 @@ import scratch.model.ActionParameter;
 public class ParameterViewModel {
     private final ActionParameter parameter;
     private final StringProperty valueProperty;
-    private final MainViewModel mainViewModel;
+    private final SceneViewModel sceneViewModel;
     private final ActionConfigViewModel configViewModel;
 
-    public ParameterViewModel(ActionParameter parameter, MainViewModel mainViewModel, ActionConfigViewModel configViewModel) {
+    public ParameterViewModel(ActionParameter parameter, SceneViewModel sceneViewModel, ActionConfigViewModel configViewModel) {
         this.parameter = parameter;
-        this.mainViewModel = mainViewModel;
+        this.sceneViewModel = sceneViewModel;
         this.configViewModel = configViewModel;
         this.valueProperty = new SimpleStringProperty(parameter.getValue());
 
-        // When the property changes (from the view), update the model
         this.valueProperty.addListener((obs, oldVal, newVal) -> {
             parameter.setValue(newVal);
-            mainViewModel.notifyProgramContentChanged();
+            sceneViewModel.notifyProgramContentChanged();
             configViewModel.validateCurrentAction();
         });
     }
@@ -45,7 +44,6 @@ public class ParameterViewModel {
             int currentVal = Integer.parseInt(valueProperty.get());
             valueProperty.set(String.valueOf(currentVal + 1));
         } catch (NumberFormatException ex) {
-            // Ignore if not a number
         }
     }
 
@@ -54,7 +52,6 @@ public class ParameterViewModel {
             int currentVal = Integer.parseInt(valueProperty.get());
             valueProperty.set(String.valueOf(currentVal - 1));
         } catch (NumberFormatException ex) {
-            // Ignore if not a number
         }
     }
 }

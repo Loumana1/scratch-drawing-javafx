@@ -15,16 +15,12 @@ public class Program {
         this.currentIndex = 0;
     }
 
-
-    //Gestion du programme
-    public void addAction(Action action){
+    public void addAction(Action action) {
         if (action == null)
             return;
         actions.add(action);
-
     }
 
-    //insertion au "milieu" du program
     public void insertAction(int index, Action action) {
         if (action == null)
             return;
@@ -36,55 +32,44 @@ public class Program {
         }
     }
 
-
     public void removeAction(int index) {
-       //index valide ?
         if (index >= 0 && index < actions.size()) {
-
             actions.remove(index);
         }
     }
 
-    public Action getAction(int index){
-
+    public Action getAction(int index) {
         return actions.get(index);
     }
-    public  List<Action> getActions(){
+
+    public List<Action> getActions() {
         return Collections.unmodifiableList(actions);
     }
-    public void moveUp(int index){
+
+    public void moveUp(int index) {
         if (index > 0)
-            Collections.swap(actions , index , index - 1);
+            Collections.swap(actions, index, index - 1);
     }
 
-    public void moveDown(int index){
+    public void moveDown(int index) {
         if (index < actions.size() - 1)
-            Collections.swap(actions , index , index + 1);
+            Collections.swap(actions, index, index + 1);
     }
 
-    public void duplicateAt(int index){
+    public void duplicateAt(int index) {
         if (index >= 0 && index < actions.size()) {
             Action original = actions.get(index);
             Action duplicate = original.duplicate();
-
-            actions.add(index + 1 , duplicate);
+            actions.add(index + 1, duplicate);
         }
     }
 
-    public void clear(){
+    public void clear() {
         actions.clear();
         resetExecution();
     }
 
-    //Methodes d'execution
-
     public boolean isValid(ExecutionContext context) {
-
-        // une copie du contexte pour la simulation
-        //Sert essentiellemnt a definir  si le boutton chargé va etre actif
-        // si on repart d'un contexte initial (reset),
-        // et on reinsert tout les action,
-        // est-ce que ce programme est cohérent ?
         ExecutionContext tempContext = new ExecutionContext();
 
         boolean instructionSeen = false;
@@ -101,7 +86,7 @@ public class Program {
                     instructionSeen = true;
                 }
                 if (action.isVisual()) hasVisualAction = true;
-                if (action.getType() == ActionType.REPEAT){
+                if (action.getType() == ActionType.REPEAT) {
                     repeatDepth++;
                 } else if (action.getType() == ActionType.END_REPEAT) {
                     repeatDepth--;
@@ -113,11 +98,9 @@ public class Program {
                 }
                 action.execute(tempContext);
             }
-            // Vérifier variable repeat n'est pas modifiée dans la boucle
             if (!checkRepeatVarNotModified()) {
                 return false;
             }
-            // Vérifier pas de stylo dans une boucle
             if (!checkNoPenActionInLoop()) {
                 return false;
             }
@@ -150,7 +133,6 @@ public class Program {
         return true;
     }
 
-    // verifier le action pen up et pen down dans une lop
     private boolean checkNoPenActionInLoop() {
         int depth = 0;
         int penBalance = 0;
@@ -164,26 +146,25 @@ public class Program {
                 if (depth == 0) penBalance = 0;
             }
             if (depth > 0) {
-                if (a.getType() == ActionType.PEN_UP)   penBalance++;
-                if (a.getType() == ActionType.PEN_DOWN)  penBalance--;
+                if (a.getType() == ActionType.PEN_UP) penBalance++;
+                if (a.getType() == ActionType.PEN_DOWN) penBalance--;
             }
         }
         return true;
     }
 
-    public void executeNext(ExecutionContext context){
+    public void executeNext(ExecutionContext context) {
         if (!hasNext()) return;
 
         Action a = actions.get(currentIndex);
 
-        if ( a.getType() == ActionType.REPEAT) {
-
+        if (a.getType() == ActionType.REPEAT) {
             int n = a.resolveCount(context);
             if (n <= 0) {
                 currentIndex = findEndRepeat(currentIndex) + 1;
-            }else {
-                context.pushRepeat(currentIndex , n - 1);
-                currentIndex++ ;
+            } else {
+                context.pushRepeat(currentIndex, n - 1);
+                currentIndex++;
             }
         } else if (a.getType() == ActionType.END_REPEAT) {
             if (context.hasRepeat()) {
@@ -203,25 +184,26 @@ public class Program {
             currentIndex++;
         }
     }
+
     private int findEndRepeat(int from) {
-        int count = 0 ;
+        int count = 0;
         for (int i = from; i < actions.size(); i++) {
             if (actions.get(i).getType() == ActionType.REPEAT)
-                count++ ;
+                count++;
             else if (actions.get(i).getType() == ActionType.END_REPEAT) {
                 if (--count == 0)
-                    return  i;
+                    return i;
             }
         }
-        return actions.size() -1;
+        return actions.size() - 1;
     }
 
-    public boolean hasNext(){
+    public boolean hasNext() {
         return currentIndex < actions.size();
     }
 
-    public void  resetExecution(){
-        currentIndex = 0 ;
+    public void resetExecution() {
+        currentIndex = 0;
     }
 
     public int getCurrentIndex() {
