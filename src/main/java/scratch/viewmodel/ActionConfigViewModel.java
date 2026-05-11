@@ -10,7 +10,7 @@ import scratch.model.ActionParameter;
 public class ActionConfigViewModel {
 
     private final StringProperty title = new SimpleStringProperty("(aucune action sélectionnée)");
-    private final ObservableList<ActionParameter> parameters = FXCollections.observableArrayList();
+    private final ObservableList<ParameterViewModel> parameters = FXCollections.observableArrayList();
     private final MainViewModel mainViewModel;
 
     public ActionConfigViewModel(MainViewModel mainViewModel) {
@@ -24,9 +24,23 @@ public class ActionConfigViewModel {
             return;
         }
         title.set(action.getTitle());
-        parameters.setAll(action.getParameters());
+        for (ActionParameter param : action.getParameters()) {
+            parameters.add(new ParameterViewModel(param, mainViewModel, this));
+        }
+    }
+
+    public void validateCurrentAction() {
+        int idx = mainViewModel.getSelectedIndex();
+        if (idx >= 0) {
+            Action action = mainViewModel.getObservableActions().get(idx);
+            if (!action.isValid(mainViewModel.getExecutionContext())) {
+                mainViewModel.errorMessageProperty().set("Erreur : Valeur ou variable invalide.");
+            } else {
+                mainViewModel.errorMessageProperty().set("");
+            }
+        }
     }
 
     public StringProperty titleProperty() { return title; }
-    public ObservableList<ActionParameter> getParameters() { return parameters; }
+    public ObservableList<ParameterViewModel> getParameters() { return parameters; }
 }

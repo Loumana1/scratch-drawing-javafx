@@ -108,8 +108,9 @@ public class ProgramView extends VBox {
 
             }
         });
-        // Forcer le rrefresh qd nouvelle erreur
+        // Forcer le rrefresh qd nouvelle erreur ou modification de parametre
         viewModel.executionFaultLineIndexProperty().addListener((obs, o, n) -> programList.refresh());
+        viewModel.programChangeCounterProperty().addListener((obs, o, n) -> programList.refresh());
         HBox buttons = new HBox(10);
 
 
@@ -122,7 +123,7 @@ public class ProgramView extends VBox {
         );
 
         DetailPanelView detailPanel =
-                new DetailPanelView(viewModel, programList);
+                new DetailPanelView(viewModel);
 
         getChildren().addAll(
                 title,

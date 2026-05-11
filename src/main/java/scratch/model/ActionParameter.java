@@ -10,7 +10,7 @@ public class ActionParameter {
     private final boolean hasButtons;
     private final Consumer<String> updateLogic;
 
-    // Constructeur complet
+
     public ActionParameter(String label, String initialValue, boolean isVariableAllowed, String unit, boolean hasButtons, Consumer<String> updateLogic) {
         this.label = label;
         this.value = initialValue;
@@ -20,7 +20,7 @@ public class ActionParameter {
         this.updateLogic = updateLogic;
     }
 
-    // Surcharge pour les paramètres sans unité ni boutons (ex: Nom de variable)
+
     public ActionParameter(String label, String initialValue, boolean isVariableAllowed, Consumer<String> updateLogic) {
         this(label, initialValue, isVariableAllowed, "", false, updateLogic);
     }
