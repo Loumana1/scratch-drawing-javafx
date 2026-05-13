@@ -118,7 +118,7 @@ public class Program {
         for (int i = 0; i <= lastIndexInclusive; i++) {
             Action a = actions.get(i);
             if (!a.isValid(context)) {
-                throw new ExecutionException("Valeur ou variable invalide.");
+                throw new ExecutionException("Erreur valeur ou variable ");
             }
             a.execute(context);
         }
