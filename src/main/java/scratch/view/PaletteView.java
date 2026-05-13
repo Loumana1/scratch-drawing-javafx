@@ -1,15 +1,14 @@
 package scratch.view;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import scratch.model.Action;
 import scratch.model.ActionType;
 import scratch.viewmodel.ProgramViewModel;
-import javafx.geometry.Pos;
 
 public class PaletteView extends VBox {
     private final ListView<ActionType> listView = new ListView<>();
@@ -46,16 +45,13 @@ public class PaletteView extends VBox {
                 if (empty || type == null) {
                     setGraphic(null);
                 } else {
+                    Action temp = programViewModel.createAction(type);
+                    Color color = temp.getColor();
+
                     Circle circle = new Circle(5);
-                    Label label = new Label(getDisplayName(type));
-                    Color color = switch (type) {
-                        case MOVE_FORWARD -> Color.BLUE;
-                        case TURN_LEFT, TURN_RIGHT -> Color.RED;
-                        case PEN_UP, PEN_DOWN -> Color.GREEN;
-                        case DRAW_POLYGON -> Color.CHOCOLATE;
-                        case REPEAT, END_REPEAT, VAR_DECLARATION, VAR_ASSIGNMENT, INCREMENT_VARIABLE -> Color.LIGHTSEAGREEN;
-                    };
                     circle.setFill(color);
+
+                    Label label = new Label(temp.getTitle());
                     label.setTextFill(color);
 
                     HBox box = new HBox(10, circle, label);
@@ -92,19 +88,4 @@ public class PaletteView extends VBox {
         getChildren().addAll(title, listView, addButton);
     }
 
-    public static String getDisplayName(ActionType type) {
-        return switch (type) {
-            case DRAW_POLYGON -> "Pologone ";
-            case MOVE_FORWARD -> "Avancer de";
-            case TURN_LEFT -> "Tourner à gauche de";
-            case TURN_RIGHT -> "Tourner à droite de";
-            case PEN_UP -> "Lever le stylo";
-            case PEN_DOWN -> "Abaisser le stylo";
-            case REPEAT -> "Repeter";
-            case END_REPEAT -> "Fin Repeter";
-            case VAR_ASSIGNMENT -> "Assignation";
-            case VAR_DECLARATION -> "Déclaration variable";
-            case INCREMENT_VARIABLE -> "Inc/Dec variable";
-        };
-    }
 }
