@@ -37,14 +37,15 @@ public class VarAssignmentAction extends Action{
 
     @Override
     public boolean isValid(ExecutionContext e) {
-
-        if (getValue(). isBlank() || getTargetVar().isBlank()) return false;
-
-      if (e.hasVariable(getTargetVar()) || e.isValidValue(getValue()  ))
-          return true;
-
-
-        return false;
+        if (getValue().isBlank() || getTargetVar().isBlank()) return false;
+        if (!e.hasVariable(getTargetVar())) return false;
+        if (!e.isValidValue(getValue())) return false;
+        try {
+            int val = Integer.parseInt(getValue().trim());
+            return val <= 180;
+        } catch (NumberFormatException ex) {
+            return true;
+        }
     }
 
 

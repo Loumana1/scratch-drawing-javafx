@@ -133,7 +133,7 @@ public class ProgramViewModel {
             }
             selectedIndex.set(observableActions.isEmpty() ? -1 : 0);
         } catch (Exception e) {
-            System.err.println("Erreur chargement : " + e.getMessage());
+            errorMessage.set("Erreur chargement : " + e.getMessage());
         }
     }
 
@@ -157,7 +157,7 @@ public class ProgramViewModel {
         return canRemove();
     }
 
-    private Action createAction(ActionType type) {
+    public Action createAction(ActionType type) {
         return switch (type) {
             case DRAW_POLYGON -> new PolygonAction();
             case MOVE_FORWARD -> new MoveForwardAction();

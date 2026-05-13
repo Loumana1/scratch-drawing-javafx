@@ -61,7 +61,7 @@ public class SceneViewModel {
             }
 
             String msg = e.getMessage();
-            errorMessage.set(msg != null && !msg.isBlank() ? msg : "Runtime");
+            errorMessage.set("Runtime Error : " + (msg != null && !msg.isBlank() ? msg : "erreur inconnue"));
         }
     }
 
