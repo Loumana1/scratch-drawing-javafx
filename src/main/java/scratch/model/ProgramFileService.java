@@ -67,6 +67,12 @@ public class ProgramFileService {
             case "END_REPEAT":
                 return new EndRepeatAction();
 
+            case "DRAW_POLYGON":
+                PolygonAction poly = new PolygonAction();
+                if (parts.length > 1) poly.setSize(parts[1].trim());
+                if (parts.length > 2) poly.setNum(parts[2].trim());
+                return poly;
+
             case "MOVE_FORWARD":
                 return fillParameterizedAction(new MoveForwardAction(), parts);
 

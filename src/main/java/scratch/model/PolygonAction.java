@@ -7,8 +7,11 @@ import java.util.List;
 
 public class PolygonAction extends Action{
 
-    private  String size ;
-    private  String num ;
+    public static final int MIN_SIZE = 1;
+    public static final int MIN_SIDES = 3;
+
+    private String size;
+    private String num;
 
     public PolygonAction(){
         this.size = "30";
@@ -21,10 +24,13 @@ public class PolygonAction extends Action{
 
     @Override
     public boolean isValid(ExecutionContext e) {
-        int Nsize = e.resolveValue(size);
-        int Nnum = e.resolveValue(num);
-
-        return Nsize > 30 && Nnum > 6;
+        try {
+            int Nsize = e.resolveValue(size);
+            int Nnum = e.resolveValue(num);
+            return Nsize >= MIN_SIZE && Nnum >= MIN_SIDES;
+        } catch (ExecutionException ex) {
+            return false;
+        }
     }
 
     public void setNum(String num) {
@@ -50,10 +56,12 @@ public class PolygonAction extends Action{
 
     @Override
     public void execute(ExecutionContext e) {
-        if (!isValid(e))
-            throw new ExecutionException("Les nombre des cote ou la taille sont inferieur a 3");
-
-        e.polygone(Integer.parseInt(size) , Integer.parseInt(num));
+        int Nsize = e.resolveValue(size);
+        int Nnum = e.resolveValue(num);
+        if (Nsize < MIN_SIZE || Nnum < MIN_SIDES)
+            throw new ExecutionException(
+                    "Polygone : taille >= " + MIN_SIZE + " et côtés >= " + MIN_SIDES + " requis.");
+        e.polygone(Nsize, Nnum);
     }
 
     @Override
@@ -69,7 +77,7 @@ public class PolygonAction extends Action{
 
     @Override
     public String format() {
-        return "";
+        return getType().name() + ";" + size + ";" + num;
     }
 
     @Override
