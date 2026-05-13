@@ -6,6 +6,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import scratch.model.Action;
 import scratch.model.ActionParameter;
+import scratch.model.ExecutionContext;
+import scratch.model.ExecutionException;
+import scratch.model.Program;
 
 public class ActionConfigViewModel {
 
@@ -33,13 +36,20 @@ public class ActionConfigViewModel {
 
     public void validateCurrentAction() {
         int idx = programViewModel.getSelectedIndex();
-        if (idx >= 0 && idx < programViewModel.getObservableActions().size()) {
-            Action action = programViewModel.getObservableActions().get(idx);
-            if (!action.isValid(sceneViewModel.getExecutionContext())) {
-                sceneViewModel.errorMessageProperty().set("Erreur : Valeur ou variable invalide.");
-            } else {
-                sceneViewModel.errorMessageProperty().set("");
-            }
+        if (idx < 0 || idx >= programViewModel.getObservableActions().size()) {
+            return;
+        }
+        Program program = programViewModel.getProgram();
+        ExecutionContext scratch = new ExecutionContext();
+        try {
+            program.runValidationInternDepuisDebut(idx, scratch);
+            sceneViewModel.errorMessageProperty().set("");
+        } catch (ExecutionException ex) {
+            String msg = ex.getMessage();
+            sceneViewModel.errorMessageProperty().set(
+                    msg != null && !msg.isBlank()
+                            ? msg
+                            : "Erreur : Valeur ou variable invalide.");
         }
     }
 

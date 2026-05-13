@@ -25,10 +25,14 @@ public class MainViewModel {
             if (fault >= 0 && newVal != null && newVal.intValue() != fault) {
                 sceneViewModel.clearFaultLine();
             }
+
+            configViewModel.validateCurrentAction();
         });
 
         programViewModel.programChangeCounterProperty().addListener((obs, oldVal, newVal) -> {
             sceneViewModel.onProgramStructureChanged();
+            configViewModel.updateForAction(programViewModel.getSelectedAction());
+            configViewModel.validateCurrentAction();
         });
     }
 

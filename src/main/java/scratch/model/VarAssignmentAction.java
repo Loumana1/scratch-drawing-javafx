@@ -37,9 +37,14 @@ public class VarAssignmentAction extends Action{
 
     @Override
     public boolean isValid(ExecutionContext e) {
-        if (targetVar == null || targetVar.isBlank()) return false;
-        if (!e.hasVariable(targetVar)) return false;
-        return e.isValidValue(value);
+
+        if (getValue(). isBlank() || getTargetVar().isBlank()) return false;
+
+      if (e.hasVariable(getTargetVar()) || e.isValidValue(getValue()  ))
+          return true;
+
+
+        return false;
     }
 
 
