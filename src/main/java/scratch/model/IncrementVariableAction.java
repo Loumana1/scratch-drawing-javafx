@@ -34,9 +34,10 @@ public class IncrementVariableAction extends Action {
 
     @Override
     public boolean isValid(ExecutionContext e) {
-        if (targetVar == null || targetVar.isBlank()) return false;
-        if (!e.hasVariable(targetVar)) return false;
-        return e.isValidValue(value);
+
+        if (getValue(). isBlank() || getTargetVar().isBlank()) return false;
+
+        return e.hasVariable(getTargetVar()) && e.isValidValue(getValue());
     }
 
     @Override

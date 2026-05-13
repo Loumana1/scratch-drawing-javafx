@@ -18,8 +18,8 @@ public class ParameterViewModel {
 
         this.valueProperty.addListener((obs, oldVal, newVal) -> {
             parameter.setValue(newVal);
-            sceneViewModel.notifyProgramContentChanged();
             configViewModel.validateCurrentAction();
+            sceneViewModel.notifyProgramContentChanged();
         });
     }
 
@@ -43,6 +43,7 @@ public class ParameterViewModel {
         try {
             int currentVal = Integer.parseInt(valueProperty.get());
             valueProperty.set(String.valueOf(currentVal + 1));
+
         } catch (NumberFormatException ex) {
         }
     }

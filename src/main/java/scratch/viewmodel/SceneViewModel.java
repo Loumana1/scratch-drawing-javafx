@@ -124,7 +124,6 @@ public class SceneViewModel {
     }
 
     public void notifyProgramContentChanged() {
-        errorMessage.set("");
         contentChangeCounter.set(contentChangeCounter.get() + 1);
     }
 
@@ -138,6 +137,7 @@ public class SceneViewModel {
     public void clearFaultLine() {
         executionFaultLineIndex.set(-1);
         errorMessage.set("");
+        notifyProgramContentChanged();
     }
 
     public void onProgramCleared() {
