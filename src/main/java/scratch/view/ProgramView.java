@@ -70,20 +70,7 @@ public class ProgramView extends VBox {
                 label.setTextFill(action.getColor());
                 label.setText(action.toString());
 
-                int depth = 0;
-                int currentIdx = getIndex();
-                for (int i = 0; i < currentIdx; i++) {
-                    Action a = getListView().getItems().get(i);
-                    if (a.getType() == ActionType.REPEAT)
-                        depth++;
-                    else if (a.getType() == ActionType.END_REPEAT)
-                        depth--;
-                }
-                if (action.getType() == ActionType.END_REPEAT)
-                    depth--;
-                if (depth < 0)
-                    depth = 0;
-
+                int depth = programViewModel.getIndentDepth(getIndex());
                 int leftPadding = 5 + (depth * 20);
 
                 HBox box = new HBox(10, circle, label);
@@ -93,11 +80,7 @@ public class ProgramView extends VBox {
                 setGraphic(box);
                 setText(null);
 
-                boolean hasError = sceneViewModel.errorMessageProperty().get() != null
-                        && !sceneViewModel.errorMessageProperty().get().isEmpty();
-                int faultIdx = sceneViewModel.getExecutionFaultLineIndex();
-                boolean isFaultLine = faultIdx >= 0 && getIndex() == faultIdx;
-                if (hasError && isFaultLine) {
+                if (sceneViewModel.isErrorLine(getIndex())) {
                     setStyle("-fx-border-color: red; -fx-border-width: 2;");
                 } else {
                     setStyle("");
