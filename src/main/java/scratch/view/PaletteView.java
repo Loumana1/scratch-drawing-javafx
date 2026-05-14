@@ -6,7 +6,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import scratch.model.Action;
 import scratch.model.ActionType;
 import scratch.viewmodel.ProgramViewModel;
 
@@ -45,13 +44,12 @@ public class PaletteView extends VBox {
                 if (empty || type == null) {
                     setGraphic(null);
                 } else {
-                    Action temp = programViewModel.createAction(type);
-                    Color color = temp.getColor();
+                    Color color = programViewModel.getDisplayColor(type);
 
                     Circle circle = new Circle(5);
                     circle.setFill(color);
 
-                    Label label = new Label(temp.getTitle());
+                    Label label = new Label(programViewModel.getDisplayTitle(type));
                     label.setTextFill(color);
 
                     HBox box = new HBox(10, circle, label);
