@@ -14,7 +14,7 @@ public class PaletteView extends VBox {
     private final ListView<ActionType> listView = new ListView<>();
     private final ProgramViewModel programViewModel;
 
-    public PaletteView(ProgramViewModel programViewModel , MainViewModel mainViewModel) {
+    public PaletteView(ProgramViewModel programViewModel ) {
 
         this.programViewModel = programViewModel;
         setSpacing(8);
@@ -34,14 +34,7 @@ public class PaletteView extends VBox {
                         "-fx-background-color: white;"
         );
 
-        // On crée une petite méthode interne pour éviter le Runnable
-
-        updateActionList();
-
-// On écoute le changement de mode pour relancer la mise à jour
-        ProgramViewModel.advancedModeProperty().addListener((obs, oldVal, newVal) -> {
-            updateActionList();
-        });
+        listView.getItems().addAll(ActionType.values());
 
         listView.setCellFactory(lv -> new ListCell<>() {
 
@@ -92,19 +85,6 @@ public class PaletteView extends VBox {
         });
 
         getChildren().addAll(title, listView, addButton);
-    }
-    private void updateActionList() {
-        listView.getItems().clear();
-        for (ActionType type : ActionType.values()) {
-            // Logique de filtrage : on cache DRAW_POLYGON si on n'est pas en mode avancé
-            if (type == ActionType.DRAW_POLYGON) {
-                if (ProgramViewModel.isAdvancedMode()) {
-                    listView.getItems().add(type);
-                }
-            } else {
-                listView.getItems().add(type);
-            }
-        }
     }
 
 }
