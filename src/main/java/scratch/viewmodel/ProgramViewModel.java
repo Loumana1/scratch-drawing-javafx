@@ -170,6 +170,7 @@ public class ProgramViewModel {
             case VAR_DECLARATION -> new VarDeclarationAction();
             case VAR_ASSIGNMENT -> new VarAssignmentAction();
             case INCREMENT_VARIABLE -> new IncrementVariableAction();
+            case DRAW_RECTANGLE -> new DrawRectangleAction();
         };
     }
 
