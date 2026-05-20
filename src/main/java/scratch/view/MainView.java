@@ -24,7 +24,7 @@ public class MainView extends BorderPane {
         this.programViewModel = viewModel.getProgramViewModel();
         this.sceneViewModel = viewModel.getSceneViewModel();
 
-        PaletteView palette = new PaletteView(programViewModel , viewModel);
+        PaletteView palette = new PaletteView(programViewModel);
         ProgramView program = new ProgramView(programViewModel, sceneViewModel, viewModel.getConfigViewModel());
         SceneView scene = new SceneView(sceneViewModel);
 
