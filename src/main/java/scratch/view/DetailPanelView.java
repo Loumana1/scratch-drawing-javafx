@@ -51,6 +51,8 @@ public class DetailPanelView extends TitledPane {
 
             TextField textField = new TextField();
             textField.textProperty().bindBidirectional(paramViewModel.valueProperty());
+
+            textField.setPrefWidth(50);
             textField.setMaxWidth(60);
 
             Label unitLabel = new Label(paramViewModel.getUnit());

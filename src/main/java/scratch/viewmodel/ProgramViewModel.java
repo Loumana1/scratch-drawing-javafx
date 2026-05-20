@@ -183,7 +183,28 @@ public class ProgramViewModel {
             case VAR_DECLARATION -> new VarDeclarationAction();
             case VAR_ASSIGNMENT -> new VarAssignmentAction();
             case INCREMENT_VARIABLE -> new IncrementVariableAction();
+            case DRAW_RECTANGLE -> new DrawRectangleAction();
         };
+    }
+
+    public int getIndentDepth(int index) {
+        int depth = 0;
+        List<Action> actions = program.getActions();
+        for (int i = 0; i < index; i++) {
+            Action a = actions.get(i);
+            if (a.getType() == ActionType.REPEAT) depth++;
+            else if (a.getType() == ActionType.END_REPEAT) depth--;
+        }
+        if (index < actions.size() && actions.get(index).getType() == ActionType.END_REPEAT) depth--;
+        return Math.max(depth, 0);
+    }
+
+    public String getDisplayTitle(ActionType type) {
+        return createAction(type).getTitle();
+    }
+
+    public javafx.scene.paint.Color getDisplayColor(ActionType type) {
+        return createAction(type).getColor();
     }
 
     private void notifyProgramChanged() {

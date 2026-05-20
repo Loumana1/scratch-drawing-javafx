@@ -188,6 +188,17 @@ public class SceneViewModel {
                 .forEach((name, val) -> observableVariables.add(new VariableRow(name, val)));
     }
 
+    public boolean isErrorLine(int index) {
+        String err = errorMessage.get();
+        boolean hasError = err != null && !err.isEmpty();
+        return hasError && index == executionFaultLineIndex.get();
+    }
+
+    public void reloadOrReset() {
+        if (programLoaded.get()) resetExecution();
+        loadOnScene();
+    }
+
     public IntegerProperty executionStepProperty() { return executionStep; }
     public ExecutionContext getExecutionContext() { return executionContext; }
     public StringProperty errorMessageProperty() { return errorMessage; }

@@ -188,4 +188,13 @@ public class ExecutionContext {
 
         return lines;
     }
+
+    public void drawRectangle(int width, int height) {
+        int x1 = x, y1 = y;
+        int x2 = x1 + width, y2 = y1 + height;
+        segments.add(new Segment(x1, y1, x1, y2));
+        segments.add(new Segment(x1, y2, x2, y2));
+        segments.add(new Segment(x2, y2, x2, y1));
+        segments.add(new Segment(x2, y1, x1, y1));
+    }
 }

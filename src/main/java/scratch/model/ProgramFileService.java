@@ -88,6 +88,12 @@ public class ProgramFileService {
             case "PEN_DOWN":
                 return new PenDownAction();
 
+            case "DRAW_RECTANGLE":
+                DrawRectangleAction rect = new DrawRectangleAction();
+                if (parts.length > 1) rect.setWidth(parts[1].trim());
+                if (parts.length > 2) rect.setHeight(parts[2].trim());
+                return rect;
+
             default:
                 return null;
         }

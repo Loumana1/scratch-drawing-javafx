@@ -138,12 +138,7 @@ public class SceneView extends VBox {
 
     private void configActions() {
         btnReset.setOnAction(e -> {
-            if (sceneViewModel.programLoadedProperty().get()) {
-                sceneViewModel.resetExecution();
-                sceneViewModel.loadOnScene();
-            } else {
-                sceneViewModel.loadOnScene();
-            }
+            sceneViewModel.reloadOrReset();
             drawGrid();
         });
         btnNext.setOnAction(e -> {
