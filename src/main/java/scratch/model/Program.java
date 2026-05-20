@@ -104,6 +104,9 @@ public class Program {
             if (!checkNoPenActionInLoop()) {
                 return false;
             }
+            if (!checkPolycount())
+                return false;
+
             return repeatDepth == 0 && hasVisualAction;
         } catch (ExecutionException e) {
             return false;
@@ -145,6 +148,18 @@ public class Program {
             }
         }
         return true;
+    }
+    private boolean checkPolycount(){
+        int polyCount = 0 ;
+        for (Action a : actions){
+            if (a.getType() == ActionType.DRAW_POLYGON){
+                polyCount++;
+            }
+        }
+        if (polyCount >= 4)
+            return false;
+        else
+            return true;
     }
 
     private boolean checkNoPenActionInLoop() {

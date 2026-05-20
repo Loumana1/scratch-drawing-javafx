@@ -18,6 +18,19 @@ public class ProgramViewModel {
     private final IntegerProperty selectedIndex = new SimpleIntegerProperty(-1);
     private final IntegerProperty programChangeCounter = new SimpleIntegerProperty(0);
     private final StringProperty errorMessage = new SimpleStringProperty("");
+    private static BooleanProperty advancedMode = new SimpleBooleanProperty(false);
+
+    public static BooleanProperty advancedModeProperty() {
+        return advancedMode;
+    }
+
+    public static boolean isAdvancedMode() {
+        return advancedMode.get();
+    }
+
+    public void toggleMode() {
+        advancedMode.set(!advancedMode.get());
+    }
 
     public ProgramViewModel(Program program) {
         this.program = program;
