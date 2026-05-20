@@ -1,6 +1,8 @@
 package scratch.view;
 
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import scratch.viewmodel.MainViewModel;
@@ -22,7 +24,7 @@ public class MainView extends BorderPane {
         this.programViewModel = viewModel.getProgramViewModel();
         this.sceneViewModel = viewModel.getSceneViewModel();
 
-        PaletteView palette = new PaletteView(programViewModel);
+        PaletteView palette = new PaletteView(programViewModel , viewModel);
         ProgramView program = new ProgramView(programViewModel, sceneViewModel, viewModel.getConfigViewModel());
         SceneView scene = new SceneView(sceneViewModel);
 
@@ -52,6 +54,16 @@ public class MainView extends BorderPane {
             }
         });
 
+        MenuItem mode = new MenuItem("Advanced");
+        mode.setOnAction(e -> {
+            programViewModel.toggleMode();
+            if (programViewModel.isAdvancedMode()){
+                mode.setText("Basic M");
+            }else {
+                mode.setText("Advanced M");
+            }
+        });
+
         MenuItem saveItem = new MenuItem("Save As...");
         saveItem.setOnAction(e -> {
             FileChooser fileChooser = createScratchFileChooser("Enregistrer sous");
@@ -70,7 +82,7 @@ public class MainView extends BorderPane {
         MenuItem exitItem = new MenuItem("Exit");
         exitItem.setOnAction(e -> Platform.exit());
 
-        fileMenu.getItems().addAll(newItem, openItem, saveItem, exitItem);
+        fileMenu.getItems().addAll(newItem, openItem, mode, saveItem, exitItem);
         menuBar.getMenus().add(fileMenu);
 
         return menuBar;
