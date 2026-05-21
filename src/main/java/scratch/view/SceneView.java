@@ -142,7 +142,7 @@ public class SceneView extends VBox {
     }
 
     private void configActions() {
-     //   btnReset.textProperty().bind(sceneViewModel.resetButtonLabelProperty());
+  btnReset.textProperty().bind(sceneViewModel.resetButtonLabelProperty());
         btnReset.setOnAction(e -> {
             sceneViewModel.reloadOrReset();
             drawGrid();
