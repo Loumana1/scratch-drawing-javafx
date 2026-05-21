@@ -25,6 +25,7 @@ public class SceneViewModel {
     private Timeline autoTimeline;
     private final IntegerProperty executionFaultLineIndex = new SimpleIntegerProperty(-1);
 
+
     private final ObservableList<VariableRow> observableVariables =
             FXCollections.observableArrayList();
 
@@ -36,6 +37,17 @@ public class SceneViewModel {
         turtleState.set(buildTurtleStateString());
         refreshVariablesFromContext();
     }
+
+    public void onAutoModeSelected() {
+        autoMode.set(true);
+    }
+
+    public void onManualModeSelected() {
+        autoMode.set(false);
+        stopAutoExecution();
+    }
+
+
 
     public void executeNext() {
         if (!program.hasNext()) {
@@ -207,7 +219,6 @@ public class SceneViewModel {
     public BooleanProperty autoModeProperty() { return autoMode; }
     public boolean isAutoMode() { return autoMode.get(); }
     public DoubleProperty speedProperty() { return speed; }
-    public double getSpeed() { return speed.get(); }
     public int getExecutionFaultLineIndex() { return executionFaultLineIndex.get(); }
     public ReadOnlyIntegerProperty executionFaultLineIndexProperty() { return executionFaultLineIndex; }
     public ObservableList<VariableRow> getObservableVariables() { return observableVariables; }

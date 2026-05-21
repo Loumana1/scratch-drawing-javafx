@@ -6,6 +6,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -24,7 +25,6 @@ public class SceneView extends VBox {
     private final Label lblTurtle = new Label();
     private final Label lblVariablesTitle = new Label("Variables");
     private final TableView<VariableRow> tableVariables = new TableView<>();
-    private final Label lblError = new Label();
     private final RadioButton rbManual = new RadioButton("Execution manuelle");
     private final RadioButton rbAuto = new RadioButton("Execution automatique");
     private final ToggleGroup modelGroup = new ToggleGroup();
@@ -35,12 +35,12 @@ public class SceneView extends VBox {
 
     public SceneView(SceneViewModel sceneViewModel) {
         this.sceneViewModel = sceneViewModel;
+
         setSpacing(8);
         setPadding(new Insets(10));
         setAlignment(Pos.TOP_LEFT);
 
         Label title = new Label("Scène");
-
         canvas = new Canvas(SIZE, SIZE);
 
         StackPane canvasBox = new StackPane(canvas);
@@ -51,51 +51,49 @@ public class SceneView extends VBox {
 
         drawGrid();
 
-        HBox buttons = new HBox(10);
-        buttons.setAlignment(Pos.CENTER);
-        buttons.getChildren().addAll(btnReset, btnNext);
         rbManual.setToggleGroup(modelGroup);
         rbAuto.setToggleGroup(modelGroup);
         rbManual.setSelected(true);
-        btnExecute.setVisible(false);
-        btnExecute.setManaged(false);
-        btnStop.setVisible(false);
-        btnStop.setManaged(false);
+
+
         speedSlider.setVisible(false);
         speedSlider.setManaged(false);
         speedLabel.setVisible(false);
         speedSlider.setShowTickLabels(true);
         speedSlider.setShowTickMarks(true);
         speedSlider.setMaxWidth(Double.MAX_VALUE);
-        HBox.setHgrow(speedSlider, javafx.scene.layout.Priority.ALWAYS);
 
-        modelGroup.selectedToggleProperty().addListener((obs, old, nw) -> {
-            boolean isAuto = (nw == rbAuto);
-            sceneViewModel.autoModeProperty().set(isAuto);
 
-            speedSlider.setVisible(isAuto);
-            speedSlider.setManaged(isAuto);
-            speedLabel.setVisible(isAuto);
-            speedLabel.setManaged(isAuto);
 
-            btnExecute.setVisible(isAuto);
-            btnExecute.setManaged(isAuto);
-            btnStop.setVisible(isAuto);
-            btnStop.setManaged(isAuto);
+        rbAuto.setOnAction(e -> sceneViewModel.onAutoModeSelected());
+        rbManual.setOnAction(e -> sceneViewModel.onManualModeSelected());
 
-            btnNext.setVisible(!isAuto);
-            btnNext.setManaged(!isAuto);
+        btnExecute.visibleProperty().bind(sceneViewModel.autoModeProperty());
+        btnExecute.managedProperty().bind(sceneViewModel.autoModeProperty());
+        btnStop.visibleProperty().bind(sceneViewModel.autoModeProperty());
+        btnStop.managedProperty().bind(sceneViewModel.autoModeProperty());
+        speedSlider.visibleProperty().bind(sceneViewModel.autoModeProperty());
+        speedSlider.managedProperty().bind(sceneViewModel.autoModeProperty());
+        speedLabel.visibleProperty().bind(sceneViewModel.autoModeProperty());
+        speedLabel.managedProperty().bind(sceneViewModel.autoModeProperty());
 
-            if (!isAuto) sceneViewModel.stopAutoExecution();
-        });
+        btnNext.visibleProperty().bind(sceneViewModel.autoModeProperty().not());
+        btnNext.managedProperty().bind(sceneViewModel.autoModeProperty().not());
 
         speedSlider.valueProperty().addListener((obs, old, nw) -> {
-            sceneViewModel.speedProperty().set(nw.doubleValue());
+            double seconds = nw.doubleValue();
+        //    sceneViewModel.speedProperty().set(nw.doubleValue());
             speedLabel.setText(String.format("%.2f s", nw.doubleValue()));
+
+            sceneViewModel.speedProperty().set(seconds);
+
             if (sceneViewModel.isAutoMode() && sceneViewModel.programLoadedProperty().get()) {
                 sceneViewModel.startAutoExecution();
             }
+
         });
+
+
         btnExecute.setOnAction(e -> sceneViewModel.startAutoExecution());
         btnStop.setOnAction(e -> sceneViewModel.stopAutoExecution());
 
@@ -114,11 +112,17 @@ public class SceneView extends VBox {
         HBox modeBox = new HBox(10, rbAuto, rbManual);
         modeBox.setAlignment(Pos.CENTER);
 
-        HBox speedBox = new HBox(speedSlider);
+        HBox speedBox = new HBox(speedSlider, speedLabel);
         speedBox.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(speedSlider, Priority.ALWAYS);
+
 
         HBox buttonsBox = new HBox(10, btnReset, btnExecute, btnStop, btnNext);
         buttonsBox.setAlignment(Pos.CENTER);
+
+
+        configActions();
+
 
         getChildren().addAll(
                 title,
@@ -130,13 +134,15 @@ public class SceneView extends VBox {
                 buttonsBox,
                 speedBox);
 
-        configActions();
+
         configButtonsDisabling();
         sceneViewModel.executionStepProperty().addListener((obs, oldVal, newVal) -> drawGrid());
         sceneViewModel.programLoadedProperty().addListener((obs, old, nw) -> drawGrid());
+
     }
 
     private void configActions() {
+     //   btnReset.textProperty().bind(sceneViewModel.resetButtonLabelProperty());
         btnReset.setOnAction(e -> {
             sceneViewModel.reloadOrReset();
             drawGrid();
@@ -153,10 +159,7 @@ public class SceneView extends VBox {
         btnNext.disableProperty().bind(
                 sceneViewModel.programLoadedProperty().not()
                         .or(sceneViewModel.canExecuteNext().not()));
-        sceneViewModel.programLoadedProperty().addListener((obs, old, nw) -> {
-            btnReset.setText(nw ? "Ré-initialiser" : "Charger");
-            drawGrid();
-        });
+
         btnExecute.disableProperty().bind(sceneViewModel.canExecuteNext().not());
         btnStop.disableProperty().bind(sceneViewModel.canExecuteNext().not());
     }
