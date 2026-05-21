@@ -4,6 +4,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -37,6 +38,13 @@ public class SceneViewModel {
         turtleState.set(buildTurtleStateString());
         refreshVariablesFromContext();
     }
+    public StringBinding resetButtonLabelProperty() {
+        return Bindings.createStringBinding(
+                () -> programLoaded.get() ? "Ré-initialiser" : "Charger",
+                programLoaded
+        );
+    }
+
 
     public void onAutoModeSelected() {
         autoMode.set(true);
