@@ -10,6 +10,9 @@ import scratch.viewmodel.ActionConfigViewModel;
 import scratch.viewmodel.SceneViewModel;
 import scratch.viewmodel.ParameterViewModel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DetailPanelView extends TitledPane {
 
     private final VBox container = new VBox(10);
@@ -42,7 +45,6 @@ public class DetailPanelView extends TitledPane {
 
 
      if (configViewModel.emptyProperty().get()){
-         //   noActionLabel.setStyle("-fx-font-style: italic; -fx-text-fill: gray;");
             container.getChildren().addAll(noActionLabel, lblRuntimeError);
             return;
         }

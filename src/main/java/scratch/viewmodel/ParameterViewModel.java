@@ -57,21 +57,8 @@ public class ParameterViewModel {
     public BooleanProperty unitVisibleProperty() {
         return unitVisibleProperty;
     }
-/*
-    public String getLabel() {
-        return parameter.getLabel();
-    }
 
- */
 
-    public String getUnit() {
-        return parameter.getUnit();
-    }
-/*
-    public boolean hasButtons() {
-        return parameter.hasButtons();
-    }
-*/
     public void increment() {
         try {
             int currentVal = Integer.parseInt(valueProperty.get());
