@@ -1,5 +1,8 @@
 package scratch.viewmodel;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -16,11 +19,16 @@ public class ActionConfigViewModel {
     private final ObservableList<ParameterViewModel> parameters = FXCollections.observableArrayList();
     private final ProgramViewModel programViewModel;
     private final SceneViewModel sceneViewModel;
+    private final BooleanBinding empty;
 
     public ActionConfigViewModel(ProgramViewModel programViewModel, SceneViewModel sceneViewModel) {
         this.programViewModel = programViewModel;
         this.sceneViewModel = sceneViewModel;
+        this.empty = Bindings.createBooleanBinding(parameters::isEmpty, parameters);
+
+
     }
+    public BooleanBinding emptyProperty() { return empty; }
 
     public void updateForAction(Action action) {
         parameters.clear();
