@@ -185,6 +185,7 @@ public class ProgramViewModel {
             case VAR_ASSIGNMENT -> new VarAssignmentAction();
             case INCREMENT_VARIABLE -> new IncrementVariableAction();
             case DRAW_RECTANGLE -> new DrawRectangleAction();
+            case TELEPORTATION -> new TeleportationAction();
         };
     }
 

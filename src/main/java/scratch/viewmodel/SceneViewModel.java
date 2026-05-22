@@ -25,6 +25,8 @@ public class SceneViewModel {
     private final DoubleProperty speed = new SimpleDoubleProperty(1.0);
     private Timeline autoTimeline;
     private final IntegerProperty executionFaultLineIndex = new SimpleIntegerProperty(-1);
+    private final BooleanProperty showTeleportation = new SimpleBooleanProperty(true);
+
 
 
     private final ObservableList<VariableRow> observableVariables =
@@ -231,4 +233,6 @@ public class SceneViewModel {
     public ReadOnlyIntegerProperty executionFaultLineIndexProperty() { return executionFaultLineIndex; }
     public ObservableList<VariableRow> getObservableVariables() { return observableVariables; }
     public IntegerProperty contentChangeCounterProperty() { return contentChangeCounter; }
+    public BooleanProperty showTeleportationProperty() { return showTeleportation; }
+
 }

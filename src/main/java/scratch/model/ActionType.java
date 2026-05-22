@@ -12,5 +12,6 @@ public enum ActionType {
     PEN_UP,
     DRAW_POLYGON,
     PEN_DOWN,
-    DRAW_RECTANGLE
+    DRAW_RECTANGLE,
+    TELEPORTATION
 }

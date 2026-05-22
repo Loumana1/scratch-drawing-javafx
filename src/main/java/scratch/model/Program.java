@@ -108,9 +108,14 @@ public class Program {
             if (!checkNoPenActionInLoop()) {
                 return false;
             }
+
             if (!checkPolycount())
                 return false;
+
             if (!checkRectangle())
+                return false;
+
+            if (!checkNoTeleportInLoop())
                 return false;
 
             return repeatDepth == 0 && hasVisualAction;
@@ -193,6 +198,16 @@ public class Program {
                 if (a.getType() == ActionType.PEN_UP) penBalance++;
                 if (a.getType() == ActionType.PEN_DOWN) penBalance--;
             }
+        }
+        return true;
+    }
+
+    private boolean checkNoTeleportInLoop() {
+        int depth = 0;
+        for (Action a : actions) {
+            if (a.getType() == ActionType.REPEAT) depth++;
+            else if (a.getType() == ActionType.END_REPEAT) depth--;
+            else if (a.getType() == ActionType.TELEPORTATION && depth > 0) return false;
         }
         return true;
     }
