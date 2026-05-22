@@ -36,6 +36,8 @@ public class ProgramViewModel {
     public ProgramViewModel(Program program) {
         this.program = program;
         this.observableActions = FXCollections.observableArrayList(program.getActions());
+        advancedMode.addListener((obs, o, n) -> refreshPaletteItems());
+        refreshPaletteItems();
     }
 
     public void addAction(ActionType type) {
@@ -214,6 +216,22 @@ public class ProgramViewModel {
                 listView.getSelectionModel().clearSelection();
             }
         });
+    }
+    private final ObservableList<ActionType> paletteItems = FXCollections.observableArrayList();
+
+    public ObservableList<ActionType> getPaletteItems() {
+        return paletteItems;
+    }
+
+    private void refreshPaletteItems() {
+        paletteItems.clear();
+        for (ActionType type : ActionType.values()) {
+            if ((type == ActionType.DRAW_POLYGON || type == ActionType.DRAW_RECTANGLE)
+                    && !advancedMode.get()) {
+                continue;
+            }
+            paletteItems.add(type);
+        }
     }
 
     public String getDisplayTitle(ActionType type) {

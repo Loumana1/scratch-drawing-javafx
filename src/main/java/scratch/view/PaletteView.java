@@ -32,24 +32,15 @@ public class PaletteView extends VBox {
                         "-fx-border-width: 2;" +
                         "-fx-background-color: white;"
         );
-        updateActionList();
-
-        ProgramViewModel.advancedModeProperty().addListener((obs, oldVal, newVal) -> {
-            updateActionList();
-        });
 
         CheckBox modeAvance = new CheckBox("Mode avancé");
 
-        Runnable updateList = () -> {
-            listView.getItems().clear();
-            for (ActionType type : ActionType.values()) {
-                if ((type == ActionType.DRAW_POLYGON || type == ActionType.DRAW_RECTANGLE) && !modeAvance.isSelected()) continue;
-                listView.getItems().add(type);
-            }
-        };
 
-        updateList.run();
-        modeAvance.setOnAction(e -> updateList.run());
+        modeAvance.selectedProperty().bindBidirectional(
+                ProgramViewModel.advancedModeProperty()
+        );
+
+        listView.setItems(programViewModel.getPaletteItems());
 
         listView.setCellFactory(lv -> new ListCell<>() {
 
