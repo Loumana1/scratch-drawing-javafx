@@ -5,6 +5,7 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.ListView;
 import scratch.model.*;
 
 import java.io.File;
@@ -197,6 +198,21 @@ public class ProgramViewModel {
         }
         if (index < actions.size() && actions.get(index).getType() == ActionType.END_REPEAT) depth--;
         return Math.max(depth, 0);
+    }
+
+    public void bindListSelection(ListView<Action> listView) {
+        listView.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && newVal.intValue() >= 0) {
+                selectedIndex.set(newVal.intValue());
+            }
+        });
+        selectedIndex.addListener((obs, oldVal, newVal) -> {
+            if (newVal.intValue() >= 0 && newVal.intValue() < observableActions.size()) {
+                listView.getSelectionModel().select(newVal.intValue());
+            } else {
+                listView.getSelectionModel().clearSelection();
+            }
+        });
     }
 
     public String getDisplayTitle(ActionType type) {

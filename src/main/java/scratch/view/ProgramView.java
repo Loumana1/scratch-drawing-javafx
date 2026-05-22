@@ -4,7 +4,6 @@ import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import scratch.model.*;
 import scratch.viewmodel.ActionConfigViewModel;
@@ -41,14 +40,7 @@ public class ProgramView extends VBox {
         addListeners();
         configurationBindings();
 
-        programList.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal.intValue() >= 0) {
-                programViewModel.selectedIndexProperty().set(newVal.intValue());
-            }
-        });
-        programViewModel.selectedIndexProperty().addListener((obs, old, nw) -> {
-            programList.getSelectionModel().select(nw.intValue());
-        });
+        programViewModel.bindListSelection(programList);
 
         programList.setCellFactory(lv -> new ListCell<>() {
 
@@ -85,15 +77,14 @@ public class ProgramView extends VBox {
                 } else {
                     setStyle("");
                 }
-                setGraphic(box);
-                setText(null);
             }
         });
 
-        sceneViewModel.executionFaultLineIndexProperty().addListener((obs, o, n) -> programList.refresh());
-        programViewModel.programChangeCounterProperty().addListener((obs, o, n) -> programList.refresh());
-        sceneViewModel.contentChangeCounterProperty().addListener((obs, o, n) -> programList.refresh());
-        sceneViewModel.errorMessageProperty().addListener((obs, o, n) -> programList.refresh());
+        Runnable refreshList = programList::refresh;
+        sceneViewModel.executionFaultLineIndexProperty().addListener((obs, o, n) -> refreshList.run());
+        programViewModel.programChangeCounterProperty().addListener((obs, o, n) ->  refreshList.run());
+        sceneViewModel.errorMessageProperty().addListener((obs, o, n) ->  refreshList.run());
+
         HBox buttons = new HBox(10);
 
         buttons.getChildren().addAll(
