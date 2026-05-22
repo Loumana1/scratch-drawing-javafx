@@ -37,7 +37,7 @@ public class PaletteView extends VBox {
 
 
         modeAvance.selectedProperty().bindBidirectional(
-                ProgramViewModel.advancedModeProperty()
+                programViewModel.advancedModeProperty()
         );
 
         listView.setItems(programViewModel.getPaletteItems());
@@ -92,17 +92,4 @@ public class PaletteView extends VBox {
 
         getChildren().addAll(title, listView, addButton, modeAvance);
     }
-    private void updateActionList() {
-        listView.getItems().clear();
-        for (ActionType type : ActionType.values()) {
-            if (type == ActionType.DRAW_POLYGON || type == ActionType.DRAW_RECTANGLE) {
-                if (ProgramViewModel.isAdvancedMode()) {
-                    listView.getItems().add(type);
-                }
-            } else {
-                listView.getItems().add(type);
-            }
-        }
-    }
-
 }

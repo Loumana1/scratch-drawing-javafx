@@ -122,6 +122,13 @@ public class SceneViewModel {
         }
     }
 
+    public void onSpeedChanged(double newSpeed) {
+        speed.set(newSpeed);
+        if (isAutoMode() && programLoaded.get()) {
+            startAutoExecution();
+        }
+    }
+
     public void startAutoExecution() {
         stopAutoExecution();
 

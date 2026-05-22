@@ -71,8 +71,8 @@ public class DrawRectangleAction extends Action {
     @Override
     public List<ActionParameter> getParameters() {
         return List.of(
-                new ActionParameter("Hauteur", width, true, "", true, v -> this.width = v),
-                new ActionParameter("Longueur", height, true, "", true, v -> this.height = v)
+                new ActionParameter("Largeur", width, true, "", true, v -> this.width = v),
+                new ActionParameter("Hauteur", height, true, "", true, v -> this.height = v)
         );
     }
 

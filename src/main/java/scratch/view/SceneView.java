@@ -83,16 +83,8 @@ public class SceneView extends VBox {
         btnNext.managedProperty().bind(sceneViewModel.autoModeProperty().not());
 
         speedSlider.valueProperty().addListener((obs, old, nw) -> {
-            double seconds = nw.doubleValue();
-        //    sceneViewModel.speedProperty().set(nw.doubleValue());
             speedLabel.setText(String.format("%.2f s", nw.doubleValue()));
-
-            sceneViewModel.speedProperty().set(seconds);
-
-            if (sceneViewModel.isAutoMode() && sceneViewModel.programLoadedProperty().get()) {
-                sceneViewModel.startAutoExecution();
-            }
-
+            sceneViewModel.onSpeedChanged(nw.doubleValue());
         });
 
 
