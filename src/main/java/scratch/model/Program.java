@@ -106,6 +106,8 @@ public class Program {
             }
             if (!checkPolycount())
                 return false;
+            if (!checkRectangle())
+                return false;
 
             return repeatDepth == 0 && hasVisualAction;
         } catch (ExecutionException e) {
@@ -160,6 +162,11 @@ public class Program {
             return false;
         else
             return true;
+    }
+    private boolean checkRectangle(){
+        if (actions.getLast().getType() == ActionType.DRAW_RECTANGLE )
+            return false;
+        return true;
     }
 
     private boolean checkNoPenActionInLoop() {
