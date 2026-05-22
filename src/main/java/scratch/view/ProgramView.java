@@ -84,6 +84,12 @@ public class ProgramView extends VBox {
         sceneViewModel.executionFaultLineIndexProperty().addListener((obs, o, n) -> refreshList.run());
         programViewModel.programChangeCounterProperty().addListener((obs, o, n) ->  refreshList.run());
         sceneViewModel.errorMessageProperty().addListener((obs, o, n) ->  refreshList.run());
+        sceneViewModel.contentChangeCounterProperty().addListener((obs, o, n) -> {
+            int idx = programViewModel.getSelectedIndex();
+            if (idx >= 0 && idx < programViewModel.getObservableActions().size()) {
+                programViewModel.getObservableActions().set(idx, programViewModel.getObservableActions().get(idx));
+            }
+        });
 
         HBox buttons = new HBox(10);
 

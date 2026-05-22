@@ -197,4 +197,12 @@ public class ExecutionContext {
         segments.add(new Segment(x2, y2, x2, y1));
         segments.add(new Segment(x2, y1, x1, y1));
     }
+
+    public void teleport(int targetX, int targetY) {
+        int newX = DEFAULT_X + targetX;
+        int newY = DEFAULT_Y - targetY;
+        segments.add(new Segment(x, y, newX, newY, true));
+        x = newX;
+        y = newY;
+    }
 }

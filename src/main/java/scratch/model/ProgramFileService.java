@@ -94,6 +94,12 @@ public class ProgramFileService {
                 if (parts.length > 2) rect.setHeight(parts[2].trim());
                 return rect;
 
+            case "TELEPORTATION":
+                TeleportationAction tele = new TeleportationAction();
+                if (parts.length > 1) tele.setX(parts[1].trim());
+                if (parts.length > 2) tele.setY(parts[2].trim());
+                return tele;
+
             default:
                 return null;
         }

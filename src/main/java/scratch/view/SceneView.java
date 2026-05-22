@@ -32,6 +32,8 @@ public class SceneView extends VBox {
     private final Label speedLabel = new Label("1.0 s");
     private final Button btnExecute = new Button("Executer");
     private final Button btnStop = new Button("Arreter");
+    private final CheckBox cbShowTeleportation = new CheckBox("afficher la téléportation");
+
 
     public SceneView(SceneViewModel sceneViewModel) {
         this.sceneViewModel = sceneViewModel;
@@ -108,6 +110,9 @@ public class SceneView extends VBox {
         lblTurtle.textProperty().bind(sceneViewModel.turtleStateProperty());
         lblTurtle.setStyle("-fx-font-size: 12px;");
         lblVariablesTitle.setStyle("-fx-font-weight: bold;");
+        cbShowTeleportation.selectedProperty().bindBidirectional(sceneViewModel.showTeleportationProperty());
+        sceneViewModel.showTeleportationProperty().addListener((obs, old, nw) -> drawGrid());
+
 
         HBox modeBox = new HBox(10, rbAuto, rbManual);
         modeBox.setAlignment(Pos.CENTER);
@@ -130,6 +135,7 @@ public class SceneView extends VBox {
                 lblTurtle,
                 lblVariablesTitle,
                 tableVariables,
+                cbShowTeleportation,
                 modeBox,
                 buttonsBox,
                 speedBox);
@@ -187,9 +193,17 @@ public class SceneView extends VBox {
         gc.strokeRect(0, 0, SIZE, SIZE);
 
         for (Segment seg : ctx.getSegments()) {
+            if (seg.isDashed()) {
+                if (!sceneViewModel.showTeleportationProperty().get()) continue;
+                gc.setLineDashes(10);
+            } else {
+                gc.setLineDashes(0);
+            }
             gc.setStroke(Color.RED);
             gc.strokeLine(seg.getX1(), seg.getY1(), seg.getX2(), seg.getY2());
         }
+        gc.setLineDashes(0);
+
         drawCursor(gc, ctx.getX(), ctx.getY(), ctx.getDirection());
     }
 
