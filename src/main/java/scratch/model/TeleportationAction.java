@@ -27,7 +27,7 @@ public class TeleportationAction extends Action {
         int dx = Math.abs(targetX - currentX);
         int dy = Math.abs(targetY - currentY);
         if (dx < 10 && dy < 10)
-            throw new ExecutionException("Runtime error : distance insuffisante (dx ou dy >= 10 requis).");
+            throw new ExecutionException("distance insuffisante (dx ou dy >= 10 requis).");
         e.teleport(targetX, targetY);
     }
 
