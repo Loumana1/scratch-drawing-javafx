@@ -96,7 +96,11 @@ public class Program {
                 if (!action.isValid(tempContext)) {
                     return false;
                 }
-                action.execute(tempContext);
+                try {
+                    action.execute(tempContext);
+                } catch (ExecutionException e) {
+                    if (action.getType() != ActionType.DRAW_POLYGON) return false;
+                }
             }
             if (!checkRepeatVarNotModified()) {
                 return false;
@@ -125,7 +129,11 @@ public class Program {
             if (!a.isValid(context)) {
                 throw new ExecutionException("Erreur valeur ou variable ");
             }
-            a.execute(context);
+            try {
+                a.execute(context);
+            } catch (ExecutionException e) {
+                if (a.getType() != ActionType.DRAW_POLYGON) throw e;
+            }
         }
     }
 
