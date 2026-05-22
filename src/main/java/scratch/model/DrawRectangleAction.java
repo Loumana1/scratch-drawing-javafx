@@ -33,9 +33,15 @@ public class DrawRectangleAction extends Action {
     @Override
     public boolean isValid(ExecutionContext e) {
         try {
-            int w = e.resolveValue(width);
-            int h = e.resolveValue(height);
-            return w >= MIN_VALUE && h >= MIN_VALUE;
+            if (!e.hasVariable(width)) {
+                int w = e.resolveValue(width);
+                if (w < MIN_VALUE) return false;
+            }
+            if (!e.hasVariable(height)) {
+                int h = e.resolveValue(height);
+                if (h < MIN_VALUE) return false;
+            }
+            return true;
         } catch (ExecutionException ex) {
             return false;
         }

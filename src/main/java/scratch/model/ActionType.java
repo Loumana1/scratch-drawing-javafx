@@ -10,8 +10,8 @@ public enum ActionType {
     REPEAT,
     END_REPEAT,
     PEN_UP,
-    DRAW_POLYGON,
     PEN_DOWN,
+    DRAW_POLYGON,
     DRAW_RECTANGLE,
     TELEPORTATION
 }

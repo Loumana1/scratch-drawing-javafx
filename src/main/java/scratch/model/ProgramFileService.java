@@ -29,7 +29,8 @@ public class ProgramFileService {
             String[] parts = line.split(";");
             String type = parts[0].trim();
 
-            actions.add(createFromType(type, parts));
+            Action action = createFromType(type, parts);
+            if (action != null) actions.add(action);
         }
         return actions;
     }
