@@ -7,7 +7,7 @@ import java.util.List;
 
 public class PolygonAction extends Action{
 
-    public static final int MIN_SIZE = 1;
+    public static final int MIN_SIZE = 3;
     public static final int MIN_SIDES = 3;
 
     private String size;
@@ -25,9 +25,15 @@ public class PolygonAction extends Action{
     @Override
     public boolean isValid(ExecutionContext e) {
         try {
-            int Nsize = e.resolveValue(size);
-            int Nnum = e.resolveValue(num);
-            return Nsize >= MIN_SIZE && Nnum >= MIN_SIDES;
+            if (!e.hasVariable(size)) {
+                int Nsize = e.resolveValue(size);
+                if (Nsize < MIN_SIZE) return false;
+            }
+            if (!e.hasVariable(num)) {
+                int Nnum = e.resolveValue(num);
+                if (Nnum < MIN_SIDES) return false;
+            }
+            return true;
         } catch (ExecutionException ex) {
             return false;
         }
