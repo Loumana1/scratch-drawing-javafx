@@ -99,7 +99,7 @@ public class Program {
                 try {
                     action.execute(tempContext);
                 } catch (ExecutionException e) {
-                    if (action.getType() != ActionType.DRAW_POLYGON && action.getType() != ActionType.TELEPORTATION) return false;
+                    if (action.getType() != ActionType.DRAW_POLYGON && action.getType() != ActionType.TELEPORTATION && action.getType() != ActionType.DRAW_RECTANGLE) return false;
                 }
             }
             if (!checkRepeatVarNotModified()) {
@@ -137,7 +137,7 @@ public class Program {
             try {
                 a.execute(context);
             } catch (ExecutionException e) {
-                if (a.getType() != ActionType.DRAW_POLYGON && a.getType() != ActionType.TELEPORTATION) throw e;
+                if (a.getType() != ActionType.DRAW_POLYGON && a.getType() != ActionType.TELEPORTATION && a.getType() != ActionType.DRAW_RECTANGLE) throw e;
             }
         }
     }
