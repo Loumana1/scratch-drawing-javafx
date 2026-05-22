@@ -19,13 +19,13 @@ public class ProgramViewModel {
     private final IntegerProperty selectedIndex = new SimpleIntegerProperty(-1);
     private final IntegerProperty programChangeCounter = new SimpleIntegerProperty(0);
     private final StringProperty errorMessage = new SimpleStringProperty("");
-    private static BooleanProperty advancedMode = new SimpleBooleanProperty(false);
+    private final BooleanProperty advancedMode = new SimpleBooleanProperty(false);
 
-    public static BooleanProperty advancedModeProperty() {
+    public BooleanProperty advancedModeProperty() {
         return advancedMode;
     }
 
-    public static boolean isAdvancedMode() {
+    public boolean isAdvancedMode() {
         return advancedMode.get();
     }
 
