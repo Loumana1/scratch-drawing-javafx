@@ -33,12 +33,16 @@ public class PaletteView extends VBox {
                         "-fx-background-color: white;"
         );
 
-        CheckBox modeAvance = new CheckBox("Mode avancé");
-
+        CheckMenuItem modeAvance = new CheckMenuItem("Mode avancé");
+        CheckMenuItem modeReligieux = new CheckMenuItem("Mode Religieux");
 
         modeAvance.selectedProperty().bindBidirectional(
                 programViewModel.advancedModeProperty()
         );
+        modeReligieux.selectedProperty().bindBidirectional(
+                programViewModel.religiousModeProprety()
+        );
+
 
         listView.setItems(programViewModel.getPaletteItems());
 
@@ -90,6 +94,6 @@ public class PaletteView extends VBox {
             }
         });
 
-        getChildren().addAll(title, listView, addButton, modeAvance);
+        getChildren().addAll(title, listView, addButton, modeAvance, modeReligieux);
     }
 }

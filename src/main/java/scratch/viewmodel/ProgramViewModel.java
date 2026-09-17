@@ -20,9 +20,13 @@ public class ProgramViewModel {
     private final IntegerProperty programChangeCounter = new SimpleIntegerProperty(0);
     private final StringProperty errorMessage = new SimpleStringProperty("");
     private final BooleanProperty advancedMode = new SimpleBooleanProperty(false);
+    private final BooleanProperty  religiousMode = new SimpleBooleanProperty(false);
 
     public BooleanProperty advancedModeProperty() {
         return advancedMode;
+    }
+    public BooleanProperty religiousModeProprety() {
+        return religiousMode;
     }
 
     public boolean isAdvancedMode() {
@@ -36,7 +40,14 @@ public class ProgramViewModel {
     public ProgramViewModel(Program program) {
         this.program = program;
         this.observableActions = FXCollections.observableArrayList(program.getActions());
-        advancedMode.addListener((obs, o, n) -> refreshPaletteItems());
+        advancedMode.addListener((obs, o, n) -> {
+            if(n)
+             religiousMode.set(false);
+        refreshPaletteItems();});
+        religiousMode.addListener((obs, o, n) ->{
+            if(n)
+                advancedMode.set(false);
+            refreshPaletteItems();});
         refreshPaletteItems();
     }
 
@@ -188,6 +199,7 @@ public class ProgramViewModel {
             case INCREMENT_VARIABLE -> new IncrementVariableAction();
             case DRAW_RECTANGLE -> new DrawRectangleAction();
             case TELEPORTATION -> new TeleportationAction();
+            case DRAW_CROSS -> new DrawCrossAction();
         };
     }
 
@@ -226,6 +238,11 @@ public class ProgramViewModel {
     private void refreshPaletteItems() {
         paletteItems.clear();
         for (ActionType type : ActionType.values()) {
+            if( type == ActionType.DRAW_CROSS && !religiousMode.get()){
+                continue;
+            }
+
+
             if ((type == ActionType.DRAW_POLYGON || type == ActionType.DRAW_RECTANGLE)
                     && !advancedMode.get()) {
                 continue;

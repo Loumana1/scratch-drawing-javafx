@@ -3,6 +3,8 @@ package scratch.view;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import scratch.viewmodel.MainViewModel;
@@ -77,12 +79,24 @@ public class MainView extends BorderPane {
                 }
                 programViewModel.saveToFile(file);
             }
+            CheckMenuItem advancedItem = new CheckMenuItem("Mode avancé");
+            CheckMenuItem religiousItem = new CheckMenuItem("Mode religieux");
+            advancedItem.selectedProperty().bindBidirectional(
+                    programViewModel.advancedModeProperty()
+            );
+            religiousItem.selectedProperty().bindBidirectional(
+                    programViewModel.religiousModeProprety()
+            );
         });
 
         MenuItem exitItem = new MenuItem("Exit");
         exitItem.setOnAction(e -> Platform.exit());
 
-        fileMenu.getItems().addAll(newItem, openItem, mode, saveItem, exitItem);
+        fileMenu.getItems().addAll(newItem, openItem,
+                new SeparatorMenuItem(),
+                advan,
+                religiousItem,
+                new SeparatorMenuItem(),saveItem, exitItem);
         menuBar.getMenus().add(fileMenu);
 
         return menuBar;
