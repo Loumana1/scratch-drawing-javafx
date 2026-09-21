@@ -82,30 +82,6 @@ anc_2526_c06/
 
 ---
 
-## Prérequis
-
-- **JDK 25** (ou version compatible avec le `pom.xml`)
-- **Maven 3.8+**
-- JavaFX est géré via les dépendances Maven (`org.openjfx`)
-
----
-
-## Lancer le projet
-
-```bash
-mvn compile
-mvn javafx:run
-```
-
-Si le plugin JavaFX n’est pas configuré dans le `pom.xml`, lancez depuis **IntelliJ IDEA** :
-
-1. Ouvrir le projet Maven
-2. Exécuter la classe `scratch.App`
-
-Fenêtre attendue : environ **1400×800** (minimum 1200×700).
-
----
-
 ## Conception
 
 Choix principaux retenus au fil des itérations :
@@ -117,29 +93,10 @@ Choix principaux retenus au fil des itérations :
 - Canvas dédié pour le rendu de la scène
 - Diagrammes de classes versionnés dans `docs/`
 
----
-
-## Format de fichier programme
-
-Les programmes sont sauvegardés ligne par ligne, séparateur `;`, préfixe = type d’action.  
-Exemple conceptuel :
-
-```text
-PEN_DOWN
-MOVE_FORWARD;100
-TURN_RIGHT;90
-REPEAT;4
-MOVE_FORWARD;50
-TURN_RIGHT;90
-END_REPEAT
-```
-
-Le service `ProgramFileService` gère la sérialisation / désérialisation.
+Les programmes sont des listes d’actions sérialisées (type + paramètres). `ProgramFileService` gère l’import / export.
 
 ---
 
 ## Remarques
 
-- Projet pédagogique d’analyse et conception orientée objet.
-- Les diagrammes PlantUML dans `docs/` documentent l’évolution du modèle (itérations).
-- Travail collaboratif via Git (branches par fonctionnalité : téléportation, rectangle, mode avancé, etc.).
+Projet pédagogique d’analyse et conception orientée objet. Les diagrammes PlantUML dans `docs/` retracent l’évolution du modèle au fil des itérations.
