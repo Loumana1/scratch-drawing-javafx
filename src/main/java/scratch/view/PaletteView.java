@@ -7,14 +7,13 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import scratch.model.ActionType;
-import scratch.viewmodel.MainViewModel;
 import scratch.viewmodel.ProgramViewModel;
 
 public class PaletteView extends VBox {
     private final ListView<ActionType> listView = new ListView<>();
     private final ProgramViewModel programViewModel;
 
-    public PaletteView(ProgramViewModel programViewModel ) {
+    public PaletteView(ProgramViewModel programViewModel) {
 
         this.programViewModel = programViewModel;
         setSpacing(8);
@@ -34,7 +33,18 @@ public class PaletteView extends VBox {
                         "-fx-background-color: white;"
         );
 
-        listView.getItems().addAll(ActionType.values());
+        CheckBox modeAvance = new CheckBox("Mode avancé");
+        CheckBox modeReligieux = new CheckBox("Mode Religieux");
+
+        modeAvance.selectedProperty().bindBidirectional(
+                programViewModel.advancedModeProperty()
+        );
+        modeReligieux.selectedProperty().bindBidirectional(
+                programViewModel.religiousModeProprety()
+        );
+
+
+        listView.setItems(programViewModel.getPaletteItems());
 
         listView.setCellFactory(lv -> new ListCell<>() {
 
@@ -84,7 +94,6 @@ public class PaletteView extends VBox {
             }
         });
 
-        getChildren().addAll(title, listView, addButton);
+        getChildren().addAll(title, listView, addButton, modeAvance, modeReligieux);
     }
-
 }

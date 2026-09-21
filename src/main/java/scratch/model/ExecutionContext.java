@@ -154,6 +154,28 @@ public class ExecutionContext {
         }
     }
 
+    public void drawCross(int armLength, int thickness){
+        // Barre horizontale
+        int hx1 = x - armLength;
+        int hy1 = y - thickness / 2;
+        int hx2 = x + armLength;
+        int hy2 = y + thickness / 2;
+        segments.add(new Segment(hx1, hy1, hx2, hy1));
+        segments.add(new Segment(hx2, hy1, hx2, hy2));
+        segments.add(new Segment(hx2, hy2, hx1, hy2));
+        segments.add(new Segment(hx1, hy2, hx1, hy1));
+
+        int vx1 = x - thickness / 2;
+        int vy1 = y - armLength;
+        int vx2 = x + thickness / 2;
+        int vy2 = y + armLength;
+
+        segments.add(new Segment(vx1, vy1, vx2, vy1));
+        segments.add(new Segment(vx2, vy1, vx2, vy2));
+        segments.add(new Segment(vx2, vy2, vx1, vy2));
+        segments.add(new Segment(vx1, vy2, vx1, vy1));
+    }
+
     public void polygone(int size, int num) {
         List<double[]> lines = getPolygonLines(getX(), getY(), getDirection(), size, num);
         for (double[] line : lines) {

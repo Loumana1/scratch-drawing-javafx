@@ -101,6 +101,12 @@ public class ProgramFileService {
                 if (parts.length > 2) tele.setY(parts[2].trim());
                 return tele;
 
+            case "DRAW_CROSS":
+                DrawCrossAction cross = new DrawCrossAction();
+                if (parts.length > 1) cross.setArmLength(parts[1].trim());
+                if (parts.length > 2) cross.setThickness(parts[2].trim());
+                return cross;
+
             default:
                 return null;
         }

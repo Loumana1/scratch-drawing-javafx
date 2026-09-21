@@ -99,7 +99,10 @@ public class Program {
                 try {
                     action.execute(tempContext);
                 } catch (ExecutionException e) {
-                    if (action.getType() != ActionType.DRAW_POLYGON && action.getType() != ActionType.TELEPORTATION && action.getType() != ActionType.DRAW_RECTANGLE) return false;
+                    if (action.getType() != ActionType.DRAW_POLYGON
+                            && action.getType() != ActionType.TELEPORTATION
+                            && action.getType() != ActionType.DRAW_RECTANGLE
+                            && action.getType() != ActionType.DRAW_CROSS) return false;
                 }
             }
             if (!checkRepeatVarNotModified()) {
@@ -116,6 +119,8 @@ public class Program {
                 return false;
 
             if (!checkNoTeleportInLoop())
+                return false;
+            if (!checkNoCrosstInLoop())
                 return false;
 
             return repeatDepth == 0 && hasVisualAction;
@@ -137,7 +142,10 @@ public class Program {
             try {
                 a.execute(context);
             } catch (ExecutionException e) {
-                if (a.getType() != ActionType.DRAW_POLYGON && a.getType() != ActionType.TELEPORTATION && a.getType() != ActionType.DRAW_RECTANGLE) throw e;
+                if (a.getType() != ActionType.DRAW_POLYGON
+                        && a.getType() != ActionType.TELEPORTATION
+                        && a.getType() != ActionType.DRAW_RECTANGLE
+                        && a.getType() != ActionType.DRAW_CROSS) throw e;
             }
         }
     }
@@ -208,6 +216,16 @@ public class Program {
             if (a.getType() == ActionType.REPEAT) depth++;
             else if (a.getType() == ActionType.END_REPEAT) depth--;
             else if (a.getType() == ActionType.TELEPORTATION && depth > 0) return false;
+        }
+        return true;
+    }
+
+    private boolean checkNoCrosstInLoop() {
+        int depth = 0;
+        for (Action a : actions) {
+            if (a.getType() == ActionType.REPEAT) depth++;
+            else if (a.getType() == ActionType.END_REPEAT) depth--;
+            else if (a.getType() == ActionType.DRAW_CROSS && depth > 0) return false;
         }
         return true;
     }
