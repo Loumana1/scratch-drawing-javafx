@@ -4,6 +4,10 @@
 
 L’utilisateur compose un **programme** à partir de blocs d’actions (avancer, tourner, boucles, variables, formes…), puis l’exécute pour dessiner sur une scène 2D.
 
+## Aperçu
+
+![Interface Scratch — palette, programme et scène](docs/screenshots/scratch-ui.png)
+
 ---
 
 ## Équipe
@@ -62,7 +66,9 @@ Groupe **C06** — année académique **2025–2026**.
 ```
 anc_2526_c06/
 ├── pom.xml
-├── docs/                          # Diagrammes UML (PlantUML)
+├── docs/                          # Diagrammes UML + captures d’écran
+│   ├── screenshots/
+│   │   └── scratch-ui.png
 │   ├── diagramme de class final.puml
 │   └── …
 └── src/main/java/
